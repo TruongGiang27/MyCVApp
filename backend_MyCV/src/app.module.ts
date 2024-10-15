@@ -4,7 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersController } from './userService/user.controller';
 import { UserService } from './userService/user.service';
-import { User, UserSchema } from './userService/schemas/user.schema';
+
+import { User, UserSchema } from './userService/entity/user.entity';
 // import { UserModule } from './user/user.module';
 import { EmployerModule } from './employer/employer.module';
 import { AdminModule } from './admin/admin.module';
