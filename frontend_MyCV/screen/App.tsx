@@ -45,6 +45,7 @@ const App = () => {
       {userInfo ? (
         <>
           <Text>Welcome, {userInfo.data.user.email}</Text>
+          <Text>{JSON.stringify(userInfo, null, 2)}</Text>
           <Button title="Logout" onPress={signOut} />
         </>
       ) : (
