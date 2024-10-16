@@ -1,26 +1,56 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Employer } from './entities/employer.entity';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
+import axios from 'axios';
 
+const API_URL = 'http://your-backend-url/employer';
+
+export const createEmployer = async (employerData) => {
+  try {
+    const response = await axios.post(API_URL, employerData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating employer:', error);
+    throw error;
+  }
+};
 @Injectable()
 export class EmployerService {
-  create(createEmployerDto: CreateEmployerDto) {
-    return 'This action adds a new employer';
+  constructor(@InjectModel(Employer.name) private employerModel: Model<Employer>) {}
+
+  async create(createEmployerDto: CreateEmployerDto): Promise<Employer> {
+    const createdEmployer = new this.employerModel(createEmployerDto);
+    return createdEmployer.save();
   }
 
-  findAll() {
-    return `This action returns all employer`;
+  async findAll(): Promise<Employer[]> {
+    return this.employerModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employer`;
+  async findOne(id: string): Promise<Employer> {
+    const employer = await this.employerModel.findById(id).exec();
+    if (!employer) {
+      throw new NotFoundException(`Employer with ID ${id} not found`);
+    }
+    return employer;
   }
 
-  update(id: number, updateEmployerDto: UpdateEmployerDto) {
-    return `This action updates a #${id} employer`;
+  async update(id: string, updateEmployerDto: UpdateEmployerDto): Promise<Employer> {
+    const updatedEmployer = await this.employerModel.findByIdAndUpdate(id, updateEmployerDto, { new: true }).exec();
+    if (!updatedEmployer) {
+      throw new NotFoundException(`Employer with ID ${id} not found`);
+    }
+    return updatedEmployer;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} employer`;
+  async remove(id: string): Promise<Employer> {
+    const deletedEmployer = await this.employerModel.findByIdAndDelete(id).exec();
+    if (!deletedEmployer) {
+      throw new NotFoundException(`Employer with ID ${id} not found`);
+    }
+    return deletedEmployer;
   }
 }
