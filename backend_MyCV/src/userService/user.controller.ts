@@ -6,7 +6,7 @@ import { User } from './entity/user.entity';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
