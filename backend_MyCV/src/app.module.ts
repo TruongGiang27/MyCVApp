@@ -10,7 +10,7 @@ import { User, UserSchema } from './userService/entity/user.entity';
 import { EmployerModule } from './employer/employer.module';
 import { AdminModule } from './admin/admin.module';
 
-const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryWrites=true&w=majority&appName=Admin';
+const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/MyCV?retryWrites=true&w=majority&appName=Admin';
 
 @Module({
   imports: [
@@ -23,4 +23,4 @@ const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryW
   controllers: [AppController, UsersController],
   providers: [AppService, UserService],
 })
-export class AppModule {}
+export class AppModule { }
