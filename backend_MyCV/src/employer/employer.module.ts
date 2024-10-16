@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { EmployerService } from './employer.service';
-import { EmployerController } from './employer.controller';
-
+import { Employer, EmployerSchema } from './entities/employer.entity';
 @Module({
-  controllers: [EmployerController],
+  imports: [
+    MongooseModule.forFeature([{ name: Employer.name, schema: EmployerSchema }])
+  ],
   providers: [EmployerService],
+  exports: [EmployerService],
 })
 export class EmployerModule {}
