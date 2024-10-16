@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Button, Text } from 'react-native';
 import { GoogleSignin, SignInSuccessResponse, statusCodes } from '@react-native-google-signin/google-signin';
 
-const App = () => {
+const Login = () => {
   const [userInfo, setUserInfo] = useState<SignInSuccessResponse | null>(null);
 
   useEffect(() => {
@@ -54,4 +54,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Login;

@@ -21,7 +21,7 @@ const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryW
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema },
     { name: Employer.name, schema: EmployerSchema }]),
 
-    // EmployerModule,
+    EmployerModule,
     AdminModule,
     // UserModule,
   ],
