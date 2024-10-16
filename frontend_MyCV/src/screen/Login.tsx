@@ -1,5 +1,5 @@
 import { GoogleSignin, SignInSuccessResponse, statusCodes } from '@react-native-google-signin/google-signin';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, ScrollView, Text, View } from 'react-native';
 
@@ -7,10 +7,8 @@ const Login = () => {
   const [userInfo, setUserInfo] = useState<SignInSuccessResponse | null>(null);
   const [dataUser, setDataUser] = useState<any[]>([]);
 
-  // Hàm lấy dữ liệu bằng axios
-
   useEffect(() => {
-    axios.get('http://192.168.137.1:3000/users')
+    axios.get('http://0.0.0.0:3000/users')
       .then(response => {
         setDataUser(response.data);
         console.log(response.data);
