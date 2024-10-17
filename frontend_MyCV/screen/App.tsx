@@ -10,7 +10,7 @@ const App = () => {
   // Hàm lấy dữ liệu bằng axios
  
     useEffect(() => {
-      axios.get('http://192.168.137.1:3000/users')
+      axios.get('http://10.101.29.193:3000/employer')
           .then(response => {
             setDataUser(response.data);
             console.log(response.data);
@@ -60,13 +60,8 @@ const App = () => {
       {userInfo ? (
         <>
           <Text>Welcome, {userInfo.data.user.email}</Text>
-          <Text>{JSON.stringify(userInfo, null, 2)}</Text>
-          <Button title="Logout" onPress={signOut} />
-        </>
-      ) : (
-        <Button title="Login with Google" onPress={signIn} />
-      )}
-      <ScrollView style={{ marginTop: 20 }}>
+          {/* <Text>{JSON.stringify(userInfo, null, 2)}</Text> */}
+          <ScrollView style={{ marginTop: 20 }}>
         {dataUser.length > 0 ? (
           dataUser.map((item, index) => (
             <Text key={index}>{JSON.stringify(item)}</Text>
@@ -75,6 +70,12 @@ const App = () => {
           <Text>No data available</Text>
         )}
       </ScrollView>
+          <Button title="Logout" onPress={signOut} />
+        </>
+      ) : (
+        <Button title="Login with Google" onPress={signIn} />        
+      )}
+     
     </View>
   );
 };

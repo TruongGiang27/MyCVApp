@@ -13,7 +13,7 @@ import { EmployerController } from './employer/employer.controller';
 import { EmployerService } from './employer/employer.service';
 import { Employer, EmployerSchema } from './employer/entities/employer.entity';
 
-const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/MyCV?retryWrites=true&w=majority&appName=Admin';
+const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryWrites=true&w=majority&appName=Admin';
 
 @Module({
   imports: [
