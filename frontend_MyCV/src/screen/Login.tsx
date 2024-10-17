@@ -1,4 +1,5 @@
 import { GoogleSignin, SignInSuccessResponse, statusCodes } from '@react-native-google-signin/google-signin';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, ScrollView, Text, View } from 'react-native';
@@ -6,9 +7,9 @@ import { Button, ScrollView, Text, View } from 'react-native';
 const Login = () => {
   const [userInfo, setUserInfo] = useState<SignInSuccessResponse | null>(null);
   const [dataUser, setDataUser] = useState<any[]>([]);
-
+  const navigation = useNavigation<any>();
   useEffect(() => {
-    axios.get('http://0.0.0.0:3000/users')
+    axios.get('http://10.106.16.167:3000/users')
       .then(response => {
         setDataUser(response.data);
         console.log(response.data);
@@ -31,6 +32,7 @@ const Login = () => {
       if (userInfo && userInfo.data?.user.email) {
         setUserInfo(userInfo as SignInSuccessResponse);
       }
+      navigation.navigate('Home');
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log('User cancelled the sign-in process');
@@ -48,6 +50,7 @@ const Login = () => {
     try {
       await GoogleSignin.signOut();
       setUserInfo(null);
+      navigation.navigate('Login');
     } catch (error) {
       console.error(error);
     }
@@ -58,8 +61,12 @@ const Login = () => {
       {userInfo ? (
         <>
           <Text>Welcome, {userInfo.data.user.email}</Text>
-          {/* <Text>{JSON.stringify(userInfo, null, 2)}</Text> */}
-          <ScrollView style={{ marginTop: 20 }}>
+          <Button title="Logout" onPress={signOut} />
+        </>
+      ) : (
+        <Button title="Login with Google" onPress={signIn} />
+      )}
+      <ScrollView style={{ marginTop: 20 }}>
         {dataUser.length > 0 ? (
           dataUser.map((item, index) => (
             <Text key={index}>{JSON.stringify(item)}</Text>
@@ -68,11 +75,6 @@ const Login = () => {
           <Text>No data available</Text>
         )}
       </ScrollView>
-          <Button title="Logout" onPress={signOut} />
-        </>
-      ) : (
-        <Button title="Login with Google" onPress={signIn} />        
-      )}
      
     </View>
   );
