@@ -1,25 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { View, Button, Text, ScrollView } from 'react-native';
 import { GoogleSignin, SignInSuccessResponse, statusCodes } from '@react-native-google-signin/google-signin';
-import axios from 'axios';  // Import axios
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Button, ScrollView, Text, View } from 'react-native';
 
-const App = () => {
+const Login = () => {
   const [userInfo, setUserInfo] = useState<SignInSuccessResponse | null>(null);
   const [dataUser, setDataUser] = useState<any[]>([]);
 
-  // Hàm lấy dữ liệu bằng axios
- 
-    useEffect(() => {
-      axios.get('http://10.101.29.193:3000/employer')
-          .then(response => {
-            setDataUser(response.data);
-            console.log(response.data);
-          })
-          .catch(error => {
-              console.error('There was an error fetching data!', error);
-          });
+  useEffect(() => {
+    axios.get('http://0.0.0.0:3000/users')
+      .then(response => {
+        setDataUser(response.data);
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching data!', error);
+      });
   }, []);
-  
+
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: '507193100422-jm7volrkn59vmg1aphh97noihkrna7ja.apps.googleusercontent.com',
@@ -80,4 +78,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Login;
