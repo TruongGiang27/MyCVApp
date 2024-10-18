@@ -8,4 +8,4 @@ import App from './App';
 import CreateEmployer from './src/screen/Employer/CreateEmployer';
 import JobPost from './src/screen/Employer/JobPost';
 
-AppRegistry.registerComponent(appName, () => JobPost);
+AppRegistry.registerComponent(appName, () => CreateEmployer);
