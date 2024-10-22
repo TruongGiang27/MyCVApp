@@ -18,7 +18,7 @@ const InforEmployer: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://10.102.70.158:3000/employers');
+                const response = await axios.get('http://10.102.74.123:3000/employers');
                 setEmployers(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -41,8 +41,7 @@ const InforEmployer: React.FC = () => {
                         <Text style={styles.text}>How Did You Hear: {employer.howDidYouHear}</Text>
                         <Text style={styles.text}>Phone Number: {employer.phoneNumber}</Text>
                         <Text style={styles.text}>Describe: {employer.describe}</Text>
-                    </View>
-                ))}
+                    </View>                ))}
 
             </View>
         </ScrollView>
@@ -71,6 +70,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 16,
         marginBottom: 8,
+        color: '#333',
     },
 });
 

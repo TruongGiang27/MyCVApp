@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { View, Alert, StyleSheet, ScrollView, Image } from 'react-native';
-import { Card, Title, TextInput, Button, Text } from 'react-native-paper';
-import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { Alert, Image, ScrollView, StyleSheet, View } from 'react-native';
+import { Button, Card, TextInput, Title } from 'react-native-paper';
 
 const CreateEmployer = () => {
   const [selectedCompany, setSelectedCompany] = useState('');
@@ -26,7 +26,8 @@ const CreateEmployer = () => {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-        const response = await axios.post('http://192.168.0.121:3000/employers', employerData);
+        const response = await axios.post('http://10.102.74.123:3000/employers', employerData);
+        console.log('Employer created:', response.data);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
       } catch (error) {
         console.error('Error creating employer:', error);
@@ -122,7 +123,7 @@ const CreateEmployer = () => {
               label="Nhập số điện thoại của bạn"
               value={phoneNumber}
               onChangeText={setPhoneNumber}
-              keyboardType="phone-pad"
+              keyboardType="decimal-pad"
               style={styles.input}
               mode="outlined"
               theme={{ colors: { primary: '#6200ee', outline: '#E4E0E1' } }}
@@ -135,7 +136,6 @@ const CreateEmployer = () => {
               placeholder="Giới thiệu công ty của bạn bằng cách nói về hoạt động kinh doanh, vị trí thị trường của bạn, văn hóa công ty của bạn, v.v."
               value={describe}
               onChangeText={setDescribe}
-              keyboardType="phone-pad"
               multiline={true}
               numberOfLines={4}
               style={styles.input}

@@ -9,7 +9,7 @@ const Login = () => {
   const [dataUser, setDataUser] = useState<any[]>([]);
   const navigation = useNavigation<any>();
   useEffect(() => {
-    axios.get('http://localhost:3000/users')
+    axios.get('http://10.102.74.123:3000/users')
       .then(response => {
         setDataUser(response.data);
         console.log(response.data);
@@ -75,7 +75,7 @@ const Login = () => {
           <Text>No data available</Text>
         )}
       </ScrollView>
-     
+
     </View>
   );
 };
