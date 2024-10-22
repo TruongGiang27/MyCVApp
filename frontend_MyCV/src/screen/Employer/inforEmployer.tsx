@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-import mongoose, { Types } from 'mongoose';
-import { err } from 'react-native-svg/lib/typescript/xml';
+import mongoose from 'mongoose';
+import React, { useEffect, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 
 interface Employer {
@@ -122,12 +121,29 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 5,
         // fontWeight: 'bold',
-
-
     },
     description: {
         fontSize: 16,
         marginBottom: 8,
+    },
+
+    employerContainer: {
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        borderColor: '#6200ee',
+        borderWidth: 1,
+    },
+
+    text: {
+        fontSize: 16,
+        marginBottom: 5,
     },
 });
 

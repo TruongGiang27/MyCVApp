@@ -26,12 +26,8 @@ const CreateEmployer = () => {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-<<<<<<< HEAD
         const response = await axios.post('http://10.102.74.123:3000/employers', employerData);
         console.log('Employer created:', response.data);
-=======
-        const response = await axios.post('http://10.102.74.189:3000/employers', employerData);
->>>>>>> 6b7074647704898e8336b268b9b527a2c6dbd0ae
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
       } catch (error) {
         console.error('Error creating employer:', error);
