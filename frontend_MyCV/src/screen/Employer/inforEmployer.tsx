@@ -21,7 +21,7 @@ const InforEmployer: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://10.102.70.158:3000/employers');
+                const response = await axios.get('http://10.102.74.123:3000/employers');
                 setEmployers(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -38,7 +38,7 @@ const InforEmployer: React.FC = () => {
                 throw new Error('Invalid ObjectId');
             }
     
-            const response = await axios.put(`http://10.102.74.189:3000/employers/${employer.id}`, employer);
+            const response = await axios.put(`http://10.102.74.123:3000/employers/${employer.id}`, employer);
             setEmployers(employers.map(emp => emp.id === employer.id ? response.data : emp));
             Alert.alert('Update', `Updated employer: ${employer.companyName}`);
         } catch (error) {
@@ -54,7 +54,7 @@ const InforEmployer: React.FC = () => {
                 throw new Error('Invalid ObjectId');
             }
 
-            await axios.delete(`http://10.102.74.189:3000/employers/${id}`);
+            await axios.delete(`http://10.102.74.123:3000/employers/${id}`);
             setEmployers(employers.filter(emp => emp.id !== id));
             Alert.alert('Delete', `Deleted employer: ${id}`);
         } catch (error) {
@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 16,
         marginBottom: 5,
+        color: '#6200ee',
     },
 });
 
