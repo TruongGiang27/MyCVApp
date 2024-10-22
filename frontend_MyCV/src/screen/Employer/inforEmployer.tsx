@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     subtitle: {
         fontSize: 16,
         marginBottom: 5,
-        // fontWeight: 'bold',
+        fontWeight: 'bold',
     },
     description: {
         fontSize: 16,
