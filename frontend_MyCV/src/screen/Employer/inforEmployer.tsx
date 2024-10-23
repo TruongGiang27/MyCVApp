@@ -1,7 +1,7 @@
 import axios from 'axios';
 import mongoose from 'mongoose';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 
 interface Employer {
@@ -15,13 +15,13 @@ interface Employer {
     describe: string;
 }
 
-const InforEmployer: React.FC = () => {
+const InforEmployer  = () => {
     const [employers, setEmployers] = useState<Employer[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://10.102.74.123:3000/employers');
+                const response = await axios.get('http://10.102.71.180:3000/employers');
                 setEmployers(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -33,12 +33,12 @@ const InforEmployer: React.FC = () => {
 
     const handleUpdate = async (employer: Employer) => {
         try {
-            // Ensure the id is a valid ObjectId
-            if (mongoose.Types.ObjectId.isValid(employer.id)) {
+            // Đảm bảo id là một ObjectId hợp lệ
+            if (!mongoose.Types.ObjectId.isValid(employer.id)) {
                 throw new Error('Invalid ObjectId');
             }
-    
-            const response = await axios.put(`http://10.102.74.123:3000/employers/${employer.id}`, employer);
+
+            const response = await axios.put(`http://10.102.71.180:3000/employers/${employer.id}`, employer);
             setEmployers(employers.map(emp => emp.id === employer.id ? response.data : emp));
             Alert.alert('Update', `Updated employer: ${employer.companyName}`);
         } catch (error) {
@@ -49,12 +49,11 @@ const InforEmployer: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            // Ensure the id is a valid ObjectId
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-                throw new Error('Invalid ObjectId');
-            }
+            // if (!mongoose.Types.ObjectId.isValid(id)) {
+            //     throw new Error('Invalid ObjectId');
+            // }
 
-            await axios.delete(`http://10.102.74.123:3000/employers/${id}`);
+            await axios.delete(`http://10.102.71.180:3000/employers/${id}`);
             setEmployers(employers.filter(emp => emp.id !== id));
             Alert.alert('Delete', `Deleted employer: ${id}`);
         } catch (error) {
@@ -76,6 +75,12 @@ const InforEmployer: React.FC = () => {
                         <Text style={styles.text}>How Did You Hear: {employer.howDidYouHear}</Text>
                         <Text style={styles.text}>Phone Number: {employer.phoneNumber}</Text>
                         <Text style={styles.text}>Describe: {employer.describe}</Text>
+                        <TouchableOpacity style={styles.buttonEdit} onPress={() => handleUpdate(employer)}>
+                            <Text style={styles.textbtn}>Update</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonDelete} onPress={() => handleDelete(employer.id)}>
+                            <Text style={styles.textbtn}>Delete</Text>
+                        </TouchableOpacity>
                     </View>
                 ))}
 
@@ -145,6 +150,27 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 5,
         color: '#6200ee',
+    },
+
+    buttonEdit: {
+        backgroundColor: '#6200ee',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+
+    buttonDelete: {
+        backgroundColor: '#ff0000',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+
+    textbtn: {
+        color: '#ffffff',
+        fontSize: 16,
     },
 });
 

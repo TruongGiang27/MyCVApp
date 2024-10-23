@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Card, TextInput, Title } from 'react-native-paper';
 
-const CreateEmployer = () => {
+
+function CreateEmployer({ navigation }: { navigation: any }) {
   const [selectedCompany, setSelectedCompany] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [numberOfEmployees, setNumberOfEmployees] = useState('');
@@ -26,9 +27,16 @@ const CreateEmployer = () => {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-        const response = await axios.post('http://10.102.74.123:3000/employers', employerData);
-        console.log('Employer created:', response.data);
+        try {
+          const response = await axios.post('http://10.102.71.180:3000/employers', employerData);
+
+        } catch (error) {
+          console.error('Error creating employer:', error);
+        }
+        // console.log('Employer created:', response.data);
+
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
+        navigation.navigate('InforEmployer');
       } catch (error) {
         console.error('Error creating employer:', error);
         Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
@@ -41,7 +49,7 @@ const CreateEmployer = () => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Title style={styles.title}>Tạo đơn tuyển dụng</Title>
+        <Title style={styles.title}>Tạo thông tin nhà tuyển dụng</Title>
         <Image style={styles.imgBg}
           source={require('../../../assets/images/bgImg.png')}
         />
@@ -186,7 +194,6 @@ const styles = StyleSheet.create({
   },
   describe: {
     fontSize: 14,
-
   },
   pickerContainer: {
     borderWidth: 1,
@@ -198,6 +205,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     backgroundColor: 'white',
+    color: '#6200ee',
   },
   input: {
     backgroundColor: 'white',
