@@ -10,7 +10,7 @@ export class Employer extends Document {
   companyName: string;
 
   @Prop({ required: true })
-  numberOfEmployees: number;
+  numberOfEmployees: string;
 
   @Prop({ required: true })
   fullName: string;
