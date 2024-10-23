@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { Button, Card, TextInput, Title, Text } from 'react-native-paper';
 
-const CreateEmployer = () => {
+
+function CreateEmployer({ navigation }: { navigation: any }) {
   const [selectedCompany, setSelectedCompany] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [numberOfEmployees, setNumberOfEmployees] = useState('');
@@ -44,9 +45,10 @@ const CreateEmployer = () => {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-        const response = await axios.post('http://10.102.74.189:3000/employers', employerData);
+        const response = await axios.post('http://10.106.22.122:3000/employers', employerData);
         console.log('Employer created:', response.data);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
+        // navigation.navigate('InforEmployer');
       } catch (error) {
         console.error('Error creating employer:', error);
         Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
@@ -117,16 +119,16 @@ const CreateEmployer = () => {
                 <Picker.Item label="101-500" value="101-500" />
                 <Picker.Item label="501-1000" value="501-1000" />
               </Picker>
-              <Title style={styles.subtitle}>Họ và tên của bạn</Title>
+                <Title style={styles.subtitle}>Họ và tên của bạn</Title>
 
-              <TextInput
+                <TextInput
                 label="Hãy nhập họ và tên của bạn"
                 value={fullName}
                 onChangeText={setFullName}
                 style={styles.input}
                 mode="outlined"
-                theme={{ colors: { primary: '#6200ee', outline: '#E4E0E1' } }}
-              />
+                theme={{ colors: { primary: '#6200ee', outline: '#E4E0E1', text: '#FF5733' } }} // Changed text color
+                />
               <Title style={styles.subtitle}>Bạn biết đến tôi từ đâu</Title>
               <View style={styles.pickerContainer}>
                 <Picker
@@ -157,15 +159,16 @@ const CreateEmployer = () => {
                 value={phoneNumber}
                 onChangeText={validatePhoneNumber}
                 keyboardType="decimal-pad"
+                textColor='#6D92D0'
                 style={styles.input}
                 mode="outlined"
-                theme={{ colors: { primary: '#6200ee', outline: '#E4E0E1' } }}
+                theme={{ colors: { primary: '#011F82', outline: '#6D92D0' } }}
               />
               {error ? <Text style={styles.error}>{error}</Text> : null}
 
               <Title style={styles.subtitle}>Mô tả công ty</Title>
-              <Title style={styles.describe}>Giới thiệu công ty của bạn
-                với mọi người trong vài dòng ngắn gọn.</Title>
+              <Text style={styles.describe}>Giới thiệu công ty của bạn
+                với mọi người trong vài dòng ngắn gọn.</Text>
 
               <TextInput
                 placeholder="Giới thiệu công ty của bạn bằng cách nói về hoạt động kinh doanh, vị trí thị trường của bạn, văn hóa công ty của bạn, v.v."
@@ -175,7 +178,7 @@ const CreateEmployer = () => {
                 numberOfLines={4}
                 placeholderTextColor="gray"
                 style={styles.input}
-                theme={{ colors: { primary: '#6200ee', outline: '#E4E0E1' } }}
+                theme={{ colors: { primary: '#6D92D0', outline: '#6D92D0' } }}
               />
               <Button mode="contained" onPress={handleSubmit} style={styles.button}>Submit</Button>
             </Card.Content>
@@ -216,12 +219,13 @@ const styles = StyleSheet.create({
     marginBottom: 3,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#6200ee',
+    color: '#011F82',
     textAlign: 'left',
   },
   describe: {
     fontSize: 14,
-
+    marginBottom: 5,
+    color: '#6D92D0',
   },
   pickerContainer: {
     // flexDirection: 'row',
@@ -246,6 +250,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 16,
     borderRadius: 8,
+    color: 'red',
   },
   button: {
     marginTop: 16,
