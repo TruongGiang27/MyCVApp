@@ -21,7 +21,7 @@ const InforEmployer: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://10.102.70.158:3000/employers');
+                const response = await axios.get('http://10.102.74.189:3000/employers');
                 setEmployers(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
