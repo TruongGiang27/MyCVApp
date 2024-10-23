@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions } from 'react-native';
 import { Icon, Card } from '@rneui/themed';
 
+//
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height;
 // Sample job data
 const data = [
-    { id: '1', title: 'Hệ Thống Bách Hóa Xanh - Nam Nữ Bán Hàng', company: 'Công Ty TNHH TM-DV PANPACIFIC', salary: '4.500.000 ₫ - 12.500.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '3 ngày trước' },
-    { id: '2', title: 'Sale Executive', company: 'Roche', salary: 'Thỏa thuận', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước' },
+    { id: '1', title: 'Client Management Assistant (100% Remote)', company: 'AwePlus Cx Transformation', salary: '9.000.000 ₫ - 12.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '3 ngày trước', isPremium: true },
+    { id: '2', title: 'Content & Community Curator', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
 ];
 
 // Top section (Header)
-const Header = ({ onSearchFocus }: { onSearchFocus: () => void }) => {
-
+const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void, onMapSearchFocus: () => void }) => {
     const [searchTerm, setSearchTerm] = useState('');
+
     return (
         <View style={styles.header}>
-           
             <View style={styles.searchBar}>
                 <Icon name="search" type="font-awesome" color="#999" size={18} />
                 <TextInput
@@ -23,13 +25,13 @@ const Header = ({ onSearchFocus }: { onSearchFocus: () => void }) => {
                     onChangeText={setSearchTerm}
                     onFocus={onSearchFocus}  // Trigger search view when focused
                 />
-                
+                <View style={styles.divider} />
                 <Icon name="map-marker" type="font-awesome" color="#999" size={18} />
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Vị trí"
                     onChangeText={setSearchTerm}
-                    onFocus={onSearchFocus}  // Trigger search view when focused
+                    onFocus={onMapSearchFocus}  // Trigger map search view when focused
                 />
             </View>
         </View>
@@ -40,8 +42,8 @@ const Header = ({ onSearchFocus }: { onSearchFocus: () => void }) => {
 const Search = ({ onCancel }: { onCancel: () => void }) => (
     <View style={styles.searchContainer}>
         <View style={styles.searchHeader}>
-            <TextInput 
-                style={styles.fullSearchInput} 
+            <TextInput
+                style={styles.fullSearchInput}
                 placeholder="Nhập từ khóa tìm kiếm"
                 autoFocus={true}  // Automatically focus when Search opens
             />
@@ -49,37 +51,51 @@ const Search = ({ onCancel }: { onCancel: () => void }) => (
                 <Text style={styles.cancelButton}>Hủy</Text>
             </TouchableOpacity>
         </View>
-        {/* Content for search results can be added here */}
         <Text style={styles.searchText}>Hiển thị kết quả tìm kiếm...</Text>
     </View>
 );
 
+// Search Map
 const SearchMap = ({ onCancel }: { onCancel: () => void }) => (
     <View style={styles.searchContainer}>
         <View style={styles.searchHeader}>
-            <TextInput 
-                style={styles.fullSearchInput} 
-                placeholder="Nhập từ khóa tìm kiếm"
-                autoFocus={true}  // Automatically focus when Search opens
+            <TextInput
+                style={styles.fullSearchInput}
+                placeholder="Nhập vị trí"
+                autoFocus={true}  // Automatically focus when Search Map opens
             />
             <TouchableOpacity onPress={onCancel}>
                 <Text style={styles.cancelButton}>Hủy</Text>
             </TouchableOpacity>
         </View>
-        {/* Content for search results can be added here */}
-        <Text style={styles.searchText}>Hiển thị kết quả tìm kiếm...</Text>
+        <Text style={styles.searchText}>Hiển thị kết quả tìm kiếm trên bản đồ...</Text>
     </View>
 );
+
 // Mid section (Content)
-const JobItem = ({ title, company, salary, location, timePosted }) => (
+// Job item component
+const JobItem = ({ title, company, salary, location, timePosted, isPremium }) => (
     <Card containerStyle={styles.cardContainer}>
-        <Text style={styles.title}>{title}</Text>
+        {/* Nếu là công việc premium, hiển thị nhãn đặc biệt */}
+        {isPremium && (
+            <View style={styles.premiumTag}>
+                <Text style={styles.premiumText}>Tuyển dụng nhiều ứng viên</Text>
+            </View>
+            
+        )}
+        <View style={styles.jobHeader}>
+            <Text style={styles.title}>{title}</Text>
+            {/* Icon bookmark luôn hiển thị */}
+            <Icon name="bookmark" type="font-awesome" color="#666" size={20} />
+        </View>
         <Text style={styles.company}>{company}</Text>
         <Text style={styles.salary}>{salary}</Text>
         <Text style={styles.location}>{location}</Text>
         <Text style={styles.timePosted}>{timePosted}</Text>
+        <Text style={styles.easyApply}>Nộp đơn dễ dàng</Text>
     </Card>
 );
+
 
 const Content = () => (
     <FlatList
@@ -91,6 +107,7 @@ const Content = () => (
                 salary={item.salary}
                 location={item.location}
                 timePosted={item.timePosted}
+                isPremium={item.isPremium}
             />
         )}
         keyExtractor={(item) => item.id}
@@ -123,23 +140,38 @@ const Navbar = () => (
 // Main component
 const Home = () => {
     const [isSearching, setIsSearching] = useState(false);
+    const [isMapSearching, setIsMapSearching] = useState(false);
 
     const handleSearchFocus = () => {
         setIsSearching(true);
+        setIsMapSearching(false);
+    };
+
+    const handleMapSearchFocus = () => {
+        setIsMapSearching(true);
+        setIsSearching(false);
     };
 
     const handleCancelSearch = () => {
         setIsSearching(false);
+        setIsMapSearching(false);
         Keyboard.dismiss(); // Dismiss keyboard when search is canceled
     };
+
     const { width } = useWindowDimensions();  // Get the current screen width
     const logoWidth = width * 0.5;
+
     return (
         <View style={styles.container}>
-             <Image source={require('../../../assets/images/logo.png')} style={[styles.logo, { width: 130, height: logoWidth * 0.25 }]} />
-            {!isSearching && <Header onSearchFocus={handleSearchFocus} />}
+            <View style={styles.logo}>
+                 <Image source={require('../../../assets/images/logo.png')} style={ {width: width*0.5, height: logoWidth * 0.25, resizeMode: 'contain', }} />
+            </View>
+           
+            {!isSearching && !isMapSearching && <Header onSearchFocus={handleSearchFocus} onMapSearchFocus={handleMapSearchFocus} />}
             {isSearching ? (
                 <Search onCancel={handleCancelSearch} />
+            ) : isMapSearching ? (
+                <SearchMap onCancel={handleCancelSearch} />
             ) : (
                 <>
                     <Content />
@@ -177,6 +209,12 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 10,
     },
+    divider: {
+        width: 1,
+        height: '80%',
+        backgroundColor: '#ddd',
+        marginHorizontal: 10,
+    },
     // Search view styles
     searchContainer: {
         flex: 1,
@@ -206,18 +244,37 @@ const styles = StyleSheet.create({
         color: '#666',
     },
     // Mid section (Content)
-    contentContainer: {
-        paddingBottom: 80, // Avoid overlap with navbar
-    },
     cardContainer: {
-        borderRadius: 8,
+        borderRadius: 10,
         padding: 15,
         marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
+    premiumTag: {
+        backgroundColor: '#fdecef',
+        padding: 8,
+        borderRadius: 5,
+        alignSelf: 'flex-start',
+        marginBottom: 5,
+    },
+    premiumText: {
+        color: '#d32f2f',
+        fontWeight: 'bold',
+        fontSize: width * 0.03, 
+    },
+    jobHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     title: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: 'bold',
+        color: '#333',
         marginBottom: 5,
+        flexWrap: 'wrap',      // Cho phép văn bản xuống dòng
+        maxWidth: '90%', 
     },
     company: {
         fontSize: 14,
@@ -236,6 +293,14 @@ const styles = StyleSheet.create({
     timePosted: {
         fontSize: 12,
         color: '#999',
+    },
+    easyApply: {
+        fontSize: 12,
+        color: '#007AFF',
+        marginTop: 5,
+    },
+    contentContainer: {
+        paddingBottom: 80,
     },
     // Bottom section (Navbar)
     navbar: {

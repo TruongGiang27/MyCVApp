@@ -4,7 +4,7 @@ import 'react-native-get-random-values';
 import * as React from 'react';
 import CreateEmployer from './src/screen/Employer/CreateEmployer';
 import Login from './src/screen/Login';
-import Home from './src/screen/Home';
+import Home from './src/screen/Home/Home';
 
 const Stack = createStackNavigator();
 
