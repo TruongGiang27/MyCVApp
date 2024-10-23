@@ -12,4 +12,4 @@ import JobList from './src/screen/JobList';
 import JobDetail from './src/screen/JobDetail';
 
 
-AppRegistry.registerComponent(appName, () => JobList);
+AppRegistry.registerComponent(appName, () => JobDetail);
