@@ -10,7 +10,7 @@ export class Employer extends Document {
   companyName: string;
 
   @Prop({ required: true })
-  numberOfEmployees: number;
+  numberOfEmployees: string;
 
   @Prop({ required: true })
   fullName: string;
@@ -26,3 +26,11 @@ export class Employer extends Document {
 }
 
 export const EmployerSchema = SchemaFactory.createForClass(Employer);
+
+EmployerSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});

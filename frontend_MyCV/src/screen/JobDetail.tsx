@@ -6,7 +6,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 // JobDetail Component
 const JobDetail = () => {
   return (
-    <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         {/* Header */}
         <View style={styles.header}>
@@ -115,18 +114,15 @@ const JobDetail = () => {
           <Text style={styles.applyButtonText}>Ứng tuyển ngay</Text>
         </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
   );
 };
 
 export default JobDetail;
 
 const styles = StyleSheet.create({
-  container: {
+  content: {
     flex: 1,
     backgroundColor: '#F5F5F5',
-  },
-  content: {
     padding: 16,
   },
   header: {
