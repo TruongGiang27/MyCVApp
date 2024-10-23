@@ -28,7 +28,7 @@ const JobCard = ({
 
 const JobList = () => {
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
         <Icon name="menu-outline" size={28} />
@@ -71,7 +71,7 @@ const JobList = () => {
           jobType="Thời gian linh hoạt"
         />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

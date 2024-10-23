@@ -79,7 +79,8 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                 <Picker.Item label="Công nghệ" value="technology" />
                 <Picker.Item label="Dịch vụ" value="service" />
                 <Picker.Item label="Giáo dục" value="education" />
-                <Picker.Item label="IT" value="IT" />
+                <Picker.Item label="IT" value="IT"
+                />
                 <Picker.Item label="Y tế" value="healthcare" />
                 <Picker.Item label="Xây dựng" value="construction" />
                 <Picker.Item label="Bất động sản" value="realEstate" />

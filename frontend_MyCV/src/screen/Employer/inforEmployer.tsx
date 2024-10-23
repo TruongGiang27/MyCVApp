@@ -22,7 +22,7 @@ const InforEmployer = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://10.101.29.140:3000/employers');
+                const response = await axios.get('http://10.106.21.177:3000/employers');
                 setEmployers(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -41,7 +41,7 @@ const InforEmployer = () => {
     const handleSave = async () => {
         if (formData) {
             try {
-                const response = await axios.patch(`http://10.101.29.140:3000/employers/${formData.id}`, formData);
+                const response = await axios.patch(`http://10.106.21.177:3000/employers/${formData.id}`, formData);
                 setEmployers(employers.map(emp => emp.id === formData.id ? response.data : emp));
                 setEditingEmployer(null); // Đóng form sau khi update thành công
                 Alert.alert('Update', `Updated employer: ${formData.companyName}`);
@@ -63,7 +63,7 @@ const InforEmployer = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://10.101.29.140:3000/employers/${id}`);
+            await axios.delete(`http://10.106.21.177:3000/employers/${id}`);
             setEmployers(employers.filter(emp => emp.id !== id));
             Alert.alert('Delete', `Deleted employer: ${id}`);
         } catch (error) {
@@ -163,6 +163,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 10,
         fontSize: 16,
+        color:'#011F82',
     },
     text: {
         fontSize: 16,
