@@ -3,9 +3,26 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Card, TextInput, Title } from 'react-native-paper';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+type RootStackParamList = {
+  Login: undefined;
+  Home: undefined;
+  CreateEmployer: undefined;
+  InforEmployer: undefined;
+};
 
-function CreateEmployer({ navigation }: { navigation: any }) {
+// Khai báo kiểu cho props 'navigation'
+type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'CreateEmployer'
+>;
+
+type Props = {
+  navigation: CreateEmployerScreenNavigationProp;
+};
+
+const CreateEmployer: React.FC<Props> = ({ navigation }) => {
   const [selectedCompany, setSelectedCompany] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [numberOfEmployees, setNumberOfEmployees] = useState('');
@@ -13,7 +30,6 @@ function CreateEmployer({ navigation }: { navigation: any }) {
   const [howDidYouHear, setHowDidYouHear] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [describe, setDescribe] = useState('');
-
   const handleSubmit = async () => {
     if (selectedCompany && companyName && numberOfEmployees && fullName && howDidYouHear && phoneNumber && describe) {
       try {
@@ -27,16 +43,10 @@ function CreateEmployer({ navigation }: { navigation: any }) {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-        try {
-          const response = await axios.post('http://10.102.71.180:3000/employers', employerData);
-
-        } catch (error) {
-          console.error('Error creating employer:', error);
-        }
-        // console.log('Employer created:', response.data);
-
+        navigation.navigate("InforEmployer");
+        const response = await axios.post('http://10.101.29.140:3000/employers', employerData);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
-        navigation.navigate('InforEmployer');
+
       } catch (error) {
         console.error('Error creating employer:', error);
         Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
@@ -45,6 +55,7 @@ function CreateEmployer({ navigation }: { navigation: any }) {
       Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin');
     }
   };
+
 
   return (
     <ScrollView>
@@ -182,14 +193,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 40,
     fontWeight: 'bold',
-    color: '#6200ee',
+    color: '#011F82',
     textAlign: 'center',
   },
   subtitle: {
     marginBottom: 3,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#6200ee',
+    color: '#6D92D0',
     textAlign: 'left',
   },
   describe: {

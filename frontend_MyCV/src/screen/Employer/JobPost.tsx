@@ -2,20 +2,14 @@
 import * as React from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Navbar from '../../components/Navbar';
 const JobPost = () => {
     return (
         <View style={styles.container}>
-            <View style={styles.navbar}>
-                <View style={styles.navbarleft}>
-                    <FontAwesome5 name={"arrow-left"} size={24} color="black" />
-                    <FontAwesome5 name={"home"} size={24} color="black" />
-                    
-                </View>
-                <View style={styles.navbarright}>
-                    <FontAwesome5 name={"envelope"} size={24} color="black" />
-                    <FontAwesome5 name={"bell"} size={24} color="black" />
-                    <FontAwesome5 name={"list"} size={24} color="black" />
-                </View>
+            <Navbar />
+
+            <View style={styles.content}>
+                <Text style={styles.title}>Tạo bài đăng tuyển dụng</Text>
 
             </View>
         </View>
@@ -30,24 +24,21 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
 
-    navbar: {
-        width: '100%',
-        height: 50,
-        backgroundColor: '#f8f8f8',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
+    content: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#f5f5f5',
     },
 
-    navbarleft: {
-        display: 'flex',
-        flexDirection: 'row',
+    title: {
+        marginBottom: 10,
+        lineHeight: 50,
+        marginTop: 10,
+        fontSize: 40,
+        fontWeight: 'bold',
+        color: '#011F82',
+        textAlign: 'center',
     },
 
-    navbarright: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
 
 });
