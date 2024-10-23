@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import 'react-native-get-random-values';
-import Home from './src/screen/Home';
+import Home from './src/screen/Home/Home';
 import Login from './src/screen/Login';
 import CreateEmployer from './src/screen/Employer/CreateEmployer';
 import InforEmployer from './src/screen/Employer/InforEmployer';

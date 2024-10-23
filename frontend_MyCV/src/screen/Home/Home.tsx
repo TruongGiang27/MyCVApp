@@ -1,6 +1,6 @@
+import { Card, Icon } from '@rneui/themed';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions } from 'react-native';
-import { Icon, Card } from '@rneui/themed';
+import { FlatList, Image, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 
 // Sample job data
 const data = [
@@ -14,7 +14,7 @@ const Header = ({ onSearchFocus }: { onSearchFocus: () => void }) => {
     const [searchTerm, setSearchTerm] = useState('');
     return (
         <View style={styles.header}>
-           
+
             <View style={styles.searchBar}>
                 <Icon name="search" type="font-awesome" color="#999" size={18} />
                 <TextInput
@@ -23,7 +23,7 @@ const Header = ({ onSearchFocus }: { onSearchFocus: () => void }) => {
                     onChangeText={setSearchTerm}
                     onFocus={onSearchFocus}  // Trigger search view when focused
                 />
-                
+
                 <Icon name="map-marker" type="font-awesome" color="#999" size={18} />
                 <TextInput
                     style={styles.searchInput}
@@ -40,8 +40,8 @@ const Header = ({ onSearchFocus }: { onSearchFocus: () => void }) => {
 const Search = ({ onCancel }: { onCancel: () => void }) => (
     <View style={styles.searchContainer}>
         <View style={styles.searchHeader}>
-            <TextInput 
-                style={styles.fullSearchInput} 
+            <TextInput
+                style={styles.fullSearchInput}
                 placeholder="Nhập từ khóa tìm kiếm"
                 autoFocus={true}  // Automatically focus when Search opens
             />
@@ -57,8 +57,8 @@ const Search = ({ onCancel }: { onCancel: () => void }) => (
 const SearchMap = ({ onCancel }: { onCancel: () => void }) => (
     <View style={styles.searchContainer}>
         <View style={styles.searchHeader}>
-            <TextInput 
-                style={styles.fullSearchInput} 
+            <TextInput
+                style={styles.fullSearchInput}
                 placeholder="Nhập từ khóa tìm kiếm"
                 autoFocus={true}  // Automatically focus when Search opens
             />
@@ -144,7 +144,8 @@ const Home = () => {
     const logoWidth = width * 0.5;
     return (
         <View style={styles.container}>
-             <Image source={require('../../../assets/images/logo.png')} style={[styles.logo, { width: 130, height: logoWidth * 0.25 }]} />
+            <Image source={require('../../../assets/images/logo.png')} style={[styles.logo, { width: 130, height: logoWidth * 0.25 }]} />
+            
             {!isSearching && <Header onSearchFocus={handleSearchFocus} />}
             {isSearching ? (
                 <Search onCancel={handleCancelSearch} />
@@ -184,6 +185,7 @@ const styles = StyleSheet.create({
     searchInput: {
         flex: 1,
         marginLeft: 10,
+        color: '#333',
     },
     // Search view styles
     searchContainer: {
@@ -245,7 +247,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#999',
     },
-    // Bottom section (Navbar)
+
     navbar: {
         flexDirection: 'row',
         justifyContent: 'space-around',

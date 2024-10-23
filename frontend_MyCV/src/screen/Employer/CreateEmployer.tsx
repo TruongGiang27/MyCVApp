@@ -1,11 +1,28 @@
 import { Picker } from '@react-native-picker/picker';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { Button, Card, TextInput, Title, Text } from 'react-native-paper';
 
+type RootStackParamList = {
+  Login: undefined;
+  Home: undefined;
+  CreateEmployer: undefined;
+  InforEmployer: undefined;
+};
 
-function CreateEmployer({ navigation }: { navigation: any }) {
+// Khai báo kiểu cho props 'navigation'
+type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'CreateEmployer'
+>;
+
+type Props = {
+  navigation: CreateEmployerScreenNavigationProp;
+};
+
+const CreateEmployer: React.FC<Props> = ({ navigation }) => {
   const [selectedCompany, setSelectedCompany] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [numberOfEmployees, setNumberOfEmployees] = useState('');
@@ -45,10 +62,10 @@ function CreateEmployer({ navigation }: { navigation: any }) {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-        const response = await axios.post('http://10.106.22.122:3000/employers', employerData);
-        console.log('Employer created:', response.data);
+        navigation.navigate("InforEmployer");
+        const response = await axios.post('http://10.101.29.140:3000/employers', employerData);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
-        // navigation.navigate('InforEmployer');
+
       } catch (error) {
         console.error('Error creating employer:', error);
         Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
@@ -57,6 +74,7 @@ function CreateEmployer({ navigation }: { navigation: any }) {
       Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin');
     }
   };
+
 
   return (
     <KeyboardAvoidingView
@@ -212,7 +230,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 40,
     fontWeight: 'bold',
-    color: '#6200ee',
+    color: '#011F82',
     textAlign: 'center',
   },
   subtitle: {
