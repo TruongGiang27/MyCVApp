@@ -9,6 +9,7 @@ const JobPost = () => {
                 <View style={styles.navbarleft}>
                     <FontAwesome5 name={"arrow-left"} size={24} color="black" />
                     <FontAwesome5 name={"home"} size={24} color="black" />
+                    
                 </View>
                 <View style={styles.navbarright}>
                     <FontAwesome5 name={"envelope"} size={24} color="black" />
