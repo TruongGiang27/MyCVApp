@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+//Job Card Component
 // Job Card Component
 const JobCard = ({
   title,
