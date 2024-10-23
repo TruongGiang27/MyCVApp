@@ -6,7 +6,7 @@ import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import axios from 'axios';
 
-const API_URL = 'http://your-backend-url/employer';
+const API_URL = 'http://localhost:3000/employer';
 
 export const createEmployer = async (employerData) => {
   try {

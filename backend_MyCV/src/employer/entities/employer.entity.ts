@@ -3,23 +3,26 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class Employer extends Document {
-  @Prop()
+  @Prop({ required: true })
+  selectedCompany: string;
+
+  @Prop({ required: true })
   companyName: string;
 
-  @Prop()
-  companySize: string;
+  @Prop({ required: true })
+  numberOfEmployees: number;
 
-  @Prop()
+  @Prop({ required: true })
   fullName: string;
 
-  @Prop()
-  isManager: string;
-
-  @Prop()
+  @Prop({ required: true })
   howDidYouHear: string;
 
-  @Prop()
+  @Prop({ required: true })
   phoneNumber: string;
+
+  @Prop({ required: true })
+  describe: string;
 }
 
 export const EmployerSchema = SchemaFactory.createForClass(Employer);
