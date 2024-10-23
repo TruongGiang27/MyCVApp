@@ -22,7 +22,7 @@ const InforEmployer = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://10.106.21.177:3000/employers');
+                const response = await axios.get('http:/10.101.30.249:3000/employers');
                 setEmployers(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
