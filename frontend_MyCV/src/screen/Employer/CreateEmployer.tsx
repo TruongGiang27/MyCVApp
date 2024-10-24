@@ -3,8 +3,26 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Card, TextInput, Title } from 'react-native-paper';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const CreateEmployer = () => {
+type RootStackParamList = {
+  Login: undefined;
+  Home: undefined;
+  CreateEmployer: undefined;
+  InforEmployer: undefined;
+};
+
+// Khai báo kiểu cho props 'navigation'
+type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'CreateEmployer'
+>;
+
+type Props = {
+  navigation: CreateEmployerScreenNavigationProp;
+};
+
+const CreateEmployer: React.FC<Props> = ({ navigation }) => {
   const [selectedCompany, setSelectedCompany] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [numberOfEmployees, setNumberOfEmployees] = useState('');
@@ -12,7 +30,6 @@ const CreateEmployer = () => {
   const [howDidYouHear, setHowDidYouHear] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [describe, setDescribe] = useState('');
-
   const handleSubmit = async () => {
     if (selectedCompany && companyName && numberOfEmployees && fullName && howDidYouHear && phoneNumber && describe) {
       try {
@@ -26,9 +43,10 @@ const CreateEmployer = () => {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-        const response = await axios.post('http://10.102.74.123:3000/employers', employerData);
-        console.log('Employer created:', response.data);
+        navigation.navigate("InforEmployer");
+        const response = await axios.post('http://10.101.29.140:3000/employers', employerData);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
+
       } catch (error) {
         console.error('Error creating employer:', error);
         Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
@@ -38,10 +56,11 @@ const CreateEmployer = () => {
     }
   };
 
+
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Title style={styles.title}>Tạo đơn tuyển dụng</Title>
+        <Title style={styles.title}>Tạo thông tin nhà tuyển dụng</Title>
         <Image style={styles.imgBg}
           source={require('../../../assets/images/bgImg.png')}
         />
@@ -60,7 +79,8 @@ const CreateEmployer = () => {
                 <Picker.Item label="Công nghệ" value="technology" />
                 <Picker.Item label="Dịch vụ" value="service" />
                 <Picker.Item label="Giáo dục" value="education" />
-                <Picker.Item label="IT" value="IT" />
+                <Picker.Item label="IT" value="IT"
+                />
                 <Picker.Item label="Y tế" value="healthcare" />
                 <Picker.Item label="Xây dựng" value="construction" />
                 <Picker.Item label="Bất động sản" value="realEstate" />
@@ -174,19 +194,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 40,
     fontWeight: 'bold',
-    color: '#6200ee',
+    color: '#011F82',
     textAlign: 'center',
   },
   subtitle: {
     marginBottom: 3,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#6200ee',
+    color: '#6D92D0',
     textAlign: 'left',
   },
   describe: {
     fontSize: 14,
-
   },
   pickerContainer: {
     borderWidth: 1,
@@ -198,6 +217,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     backgroundColor: 'white',
+    color: '#6200ee',
   },
   input: {
     backgroundColor: 'white',

@@ -1,3 +1,4 @@
+import { Card, Icon } from '@rneui/themed';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions } from 'react-native';
 import { Icon, Card } from '@rneui/themed';
@@ -208,6 +209,7 @@ const styles = StyleSheet.create({
     searchInput: {
         flex: 1,
         marginLeft: 10,
+        color: '#333',
     },
     divider: {
         width: 1,
