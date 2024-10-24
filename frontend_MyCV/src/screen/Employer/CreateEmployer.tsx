@@ -1,3 +1,4 @@
+//Giang 
 import { Picker } from '@react-native-picker/picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import axios from 'axios';
@@ -10,6 +11,7 @@ type RootStackParamList = {
   Home: undefined;
   CreateEmployer: undefined;
   InforEmployer: undefined;
+  HomeEmployer: undefined;
 };
 
 // Khai báo kiểu cho props 'navigation'
@@ -34,10 +36,8 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
 
 
   const handlePickerFocus = () => {
-    Keyboard.dismiss(); // Ẩn bàn phím
+    Keyboard.dismiss();
   };
-
-
 
   const validatePhoneNumber = (text: string) => {
     const phoneRegex = /^0\d{0,9}$/;
@@ -62,9 +62,9 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-        const response = await axios.post('http://192.168.58.88:3000/employers', employerData);
+        const response = await axios.post('http://192.168.1.15:3000/employers', employerData);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
-        navigation.navigate("InforEmployer");
+        navigation.navigate("HomeEmployer");
       } catch (error) {
         console.error('Error creating employer:', error);
         Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
@@ -77,8 +77,7 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      behavior="padding"
-    >
+      behavior="padding">
 
       <ScrollView>
         <View style={styles.container}>
@@ -96,8 +95,7 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                   onFocus={handlePickerFocus}
                   style={styles.picker}
                   itemStyle={styles.pickerItem}
-                  mode="dialog"
-                >
+                  mode="dialog">
                   <Picker.Item label="Chọn một tùy chọn" value="choose" />
                   <Picker.Item label="Bán lẻ và buôn bán" value="sales" />
                   <Picker.Item label="Bảo hiểm" value="insurance" />

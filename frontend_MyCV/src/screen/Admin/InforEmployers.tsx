@@ -22,7 +22,7 @@ const InforEmployer = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://192.168.58.88:3000/employers');
+                const response = await axios.get('http://192.168.1.15:3000/employers');
                 setEmployers(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -41,7 +41,7 @@ const InforEmployer = () => {
     const handleSave = async () => {
         if (formData) {
             try {
-                const response = await axios.patch(`http://192.168.58.88:3000/employers/${formData.id}`, formData);
+                const response = await axios.patch(`http://192.168.1.15:3000/employers/${formData.id}`, formData);
                 setEmployers(employers.map(emp => emp.id === formData.id ? response.data : emp));
                 setEditingEmployer(null); // Đóng form sau khi update thành công
                 Alert.alert('Update', `Updated employer: ${formData.companyName}`);
@@ -63,7 +63,7 @@ const InforEmployer = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://192.168.58.88:3000/employers/${id}`);
+            await axios.delete(`http://192.168.1.15:3000/employers/${id}`);
             setEmployers(employers.filter(emp => emp.id !== id));
             Alert.alert('Delete', `Deleted employer: ${id}`);
         } catch (error) {
@@ -127,7 +127,7 @@ const InforEmployer = () => {
                     </View>
                 ) : (
                     // Hiển thị danh sách employers
-                    employers.map((employer, index) => (
+                    employers.slice(0,5).map((employer, index) => (
                         <View key={index} style={styles.employerContainer}>
                             <Text style={styles.text}>Selected Company: {employer.selectedCompany}</Text>
                             <Text style={styles.text}>Company Name: {employer.companyName}</Text>
