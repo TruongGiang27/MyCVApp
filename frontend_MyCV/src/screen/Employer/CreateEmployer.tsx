@@ -62,10 +62,9 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-        navigation.navigate("InforEmployer");
-        const response = await axios.post('http://10.101.29.140:3000/employers', employerData);
+        const response = await axios.post('http://192.168.58.88:3000/employers', employerData);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
-
+        navigation.navigate("InforEmployer");
       } catch (error) {
         console.error('Error creating employer:', error);
         Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
@@ -97,7 +96,7 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                   onFocus={handlePickerFocus}
                   style={styles.picker}
                   itemStyle={styles.pickerItem}
-                  mode="dialog" 
+                  mode="dialog"
                 >
                   <Picker.Item label="Chọn một tùy chọn" value="choose" />
                   <Picker.Item label="Bán lẻ và buôn bán" value="sales" />
@@ -137,16 +136,16 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                 <Picker.Item label="101-500" value="101-500" />
                 <Picker.Item label="501-1000" value="501-1000" />
               </Picker>
-                <Title style={styles.subtitle}>Họ và tên của bạn</Title>
+              <Title style={styles.subtitle}>Họ và tên của bạn</Title>
 
-                <TextInput
+              <TextInput
                 label="Hãy nhập họ và tên của bạn"
                 value={fullName}
                 onChangeText={setFullName}
                 style={styles.input}
                 mode="outlined"
                 theme={{ colors: { primary: '#6200ee', outline: '#E4E0E1', text: '#FF5733' } }} // Changed text color
-                />
+              />
               <Title style={styles.subtitle}>Bạn biết đến tôi từ đâu</Title>
               <View style={styles.pickerContainer}>
                 <Picker

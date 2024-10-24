@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "frontend_MyCVApp.app"
-               BlueprintName = "frontend_MyCVApp"
-               ReferencedContainer = "container:frontend_MyCVApp.xcodeproj">
+               BuildableName = "frontendmycvapp.app"
+               BlueprintName = "frontendmycvapp"
+               ReferencedContainer = "container:frontendmycvapp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "frontend_MyCVAppTests.xctest"
-               BlueprintName = "frontend_MyCVAppTests"
-               ReferencedContainer = "container:frontend_MyCVApp.xcodeproj">
+               BuildableName = "frontendmycvappTests.xctest"
+               BlueprintName = "frontendmycvappTests"
+               ReferencedContainer = "container:frontendmycvapp.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "frontend_MyCVApp.app"
-            BlueprintName = "frontend_MyCVApp"
-            ReferencedContainer = "container:frontend_MyCVApp.xcodeproj">
+            BuildableName = "frontendmycvapp.app"
+            BlueprintName = "frontendmycvapp"
+            ReferencedContainer = "container:frontendmycvapp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "frontend_MyCVApp.app"
-            BlueprintName = "frontend_MyCVApp"
-            ReferencedContainer = "container:frontend_MyCVApp.xcodeproj">
+            BuildableName = "frontendmycvapp.app"
+            BlueprintName = "frontendmycvapp"
+            ReferencedContainer = "container:frontendmycvapp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
