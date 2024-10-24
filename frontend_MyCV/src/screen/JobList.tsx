@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-//Job Card Component
+import axios from 'axios';
+
 // Job Card Component
 const JobCard = ({
   title,
@@ -27,6 +27,42 @@ const JobCard = ({
 );
 
 const JobList = () => {
+  interface Job {
+    _id: string;
+    title: string;
+    company: string;
+    location: string;
+    salary: string;
+    jobType: string;
+  }
+
+  const [jobs, setJobs] = useState<Job[]>([]);  // State để lưu dữ liệu từ backend
+  const [loading, setLoading] = useState(true);  // State để kiểm tra xem dữ liệu đã load xong chưa
+
+  // Gọi API để lấy danh sách công việc từ backend
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await axios.get('http://192.168.0.115:3000/jobs');
+        setJobs(response.data);  // Lưu dữ liệu vào state
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+      } finally {
+        setLoading(false);  // Tắt trạng thái loading sau khi gọi API xong
+      }
+    };
+
+    fetchJobs();  // Gọi hàm khi component được render
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Đang tải...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Header Section */}
@@ -54,22 +90,18 @@ const JobList = () => {
       {/* Recent Jobs Section */}
       <Text style={styles.sectionTitle}>Việc làm cho bạn</Text>
 
-      <ScrollView contentContainerStyle={styles.jobList}>
-        {/* Sample Job Cards */}
-        <JobCard
-          title="Unity Game Developer"
-          company="Senspark"
-          location="Thành phố Hồ Chí Minh"
-          salary="30.000.000 đ / tháng"
-          jobType="Toàn thời gian"
-        />
-        <JobCard
-          title="Data Analyst Intern"
-          company="YouNet"
-          location="Thành phố Hồ Chí Minh"
-          salary="Thực tập sinh"
-          jobType="Thời gian linh hoạt"
-        />
+      {/* ScrollView for Job List */}
+      <ScrollView contentContainerStyle={styles.jobList} style={{ flex: 1 }}>
+        {jobs.map((job) => (
+          <JobCard
+            key={job._id}  // Đảm bảo key là unique, dùng _id từ MongoDB
+            title={job.title}
+            company={job.company}
+            location={job.location}
+            salary={job.salary}
+            jobType={job.jobType}
+          />
+        ))}
       </ScrollView>
     </View>
   );
@@ -81,6 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+    paddingTop: 20, // Thêm padding để tránh "notch" hoặc thanh trạng thái
   },
   header: {
     flexDirection: 'row',
@@ -126,6 +159,7 @@ const styles = StyleSheet.create({
   },
   jobList: {
     padding: 16,
+    flexGrow: 1,  // Đảm bảo ScrollView có thể cuộn khi nội dung vượt quá kích thước màn hình
   },
   jobCard: {
     backgroundColor: '#FFFFFF',
@@ -163,7 +197,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   jobType: {
-    fontSize: 14,
+    fontSize: 14, 
     color: '#011F82',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

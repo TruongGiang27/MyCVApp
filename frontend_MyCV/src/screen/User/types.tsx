@@ -1,20 +1,20 @@
 
 
-// export type RootStackParamList = {
+export type RootStackParamList = {
 
-//   JobDetail: {
+  JobDetail: {
 
-//     title: string;
+    title: string;
 
-//     company: string;
+    company: string;
 
-//     location: string;
+    location: string;
 
-//     salary: string;
+    salary: string;
 
-//     jobType: string;
+    jobType: string;
 
-//   };
+  };
 
 
-// };
+};

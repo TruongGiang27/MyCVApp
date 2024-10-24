@@ -12,6 +12,7 @@ import { AdminModule } from './admin/admin.module';
 import { EmployerController } from './employer/employer.controller';
 import { EmployerService } from './employer/employer.service';
 import { Employer, EmployerSchema } from './employer/entities/employer.entity';
+import { JobsModule } from './jobs/jobs.module';
 
 const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryWrites=true&w=majority&appName=Admin';
 
@@ -23,6 +24,7 @@ const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryW
 
     EmployerModule,
     AdminModule,
+    JobsModule,
     // UserModule,
   ],
   controllers: [AppController, UsersController, EmployerController],
