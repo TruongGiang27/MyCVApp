@@ -145,7 +145,7 @@ const Home = () => {
     return (
         <View style={styles.container}>
             <Image source={require('../../../assets/images/logo.png')} style={[styles.logo, { width: 130, height: logoWidth * 0.25 }]} />
-            
+
             {!isSearching && <Header onSearchFocus={handleSearchFocus} />}
             {isSearching ? (
                 <Search onCancel={handleCancelSearch} />

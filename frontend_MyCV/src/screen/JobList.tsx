@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 
@@ -36,24 +36,78 @@ const JobList = () => {
     jobType: string;
   }
 
-  const [jobs, setJobs] = useState<Job[]>([]);  // State để lưu dữ liệu từ backend
-  const [loading, setLoading] = useState(true);  // State để kiểm tra xem dữ liệu đã load xong chưa
+  const [jobs, setJobs] = useState<Job[]>([]); // State để lưu dữ liệu từ backend
+  const [loading, setLoading] = useState(true); // State để kiểm tra xem dữ liệu đã load xong chưa
+
+  const [searchTitle, setSearchTitle] = useState(''); // State để lưu chức danh hoặc từ khóa
+  const [searchLocation, setSearchLocation] = useState(''); // State để lưu thành phố hoặc mã vùng
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>([]); // State để lưu kết quả tìm kiếm
+  const [searchHistory, setSearchHistory] = useState<{ title: string, location: string }[]>([]); // State lưu lịch sử tìm kiếm
 
   // Gọi API để lấy danh sách công việc từ backend
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://192.168.0.115:3000/jobs');
-        setJobs(response.data);  // Lưu dữ liệu vào state
+        const response = await axios.get('http://10.106.20.177:3000/jobs');
+        setJobs(response.data); // Lưu dữ liệu vào state
+        setFilteredJobs(response.data); // Đặt kết quả tìm kiếm ban đầu là tất cả công việc
       } catch (error) {
         console.error('Error fetching jobs:', error);
       } finally {
-        setLoading(false);  // Tắt trạng thái loading sau khi gọi API xong
+        setLoading(false); // Tắt trạng thái loading sau khi gọi API xong
       }
     };
 
-    fetchJobs();  // Gọi hàm khi component được render
+    fetchJobs(); // Gọi hàm khi component được render
   }, []);
+
+  // Hàm tìm kiếm khi nhấn nút "Tìm việc"
+  const handleSearch = () => {
+    const filtered = jobs.filter((job) => {
+      const matchTitle = job.title.toLowerCase().includes(searchTitle.toLowerCase());
+      const matchLocation = job.location.toLowerCase().includes(searchLocation.toLowerCase());
+      return matchTitle && matchLocation;
+    });
+
+    // Lưu lịch sử tìm kiếm (giới hạn tối đa 2 mục)
+    if (searchTitle || searchLocation) {
+      setSearchHistory((prevHistory) => {
+        const newHistory = [{ title: searchTitle, location: searchLocation }, ...prevHistory];
+        return newHistory.slice(0, 2); // Giới hạn chỉ giữ 2 mục trong lịch sử
+      });
+    }
+
+    setFilteredJobs(filtered); // Cập nhật danh sách công việc sau khi tìm kiếm
+  };
+
+  // Hàm tìm kiếm dựa trên lịch sử tìm kiếm
+  const handleHistorySearch = (title: string, location: string) => {
+    const filtered = jobs.filter((job) => {
+      const matchTitle = job.title.toLowerCase().includes(title.toLowerCase());
+      const matchLocation = job.location.toLowerCase().includes(location.toLowerCase());
+      return matchTitle && matchLocation;
+    });
+    setFilteredJobs(filtered); // Cập nhật danh sách công việc dựa trên lịch sử
+    setSearchTitle(title);
+    setSearchLocation(location);
+  };
+
+  // Hàm hiển thị lịch sử tìm kiếm
+  const renderSearchHistory = () => (
+    <FlatList
+      data={searchHistory}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={({ item }) => (
+        <TouchableOpacity
+          onPress={() => handleHistorySearch(item.title, item.location)}
+        >
+          <Text style={styles.historyItem}>
+            {item.title} - {item.location}
+          </Text>
+        </TouchableOpacity>
+      )}
+    />
+  );
 
   if (loading) {
     return (
@@ -77,24 +131,38 @@ const JobList = () => {
         <TextInput
           placeholder="Chức danh, từ khóa hoặc công ty"
           style={styles.input}
+          value={searchTitle}
+          onFocus={renderSearchHistory} // Hiển thị lịch sử khi nhấn vào input
+          onChangeText={setSearchTitle} // Cập nhật giá trị tìm kiếm chức danh
         />
         <TextInput
           placeholder="Thành phố, tiểu bang, mã vùng..."
           style={styles.input}
+          value={searchLocation}
+          onFocus={renderSearchHistory} // Hiển thị lịch sử khi nhấn vào input
+          onChangeText={setSearchLocation} // Cập nhật giá trị tìm kiếm địa điểm
         />
-        <TouchableOpacity style={styles.searchButton}>
+        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
           <Text style={styles.searchButtonText}>Tìm việc</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Search History Section */}
+      {searchHistory.length > 0 && (
+        <View style={styles.historyContainer}>
+          <Text style={styles.sectionTitle}>Lịch sử tìm kiếm</Text>
+          {renderSearchHistory()}
+        </View>
+      )}
 
       {/* Recent Jobs Section */}
       <Text style={styles.sectionTitle}>Việc làm cho bạn</Text>
 
       {/* ScrollView for Job List */}
       <ScrollView contentContainerStyle={styles.jobList} style={{ flex: 1 }}>
-        {jobs.map((job) => (
+        {filteredJobs.map((job) => (
           <JobCard
-            key={job._id}  // Đảm bảo key là unique, dùng _id từ MongoDB
+            key={job._id} // Đảm bảo key là unique, dùng _id từ MongoDB
             title={job.title}
             company={job.company}
             location={job.location}
@@ -113,7 +181,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
-    paddingTop: 20, // Thêm padding để tránh "notch" hoặc thanh trạng thái
+    paddingTop: 20,
   },
   header: {
     flexDirection: 'row',
@@ -159,7 +227,7 @@ const styles = StyleSheet.create({
   },
   jobList: {
     padding: 16,
-    flexGrow: 1,  // Đảm bảo ScrollView có thể cuộn khi nội dung vượt quá kích thước màn hình
+    flexGrow: 1,
   },
   jobCard: {
     backgroundColor: '#FFFFFF',
@@ -197,12 +265,21 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   jobType: {
-    fontSize: 14, 
+    fontSize: 14,
     color: '#011F82',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  historyContainer: {
+    marginHorizontal: 16,
+    marginVertical: 10,
+  },
+  historyItem: {
+    fontSize: 16,
+    color: '#011F82',
+    marginBottom: 10,
   },
 });

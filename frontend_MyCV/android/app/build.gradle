@@ -2,6 +2,8 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+apply plugin: "kotlin-android"
+// apply plugin: "kotlin-android-extensions"
 
 
 /**
@@ -79,9 +81,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.frontend_mycvapp"
+    namespace "com.frontendmycvapp"
     defaultConfig {
-        applicationId "com.frontend_mycvapp"
+        applicationId "com.frontendmycvapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -107,6 +109,13 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+project.ext.react = [
+    enableHermes: true,  // or false to disable Hermes
+]
 }
 
 dependencies {
@@ -119,3 +128,4 @@ dependencies {
         implementation jscFlavor
     }
 }
+
