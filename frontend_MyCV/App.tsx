@@ -4,7 +4,7 @@ import 'react-native-get-random-values';
 import Home from './src/screen/Home/Home';
 import Login from './src/screen/Login';
 import CreateEmployer from './src/screen/Employer/CreateEmployer';
-import InforEmployer from './src/screen/Employer/InforEmployer';
+// import InforEmployers from './src/screen/Admin/InforEmployers';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import JobList from './src/screen/JobList';
 import JobDetail from './src/screen/JobDetail';
