@@ -1,4 +1,4 @@
-package com.frontend_mycvapp
+package com.frontendmycvapp
 
 import com.oblador.vectoricons.VectorIconsPackage
 import android.app.Application

@@ -39,6 +39,4 @@ const styles = StyleSheet.create({
         color: '#011F82',
         textAlign: 'center',
     },
-
-
 });

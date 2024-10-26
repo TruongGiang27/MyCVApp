@@ -9,9 +9,9 @@ const Login = () => {
   const [dataUser, setDataUser] = useState<any[]>([]);
   const navigation = useNavigation<any>();
   useEffect(() => {
-    axios.get('http://localhost:3000/users')
+    axios.get('http://192.168.58.88:3000/users')
       .then(response => {
-        setDataUser(response.data);
+        setDataUser(response.data);``
         console.log(response.data);
       })
       .catch(error => {

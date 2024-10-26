@@ -1,7 +1,6 @@
 import { Card, Icon } from '@rneui/themed';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions } from 'react-native';
-import { Icon, Card } from '@rneui/themed';
 
 //
 const width = Dimensions.get('screen').width;
@@ -82,7 +81,7 @@ const JobItem = ({ title, company, salary, location, timePosted, isPremium }) =>
             <View style={styles.premiumTag}>
                 <Text style={styles.premiumText}>Tuyển dụng nhiều ứng viên</Text>
             </View>
-            
+
         )}
         <View style={styles.jobHeader}>
             <Text style={styles.title}>{title}</Text>
@@ -164,11 +163,9 @@ const Home = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.logo}>
-                 <Image source={require('../../../assets/images/logo.png')} style={ {width: width*0.5, height: logoWidth * 0.25, resizeMode: 'contain', }} />
-            </View>
-           
-            {!isSearching && !isMapSearching && <Header onSearchFocus={handleSearchFocus} onMapSearchFocus={handleMapSearchFocus} />}
+            <Image source={require('../../../assets/images/logo.png')} style={[styles.logo, { width: 130, height: logoWidth * 0.25 }]} />
+
+            {!isSearching && <Header onSearchFocus={handleSearchFocus} />}
             {isSearching ? (
                 <Search onCancel={handleCancelSearch} />
             ) : isMapSearching ? (
@@ -197,6 +194,9 @@ const styles = StyleSheet.create({
     },
     logo: {
         resizeMode: 'contain',
+        width: width * 0.5,  
+        height: width * 0.125,  
+        marginBottom: width * 0.05,
     },
     searchBar: {
         flexDirection: 'row',
@@ -248,61 +248,64 @@ const styles = StyleSheet.create({
     // Mid section (Content)
     cardContainer: {
         borderRadius: 10,
-        padding: 15,
-        marginBottom: 10,
+        padding: width * 0.04,
+        marginBottom: width * 0.03,
         borderWidth: 1,
         borderColor: '#ddd',
+        width: '95%',
+        alignSelf: 'center',
     },
     premiumTag: {
         backgroundColor: '#fdecef',
-        padding: 8,
+        paddingVertical: width * 0.01,
+        paddingHorizontal: width * 0.03,
         borderRadius: 5,
         alignSelf: 'flex-start',
-        marginBottom: 5,
+        marginBottom: width * 0.02, 
     },
     premiumText: {
         color: '#d32f2f',
         fontWeight: 'bold',
-        fontSize: width * 0.03, 
+        fontSize: width * 0.03,
     },
     jobHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        marginBottom: width * 0.02,
     },
     title: {
-        fontSize: 20,
+        fontSize: width * 0.045,  // Điều chỉnh kích thước chữ tiêu đề theo chiều rộng màn hình
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 5,
-        flexWrap: 'wrap',      // Cho phép văn bản xuống dòng
-        maxWidth: '90%', 
     },
     company: {
-        fontSize: 14,
+        fontSize: width * 0.035,  // Kích thước chữ nhỏ hơn cho tên công ty
         color: '#555',
         marginBottom: 5,
     },
     salary: {
         color: '#007AFF',
         fontWeight: 'bold',
+        fontSize: width * 0.04,  
     },
     location: {
-        fontSize: 13,
+        fontSize: width * 0.035,  
         color: '#666',
         marginTop: 5,
     },
     timePosted: {
-        fontSize: 12,
+        fontSize: width * 0.03,  
         color: '#999',
     },
     easyApply: {
-        fontSize: 12,
+        fontSize: width * 0.03, 
         color: '#007AFF',
         marginTop: 5,
     },
     contentContainer: {
-        paddingBottom: 80,
+        paddingBottom: height * 0.15, 
     },
     // Bottom section (Navbar)
     navbar: {
