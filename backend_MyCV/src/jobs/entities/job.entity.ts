@@ -19,6 +19,10 @@ export class Job {
 
   @Prop({ required: true })
   jobType: string;
+
+  @Prop({ required: true })
+  description: string;
+  
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

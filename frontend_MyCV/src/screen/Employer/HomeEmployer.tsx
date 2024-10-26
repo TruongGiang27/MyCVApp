@@ -6,13 +6,31 @@ import InforEmployer from '../Admin/InforEmployers';
 import { Navigation } from '@mui/icons-material';
 
 import { NavigationProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+type RootStackParamList = {
+    Login: undefined;
+    Home: undefined;
+    CreateEmployer: undefined;
+    InforEmployer: undefined;
+    HomeEmployer: undefined;
+    JobPost: undefined;
+};
 
-const HomeEmployer = ({ navigation }: { navigation: NavigationProp<any> }) => {
+// Khai báo kiểu cho props 'navigation'
+type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
+    RootStackParamList,
+    'CreateEmployer'
+>;
+
+type Props = {
+    navigation: CreateEmployerScreenNavigationProp;
+};
+const HomeEmployer: React.FC<Props> = ({ navigation }) => {
     return (
         <View>
             <Text>Home Employer</Text>
 
-            <TouchableOpacity onPress={()=>navigation.navigate('InforEmployer')} style={styles.btn}>
+            <TouchableOpacity onPress={() => navigation.navigate('InforEmployer')} style={styles.btn}>
                 <Text>Employer</Text>
             </TouchableOpacity>
         </View>
@@ -27,7 +45,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    btn:{
+    btn: {
         backgroundColor: 'black',
         padding: 10,
         borderRadius: 5,

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
-
+import { BASE_URL } from './utils/url';
 // Job Card Component
 const JobCard = ({
   title,
@@ -48,7 +48,7 @@ const JobList = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://10.106.20.177:3000/jobs');
+        const response = await axios.get(`${BASE_URL}/jobs`); // Gọi API lấy danh sách công việc
         setJobs(response.data); // Lưu dữ liệu vào state
         setFilteredJobs(response.data); // Đặt kết quả tìm kiếm ban đầu là tất cả công việc
       } catch (error) {
