@@ -2,16 +2,44 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import * as React from 'react';
 import { useState } from 'react';
-import { Image, Platform, StyleSheet, Text, View } from 'react-native';
-import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { Alert, Image, Keyboard, Platform, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, TextInput, TouchableOpacity, GestureHandlerRootView } from 'react-native-gesture-handler';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Navbar from '../../components/Navbar';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import axios from 'axios';
+import { BASE_URL } from '../utils/url';
+type RootStackParamList = {
+    Login: undefined;
+    Home: undefined;
+    CreateEmployer: undefined;
+    InforEmployer: undefined;
+    HomeEmployer: undefined;
+    JobPost: undefined;
+    JobList: undefined;
+};
 
-const JobPost = () => {
+// Khai báo kiểu cho props 'navigation'
+type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
+    RootStackParamList,
+    'JobPost'
+>;
+
+type Props = {
+    navigation: CreateEmployerScreenNavigationProp;
+};
+
+const JobPost: React.FC<Props> = ({ navigation }) => {
     const [selectedValue, setSelectedValue] = useState('');
-    const [date, setDate] = useState<Date | undefined>(undefined); // Để date ban đầu là undefined
+    const [date, setDate] = useState<Date | undefined>(undefined);
     const [show, setShow] = useState<boolean>(false);
     const [showDataJob, setShowDataJob] = useState<boolean>(false);
+    const [title, setTitle] = useState<string>('');
+    const [company, setCompany] = useState<string>('');
+    const [locationCity, setlocationCity] = useState<string>('');
+    const [salary, setSalary] = useState<string>('');
+    const [jobType, setJobType] = useState('');
+    const [jobDescription, setJobDescription] = useState<string>('');
     const onChange = (event: any, selectedDate?: Date) => {
         const currentDate = selectedDate || date;
         setShow(Platform.OS === 'ios');
@@ -20,180 +48,216 @@ const JobPost = () => {
 
     const handlePickerFocus = () => {
         setShowDataJob(true);
+        Keyboard.dismiss();
     };
 
     const showDatePicker = () => {
         setShow(true);
     };
 
+    const handleSubmit = async () => {
+        if (title && company && locationCity && salary && jobType && jobDescription.length > 30) {
+            try {
+                const JobsData = {
+                    title,
+                    company,
+                    location: locationCity,
+                    salary,
+                    jobType,
+                    jobDescription,
+                };
+                console.log('Submitting employer data:', JobsData);
+                const response = await axios.post(`${BASE_URL}/jobs`, JobsData);
+                Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
+                navigation.navigate("JobList");
+            } catch (error) {
+                console.error('Error creating employer:', error);
+                Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
+            }
+        } else if (jobDescription.length < 30) {
+            Alert.alert('Lỗi', 'Mô tả công việc phải có ít nhất 30 ký tự');
+        }
+        else {
+            Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin');
+        }
+    };
+
     return (
-        <ScrollView>
-        <View style={styles.container}>
-            <Navbar />
-            <View style={styles.content}>
-                <View style={styles.header}>
-                    <Text style={styles.title}>Tạo bài đăng tuyển dụng</Text>
-                    <Image style={styles.imgPost}
-                        source={require('../../../assets/images/jobpostImg.jpg')}
-                    />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+
+            <ScrollView>
+                <View style={styles.container}>
+                    <Navbar />
+
+                    <View style={styles.content}>
+                        <View style={styles.header}>
+                            <Text style={styles.title}>Tạo bài đăng tuyển dụng</Text>
+                            <Image style={styles.imgPost}
+                                source={require('../../../assets/images/jobpostImg.jpg')}
+                            />
+                        </View>
+
+                        <View style={styles.inputinfor}>
+                            {/* Job Title*/}
+                            <View style={styles.inputRow}>
+                                <FontAwesome5 name={'user'} size={25} color={'#011F82'} />
+                                <Text style={styles.label}>Chức vụ</Text>
+                            </View>
+                            <TextInput
+                                style={styles.textinput}
+                                placeholder='Chức vụ'
+                                onChangeText={setTitle}
+                            />
+                            {/* Company Name*/}
+                            <View style={styles.inputRow}>
+                                <FontAwesome5 name={'building'} size={25} color={'#011F82'} />
+                                <Text style={styles.label}>Tên công ty</Text>
+                            </View>
+                            <TextInput
+                                style={styles.textinput}
+                                placeholder='Tên công ty'
+                                onChangeText={setCompany}
+                            />
+                            {/* Job Type*/}
+                            <View style={styles.inputRow}>
+                                <FontAwesome5 name={'business-time'} size={25} color={'#011F82'} />
+                                <Text style={styles.label}>Loại việc làm</Text>
+                            </View>
+                            <View style={styles.pickerContainer}>
+                                <Picker
+                                    selectedValue={jobType}
+                                    onValueChange={(itemValue: string, itemIndex: number) => setJobType(itemValue)}
+                                    onFocus={handlePickerFocus}
+                                    style={styles.textinput}
+                                    itemStyle={styles.pickerItem}
+                                    mode='dialog'
+                                >
+                                    <Picker.Item label="Chọn một tùy chọn" value="choose" />
+                                    <Picker.Item label="Bán thời gian" value="Part-Time" />
+                                    <Picker.Item label="Toàn thời gian" value="Full-Time" />
+                                    <Picker.Item label="Cố Định" value="Permanent" />
+                                    <Picker.Item label="Thời vụ" value="Seasonal" />
+                                    <Picker.Item label="Thực tập" value="Internship" />
+                                </Picker>
+                            </View>
+
+                            <View style={styles.inputRow}>
+                                <FontAwesome5 name={'dollar-sign'} size={25} color={'#011F82'} />
+                                <Text style={styles.label}>Mức lương</Text>
+                            </View>
+                            <TextInput
+                                style={styles.textinput}
+                                placeholder='Mức lương'
+                                onChangeText={setSalary}
+                            />
+                            <View style={styles.inputRow}>
+                                <FontAwesome5 name={'map-marker-alt'} size={25} color={'#011F82'} />
+                                <Text style={styles.label}>Địa chỉ</Text>
+                            </View>
+                            <TextInput
+                                style={styles.textinput}
+                                placeholder='Vị trí làm việc'
+                                onChangeText={setlocationCity}
+                            />
+
+                            <View style={styles.inputRow}>
+                                <FontAwesome5 name={'calendar-alt'} size={25} color={'#011F82'} />
+                                <Text style={styles.label}>Ngày hết hạn</Text>
+                            </View>
+                            <Text onPress={showDatePicker} style={styles.textinput}>
+                                {date ? date.toLocaleDateString() : "dd/mm/yyyy"}
+                            </Text>
+                            {show && (
+                                <DateTimePicker
+                                    value={date || new Date()}
+                                    mode="date"
+                                    display="calendar"
+                                    onChange={onChange}
+                                />
+                            )}
+
+                            <View style={styles.inputRow}>
+                                <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                                <Text style={styles.label}>Mô tả công việc</Text>
+                            </View>
+                            <TextInput
+                                style={styles.textinput}
+                                placeholder='Mô tả công việc'
+                                onChangeText={setJobDescription}
+                            />
+                        </View>
+
+                        <TouchableOpacity onPress={handleSubmit}>
+                            <Text style={styles.submitButton}>Đăng bài</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-
-                <View style={styles.inputinfor}>
-                    <View style={styles.inputRow}>
-                        <FontAwesome5 name={'user'} size={25} color={'#011F82'} />
-                        <Text style={styles.label}>Chức vụ</Text>
-                    </View>
-                    <TextInput style={styles.textinput} placeholder='Nhập chức vụ' />
-
-                    <View style={styles.inputRow}>
-                        <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
-                        <Text style={styles.label}>Thông tin công việc</Text>
-                    </View>
-                    <TextInput style={styles.textinput} placeholder='Thông tin công việc' />
-
-                    <View style={styles.inputRow}>
-                        <FontAwesome5 name={'dollar-sign'} size={25} color={'#011F82'} />
-                        <Text style={styles.label}>Mức lương</Text>
-                    </View>
-                    <TextInput style={styles.textinput} placeholder='Mức lương' />
-
-                    <View style={styles.inputRow}>
-                        <FontAwesome5 name={'map-marker-alt'} size={25} color={'#011F82'} />
-                        <Text style={styles.label}>Địa chỉ</Text>
-                    </View>
-                    <TextInput style={styles.textinput} placeholder='Địa chỉ' />
-
-                    <View style={styles.inputRow}>
-                        <FontAwesome5 name={'calendar-alt'} size={25} color={'#011F82'} />
-                        <Text style={styles.label}>Ngày hết hạn</Text>
-                    </View>
-                    <Text onPress={showDatePicker} style={styles.textinput}>
-                        {date ? date.toLocaleDateString() : "dd/mm/yyyy"}
-                    </Text>
-                    {show && (
-                        <DateTimePicker
-                            value={date || new Date()}
-                            mode="date"
-                            display="calendar"
-                            onChange={onChange}
-                        />
-                    )}
-
-                    <View style={styles.inputRow}>
-                        <FontAwesome5 name={'business-time'} size={25} color={'#011F82'} />
-                        <Text style={styles.label}>Loại việc làm</Text>
-                    </View>
-                    {/* <TextInput style={styles.textinput} placeholder='Loại việc làm' /> */}
-                    <View style={styles.pickerContainer}>
-                        <Picker
-                            selectedValue={selectedValue}
-                            onValueChange={(itemValue: string, itemIndex: number) => setSelectedValue(itemValue)}
-                            onFocus={handlePickerFocus}
-                            style={styles.textinput}
-                            itemStyle={styles.pickerItem}
-                        >
-                            <Picker.Item label="Chọn một tùy chọn" value="choose" />
-                            <Picker.Item label="Bán thời gian" value="Part-Time" />
-                            <Picker.Item label="Toàn thời gian" value="Full-Time" />
-                            <Picker.Item label="Cố Định" value="Permanent" />
-                            <Picker.Item label="Thời vụ" value="Seasonal" />
-                            <Picker.Item label="Thực tập" value="Internship" />
-                        </Picker>
-                    </View>
-                </View>
-
-                <TouchableOpacity>
-                    <Text style={styles.submitButton}>Đăng bài</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    </ScrollView>
+            </ScrollView>
+        </GestureHandlerRootView>
     );
-}
-
-export default JobPost;
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection: 'column',
+        backgroundColor: '#fff',
     },
     content: {
         padding: 20,
-        backgroundColor: '#f5f5f5',
     },
-    header:{
-        display: 'flex',
-
+    header: {
+        alignItems: 'center',
+        marginBottom: 20,
     },
-
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#011F82',
+    },
     imgPost: {
         width: '100%',
         height: 200,
-        borderRadius: 10,
+        resizeMode: 'cover',
         marginTop: 10,
     },
-    title: {
-        marginBottom: 10,
-        lineHeight: 50,
-        marginTop: 10,
-        fontSize: 35,
-        fontWeight: 'bold',
-        color: '#011F82',
-        textAlign: 'center',
-    },
-
     inputinfor: {
-        backgroundColor: '#fff',
-        padding: 10,
-        borderRadius: 10,
-        marginTop: 10,
-    },
-    textinput: {
-        width: '100%',
-        height: 40,
-        padding: 5,
-        borderRadius: 5,
-        backgroundColor: '#f5f5f5',
-        marginTop: 10,
-        color: 'black',
-        fontSize: 15,
+        marginBottom: 20,
     },
     inputRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 15,
+        marginBottom: 10,
     },
     label: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#011F82',
         marginLeft: 10,
+        fontSize: 16,
+        color: '#011F82',
+    },
+    textinput: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+        color: '#000',
+    },
+    pickerContainer: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    pickerItem: {
+        height: 50,
     },
     submitButton: {
         backgroundColor: '#011F82',
-        color: 'white',
-        padding: 10,
-        borderRadius: 10,
+        color: '#fff',
         textAlign: 'center',
-        marginTop: 20,
-        fontSize: 20,
-    },
-
-    pickerContainer: {
-        borderWidth: 1,
-        borderColor: 'white',
-        borderRadius: 4,
-        marginBottom: 16,
-    },
-    picker: {
-        width: '100%',
-        backgroundColor: 'white',
-        color: 'black',
-    },
-    pickerItem: {
-        fontSize: 10,
-        color: 'blue',
-        textAlign: 'center',
+        padding: 15,
+        borderRadius: 5,
+        fontSize: 16,
     },
 });
+
+export default JobPost;
