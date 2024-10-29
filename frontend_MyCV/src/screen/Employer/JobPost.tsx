@@ -69,7 +69,7 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                 console.log('Submitting employer data:', JobsData);
                 const response = await axios.post(`${BASE_URL}/jobs`, JobsData);
                 Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
-                navigation.navigate("JobList");
+                navigation.navigate("HomeEmployer");
             } catch (error) {
                 console.error('Error creating employer:', error);
                 Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
@@ -84,11 +84,8 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-
-            <ScrollView>
+            <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
                 <View style={styles.container}>
-                    <Navbar />
-
                     <View style={styles.content}>
                         <View style={styles.header}>
                             <Text style={styles.title}>Tạo bài đăng tuyển dụng</Text>
@@ -96,7 +93,6 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                                 source={require('../../../assets/images/jobpostImg.jpg')}
                             />
                         </View>
-
                         <View style={styles.inputinfor}>
                             {/* Job Title*/}
                             <View style={styles.inputRow}>
@@ -130,8 +126,7 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                                     onFocus={handlePickerFocus}
                                     style={styles.textinput}
                                     itemStyle={styles.pickerItem}
-                                    mode='dialog'
-                                >
+                                    mode='dialog'>
                                     <Picker.Item label="Chọn một tùy chọn" value="choose" />
                                     <Picker.Item label="Bán thời gian" value="Part-Time" />
                                     <Picker.Item label="Toàn thời gian" value="Full-Time" />
@@ -183,6 +178,8 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                             <TextInput
                                 style={styles.textinput}
                                 placeholder='Mô tả công việc'
+                                multiline={true}
+                                textAlignVertical='top'
                                 onChangeText={setJobDescription}
                             />
                         </View>
@@ -192,6 +189,8 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
+            <Navbar />
+
             </ScrollView>
         </GestureHandlerRootView>
     );
@@ -203,14 +202,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     content: {
-        padding: 20,
+        padding: 15,
     },
     header: {
         alignItems: 'center',
         marginBottom: 20,
     },
     title: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: 'bold',
         color: '#011F82',
     },
@@ -230,7 +229,8 @@ const styles = StyleSheet.create({
     },
     label: {
         marginLeft: 10,
-        fontSize: 16,
+        fontSize: 20,
+        fontWeight: 'bold',
         color: '#011F82',
     },
     textinput: {
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 5,
         padding: 10,
-        marginBottom: 10,
+        marginBottom: 5,
         color: '#000',
     },
     pickerContainer: {
@@ -248,16 +248,20 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     pickerItem: {
-        height: 50,
+        fontSize: 16,
     },
     submitButton: {
+        width: '60%',
         backgroundColor: '#011F82',
         color: '#fff',
         textAlign: 'center',
         padding: 15,
         borderRadius: 5,
-        fontSize: 16,
+        fontSize: 20,
+        fontWeight: 'bold',
+        alignSelf: 'center',
     },
+
 });
 
 export default JobPost;
