@@ -5,15 +5,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { Button, Card, TextInput, Title, Text } from 'react-native-paper';
-
-type RootStackParamList = {
-  Login: undefined;
-  Home: undefined;
-  CreateEmployer: undefined;
-  InforEmployer: undefined;
-  HomeEmployer: undefined;
-};
-
+import { RootStackParamList } from '../User/types';
 // Khai báo kiểu cho props 'navigation'
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
