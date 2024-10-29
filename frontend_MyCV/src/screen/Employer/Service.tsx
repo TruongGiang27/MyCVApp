@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 // import { Icon } from 'react-native-elements';
-import { Icon } from 'react-native-vector-icons/FontAwesome';
+import  Icon  from 'react-native-vector-icons/FontAwesome';
 
 const Service = () => {
     const navigation = useNavigation();
@@ -35,3 +35,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 });
+export default Service;

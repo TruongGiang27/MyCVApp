@@ -9,15 +9,7 @@ import Navbar from '../../components/Navbar';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import axios from 'axios';
 import { BASE_URL } from '../utils/url';
-type RootStackParamList = {
-    Login: undefined;
-    Home: undefined;
-    CreateEmployer: undefined;
-    InforEmployer: undefined;
-    HomeEmployer: undefined;
-    JobPost: undefined;
-    JobList: undefined;
-};
+import { RootStackParamList } from '../User/types'
 
 // Khai báo kiểu cho props 'navigation'
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
@@ -240,6 +232,7 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 5,
         color: '#000',
+        
     },
     pickerContainer: {
         borderWidth: 1,

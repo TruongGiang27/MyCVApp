@@ -1,20 +1,12 @@
 //Giang
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import InforEmployer from '../Admin/InforEmployers';
-import { Navigation } from '@mui/icons-material';
-
-import { NavigationProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-type RootStackParamList = {
-    Login: undefined;
-    Home: undefined;
-    CreateEmployer: undefined;
-    InforEmployer: undefined;
-    HomeEmployer: undefined;
-    JobPost: undefined;
-};
+import { RootStackParamList } from '../User/types';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { useRadioGroup } from '@mui/material';
 
 // Khai báo kiểu cho props 'navigation'
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
@@ -26,13 +18,11 @@ type Props = {
     navigation: CreateEmployerScreenNavigationProp;
 };
 const HomeEmployer: React.FC<Props> = ({ navigation }) => {
+    const { width } = useWindowDimensions();  // Get the current screen width
+    const logoWidth = width * 0.5;
     return (
-        <View>
-            <Text>Home Employer</Text>
+        <View style={styles.container}>
 
-            <TouchableOpacity onPress={() => navigation.navigate('InforEmployer')} style={styles.btn}>
-                <Text>Employer</Text>
-            </TouchableOpacity>
         </View>
     );
 };
@@ -42,15 +32,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
     },
-    btn: {
-        backgroundColor: 'black',
+    navbar: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-        fontSize: 16,
-        color: 'black',
-    }
+        borderBottomWidth: 1,
+        borderBottomColor: '#f2f2f2',
+    },
+    
+    logo: {
+        resizeMode: 'contain',
+    },
+
+
 });

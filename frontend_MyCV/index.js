@@ -8,5 +8,6 @@ import Home from './src/screen/Home/Home';
 import JobList from './src/screen/JobList';
 import JobDetail from './src/screen/JobDetail';
 import App from './App';
+import HomeEmployer from './src/screen/Employer/HomeEmployer';
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => HomeEmployer);
