@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { Button, Card, TextInput, Title, Text } from 'react-native-paper';
 import { RootStackParamList } from '../User/types';
+import { BASE_URL } from '../utils/url';
 // Khai báo kiểu cho props 'navigation'
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -54,7 +55,7 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-        const response = await axios.post('http://192.168.1.5:3000/employers', employerData);
+        const response = await axios.post(`${BASE_URL}/employers`, employerData);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
         navigation.navigate("HomeEmployer");
       } catch (error) {

@@ -2,7 +2,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import { BASE_URL } from '../utils/url';
 interface Employer {
     id: string;
     selectedCompany: string;
@@ -25,7 +25,7 @@ const InforManager = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://192.168.1.5:3000/employers');
+                const response = await axios.get(`${BASE_URL}/employers`);
                 setEmployers(response.data);
                 setFilteredEmployers(response.data); // Ban đầu hiển thị tất cả employers
             } catch (error) {
@@ -56,7 +56,7 @@ const InforManager = () => {
     const handleSave = async () => {
         if (formData) {
             try {
-                const response = await axios.patch(`http://192.168.1.15:3000/employers/${formData.id}`, formData);
+                const response = await axios.patch(`${BASE_URL}/employers/${formData.id}`, formData);
                 setEmployers(employers.map(emp => emp.id === formData.id ? response.data : emp));
                 setEditingEmployer(null); // Đóng form sau khi update thành công
                 Alert.alert('Update', `Updated employer: ${formData.companyName}`);
@@ -78,7 +78,7 @@ const InforManager = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://192.168.1.15:3000/employers/${id}`);
+            await axios.delete(`${BASE_URL}/employers/${id}`);
             setEmployers(employers.filter(emp => emp.id !== id));
             Alert.alert('Delete', `Deleted employer: ${id}`);
         } catch (error) {

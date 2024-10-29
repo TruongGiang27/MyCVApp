@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'r
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import { BASE_URL } from './utils/url';
 
 // Job Card Component
 const JobCard = ({
@@ -54,7 +55,7 @@ const JobList = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://192.168.1.5:3000/jobs');
+        const response = await axios.get(`${BASE_URL}/jobs`);
         setJobs(response.data); // Lưu dữ liệu vào state
         setFilteredJobs(response.data); // Đặt kết quả tìm kiếm ban đầu là tất cả công việc
       } catch (error) {
@@ -70,7 +71,7 @@ const JobList = () => {
 
   const fetchHistory = async () => {
     try {
-      const response = await axios.get('http://10.106.22.239:3000/search-history');
+      const response = await axios.get(`${BASE_URL}/search-history`);
       setSearchHistory(response.data);
     } catch (error) {
       console.error('Error fetching search history:', error);
@@ -117,7 +118,7 @@ const JobList = () => {
       });
 
       try {
-        await axios.post('http://10.106.22.239:3000/search-history', { title: searchTitle, location: searchLocation });
+        await axios.post(`${BASE_URL}/search-history`, { title: searchTitle, location: searchLocation });
       } catch (error) {
         console.error('Error saving search history:', error);
       }
