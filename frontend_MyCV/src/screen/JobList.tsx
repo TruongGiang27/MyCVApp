@@ -54,7 +54,7 @@ const JobList = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://10.106.20.177:3000/jobs');
+        const response = await axios.get('http://192.168.1.5:3000/jobs');
         setJobs(response.data); // Lưu dữ liệu vào state
         setFilteredJobs(response.data); // Đặt kết quả tìm kiếm ban đầu là tất cả công việc
       } catch (error) {

@@ -54,7 +54,7 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
           describe,
         };
         console.log('Submitting employer data:', employerData);
-        const response = await axios.post('http://10.106.22.119:3000/employers', employerData);
+        const response = await axios.post('http://192.168.1.5:3000/employers', employerData);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
         navigation.navigate("HomeEmployer");
       } catch (error) {
@@ -73,42 +73,27 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
 
       <ScrollView>
         <View style={styles.container}>
-          <Title style={styles.title}>Tạo đơn tuyển dụng</Title>
+          <Title style={styles.title}>Tạo Tài Khoản Nhà Tuyển Dụng </Title>
           <Image style={styles.imgBg}
             source={require('../../../assets/images/bgImg.png')}
           />
+          <Text style={styles.subtitle}>Bạn chưa đăng việc làm nào trước đây, vì vậy bạn cần tạo một tài khoản nhà tuyển dụng.*</Text>
           <Card style={styles.card}>
             <Card.Content>
-              <Title style={styles.subtitle}>Ngành của công ty</Title>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={selectedCompany}
-                  onValueChange={(itemValue: string, itemIndex: number) => setSelectedCompany(itemValue)}
-                  onFocus={handlePickerFocus}
-                  style={styles.picker}
-                  itemStyle={styles.pickerItem}
-                  mode="dialog">
-                  <Picker.Item label="Chọn một tùy chọn" value="choose" />
-                  <Picker.Item label="Bán lẻ và buôn bán" value="sales" />
-                  <Picker.Item label="Bảo hiểm" value="insurance" />
-                  <Picker.Item label="Công nghệ" value="technology" />
-                  <Picker.Item label="Dịch vụ" value="service" />
-                  <Picker.Item label="Giáo dục" value="education" />
-                  <Picker.Item label="IT" value="IT" />
-                  <Picker.Item label="Y tế" value="healthcare" />
-                  <Picker.Item label="Xây dựng" value="construction" />
-                  <Picker.Item label="Bất động sản" value="realEstate" />
-                </Picker>
-              </View>
-
               <Title style={styles.subtitle}>Tên của công ty</Title>
               <TextInput
                 label="Tên công ty"
                 value={companyName}
                 onChangeText={setCompanyName}
                 style={styles.input}
+                textColor='#6D92D0'
                 mode="outlined"
-                theme={{ colors: { primary: '#6200ee', outline: '#E4E0E1' } }}
+                theme={{
+                  colors: {
+                    primary: '#011F82', // Màu viền khi focus
+                    outline: '#B9D6F3', // Màu viền bình thường
+                  },
+                }}
               />
               <Title style={styles.subtitle}>Số lượng nhân viên</Title>
               <Picker
@@ -117,7 +102,6 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                 onFocus={handlePickerFocus}
                 style={styles.picker}
                 itemStyle={styles.pickerItem}
-
               >
                 <Picker.Item label="Chọn một tùy chọn" value="choose" />
                 <Picker.Item label="1-10" value="1-10" />
@@ -133,8 +117,9 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                 value={fullName}
                 onChangeText={setFullName}
                 style={styles.input}
+                textColor='#6D92D0'
                 mode="outlined"
-                theme={{ colors: { primary: '#6200ee', outline: '#E4E0E1', text: '#FF5733' } }} // Changed text color
+                theme={{ colors: { primary: '#011F82', outline: '#6D92D0' } }} // Changed text color
               />
               <Title style={styles.subtitle}>Bạn biết đến tôi từ đâu</Title>
               <View style={styles.pickerContainer}>
@@ -161,6 +146,7 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
               </View>
 
               <Title style={styles.subtitle}>Thêm số điện thoại của bạn</Title>
+              <Text style={styles.text}>Dành cho giao tiếp quản lý tài khoản. Không hiển thị cho người tìm việc.*</Text>
               <TextInput
                 label="Nhập số điện thoại của bạn"
                 value={phoneNumber}
@@ -172,21 +158,6 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                 theme={{ colors: { primary: '#011F82', outline: '#6D92D0' } }}
               />
               {error ? <Text style={styles.error}>{error}</Text> : null}
-
-              <Title style={styles.subtitle}>Mô tả công ty</Title>
-              <Text style={styles.describe}>Giới thiệu công ty của bạn
-                với mọi người trong vài dòng ngắn gọn.</Text>
-
-              <TextInput
-                placeholder="Giới thiệu công ty của bạn bằng cách nói về hoạt động kinh doanh, vị trí thị trường của bạn, văn hóa công ty của bạn, v.v."
-                value={describe}
-                onChangeText={setDescribe}
-                multiline={true}
-                numberOfLines={4}
-                placeholderTextColor="gray"
-                style={styles.input}
-                theme={{ colors: { primary: '#6D92D0', outline: '#6D92D0' } }}
-              />
               <Button mode="contained" onPress={handleSubmit} style={styles.button}>Submit</Button>
             </Card.Content>
           </Card>
@@ -212,6 +183,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 8,
     padding: 16,
+    backgroundColor: 'white',
   },
   title: {
     marginBottom: 10,
@@ -226,8 +198,15 @@ const styles = StyleSheet.create({
     marginBottom: 3,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#011F82',
+    color: '#6D92D0',
     textAlign: 'left',
+  },
+  text:{
+    fontSize: 14,
+    marginBottom: 5,
+    paddingBottom: 5,
+    color: '#6D92D0',
+    fontStyle: 'italic',
   },
   describe: {
     fontSize: 14,
@@ -235,10 +214,8 @@ const styles = StyleSheet.create({
     color: '#6D92D0',
   },
   pickerContainer: {
-    // flexDirection: 'row',
-    // alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E4E0E1',
+    borderColor: '#B9D6F3',
     borderRadius: 4,
     marginBottom: 16,
   },
@@ -246,11 +223,11 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     backgroundColor: 'white',
-    color: 'black',
+    color: '#6D92D0',
   },
   pickerItem: {
     fontSize: 16,
-    color: 'blue',
+    color: '#6D92D0',
     textAlign: 'center',
   },
   input: {
@@ -261,6 +238,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 16,
+    backgroundColor: '#6D92D0',
   },
   error: {
     color: 'red',
