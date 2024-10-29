@@ -4,5 +4,6 @@ export class CreateJobDto {
     readonly location: string;
     readonly salary: string;
     readonly jobType: string;
+    readonly jobDescription: string;
   }
   

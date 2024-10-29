@@ -25,7 +25,7 @@ const InforManager = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://10.106.25.87:3000/employers');
+                const response = await axios.get('http://192.168.1.5:3000/employers');
                 setEmployers(response.data);
                 setFilteredEmployers(response.data); // Ban đầu hiển thị tất cả employers
             } catch (error) {

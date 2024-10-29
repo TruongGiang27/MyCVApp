@@ -4,15 +4,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersController } from './userService/user.controller';
 import { UserService } from './userService/user.service';
-
-import { User, UserSchema } from './userService/entity/user.entity';
-// import { UserModule } from './user/user.module';
-import { EmployerModule } from './employer/employer.module';
 import { AdminModule } from './admin/admin.module';
 import { EmployerController } from './employer/employer.controller';
+import { EmployerModule } from './employer/employer.module';
 import { EmployerService } from './employer/employer.service';
 import { Employer, EmployerSchema } from './employer/entities/employer.entity';
-import { JobpostModule } from './jobpost/jobpost.module';
+import { User, UserSchema } from './userService/entity/user.entity';
+import { JobsModule } from './jobs/jobs.module';
+import { SearchHistoryModule } from './search_history/search_history.module';
+import { JobDetailModule } from './job-detail/job-detail.module';
 
 const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryWrites=true&w=majority&appName=Admin';
 
@@ -24,7 +24,9 @@ const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryW
 
     EmployerModule,
     AdminModule,
-    JobpostModule,
+    JobsModule,
+    SearchHistoryModule,
+    JobDetailModule,
     // UserModule,
   ],
   controllers: [AppController, UsersController, EmployerController],

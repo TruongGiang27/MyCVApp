@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 
 // Job Card Component
 const JobCard = ({
@@ -16,15 +17,19 @@ const JobCard = ({
   location: string;
   salary: string;
   jobType: string;
-}) => (
-  <View style={styles.jobCard}>
-    <Text style={styles.jobTitle}>{title}</Text>
-    <Text style={styles.jobCompany}>{company}</Text>
-    <Text style={styles.jobLocation}>{location}</Text>
-    <Text style={styles.jobSalary}>{salary}</Text>
-    <Text style={styles.jobType}>{jobType}</Text>
-  </View>
-);
+}) => {
+  const navigation = useNavigation();
+
+  return (
+    <TouchableOpacity style={styles.jobCard} onPress={() => navigation.navigate("JobDetail" as never)}>
+      <Text style={styles.jobTitle}>{title}</Text>
+      <Text style={styles.jobCompany}>{company}</Text>
+      <Text style={styles.jobLocation}>{location}</Text>
+      <Text style={styles.jobSalary}>{salary}</Text>
+      <Text style={styles.jobType}>{jobType}</Text>
+    </TouchableOpacity>
+  );
+};
 
 const JobList = () => {
   interface Job {
@@ -36,74 +41,105 @@ const JobList = () => {
     jobType: string;
   }
 
-  const [jobs, setJobs] = useState<Job[]>([]); // State để lưu dữ liệu từ backend
-  const [loading, setLoading] = useState(true); // State để kiểm tra xem dữ liệu đã load xong chưa
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [searchTitle, setSearchTitle] = useState(''); // State để lưu chức danh hoặc từ khóa
-  const [searchLocation, setSearchLocation] = useState(''); // State để lưu thành phố hoặc mã vùng
-  const [filteredJobs, setFilteredJobs] = useState<Job[]>([]); // State để lưu kết quả tìm kiếm
-  const [searchHistory, setSearchHistory] = useState<{ title: string, location: string }[]>([]); // State lưu lịch sử tìm kiếm
+  const [searchTitle, setSearchTitle] = useState('');
+  const [searchLocation, setSearchLocation] = useState('');
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
+  const [searchHistory, setSearchHistory] = useState<{ title: string, location: string }[]>([]);
 
-  // Gọi API để lấy danh sách công việc từ backend
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://10.106.25.87:3000/jobs');
+        const response = await axios.get('http://192.168.1.5:3000/jobs');
         setJobs(response.data); // Lưu dữ liệu vào state
         setFilteredJobs(response.data); // Đặt kết quả tìm kiếm ban đầu là tất cả công việc
       } catch (error) {
         console.error('Error fetching jobs:', error);
       } finally {
-        setLoading(false); // Tắt trạng thái loading sau khi gọi API xong
+        setLoading(false);
       }
     };
 
-    fetchJobs(); // Gọi hàm khi component được render
+    fetchHistory();
+    fetchJobs();
   }, []);
 
-  // Hàm tìm kiếm khi nhấn nút "Tìm việc"
-  const handleSearch = () => {
+  const fetchHistory = async () => {
+    try {
+      const response = await axios.get('http://10.106.22.239:3000/search-history');
+      setSearchHistory(response.data);
+    } catch (error) {
+      console.error('Error fetching search history:', error);
+    }
+  };
+
+  const handleInputChange = (text: string, type: 'title' | 'location') => {
+    if (type === 'title') {
+      setSearchTitle(text);
+      const titleSuggestions = jobs
+        .map((job) => job.title)
+        .filter((title) => title.toLowerCase().includes(text.toLowerCase()));
+      setSuggestions([...new Set(titleSuggestions)]);
+    } else if (type === 'location') {
+      setSearchLocation(text);
+      const locSuggestions = jobs
+        .map((job) => job.location)
+        .filter((location) => location.toLowerCase().includes(text.toLowerCase()));
+      setLocationSuggestions([...new Set(locSuggestions)]);
+    }
+  };
+
+  const handleSuggestionSelect = (text: string, type: 'title' | 'location') => {
+    if (type === 'title') {
+      setSearchTitle(text);
+      setSuggestions([]);
+    } else {
+      setSearchLocation(text);
+      setLocationSuggestions([]);
+    }
+  };
+
+  const handleSearch = async () => {
     const filtered = jobs.filter((job) => {
       const matchTitle = job.title.toLowerCase().includes(searchTitle.toLowerCase());
       const matchLocation = job.location.toLowerCase().includes(searchLocation.toLowerCase());
       return matchTitle && matchLocation;
     });
 
-    // Lưu lịch sử tìm kiếm (giới hạn tối đa 2 mục)
     if (searchTitle || searchLocation) {
       setSearchHistory((prevHistory) => {
         const newHistory = [{ title: searchTitle, location: searchLocation }, ...prevHistory];
-        return newHistory.slice(0, 2); // Giới hạn chỉ giữ 2 mục trong lịch sử
+        return newHistory.slice(0, 2);
       });
+
+      try {
+        await axios.post('http://10.106.22.239:3000/search-history', { title: searchTitle, location: searchLocation });
+      } catch (error) {
+        console.error('Error saving search history:', error);
+      }
     }
 
-    setFilteredJobs(filtered); // Cập nhật danh sách công việc sau khi tìm kiếm
+    setFilteredJobs(filtered);
   };
 
-  // Hàm tìm kiếm dựa trên lịch sử tìm kiếm
   const handleHistorySearch = (title: string, location: string) => {
-    const filtered = jobs.filter((job) => {
-      const matchTitle = job.title.toLowerCase().includes(title.toLowerCase());
-      const matchLocation = job.location.toLowerCase().includes(location.toLowerCase());
-      return matchTitle && matchLocation;
-    });
-    setFilteredJobs(filtered); // Cập nhật danh sách công việc dựa trên lịch sử
     setSearchTitle(title);
     setSearchLocation(location);
+    handleSearch();
   };
 
-  // Hàm hiển thị lịch sử tìm kiếm
   const renderSearchHistory = () => (
     <FlatList
       data={searchHistory}
       keyExtractor={(item, index) => index.toString()}
       renderItem={({ item }) => (
-        <TouchableOpacity
-          onPress={() => handleHistorySearch(item.title, item.location)}
-        >
-          <Text style={styles.historyItem}>
-            {item.title} - {item.location}
-          </Text>
+        <TouchableOpacity style={styles.historyItemCard} onPress={() => handleHistorySearch(item.title, item.location)}>
+          <Text style={styles.historyItemTitle}>{item.title}</Text>
+          <Text style={styles.historyItemLocation}>{item.location}</Text>
         </TouchableOpacity>
       )}
     />
@@ -119,61 +155,79 @@ const JobList = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header Section */}
       <View style={styles.header}>
         <Icon name="menu-outline" size={28} />
         <Text style={styles.headerText}>MyCVApp</Text>
         <Icon name="person-circle-outline" size={28} />
       </View>
 
-      {/* Search Section */}
       <View style={styles.searchSection}>
         <TextInput
           placeholder="Chức danh, từ khóa hoặc công ty"
           style={styles.input}
           value={searchTitle}
-          onFocus={renderSearchHistory} // Hiển thị lịch sử khi nhấn vào input
-          onChangeText={setSearchTitle} // Cập nhật giá trị tìm kiếm chức danh
+          onChangeText={(text) => handleInputChange(text, 'title')}
         />
+        {suggestions.length > 0 && (
+          <View style={styles.suggestionsContainer}>
+            {suggestions.map((suggestion, index) => (
+              <TouchableOpacity key={index} onPress={() => handleSuggestionSelect(suggestion, 'title')}>
+                <Text style={styles.suggestionText}>{suggestion}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
         <TextInput
           placeholder="Thành phố, tiểu bang, mã vùng..."
           style={styles.input}
           value={searchLocation}
-          onFocus={renderSearchHistory} // Hiển thị lịch sử khi nhấn vào input
-          onChangeText={setSearchLocation} // Cập nhật giá trị tìm kiếm địa điểm
+          onChangeText={(text) => handleInputChange(text, 'location')}
         />
+        {locationSuggestions.length > 0 && (
+          <View style={styles.suggestionsContainer}>
+            {locationSuggestions.map((suggestion, index) => (
+              <TouchableOpacity key={index} onPress={() => handleSuggestionSelect(suggestion, 'location')}>
+                <Text style={styles.suggestionText}>{suggestion}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
         <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
           <Text style={styles.searchButtonText}>Tìm việc</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Search History Section */}
-      {searchHistory.length > 0 && (
-        <View style={styles.historyContainer}>
-          <Text style={styles.sectionTitle}>Lịch sử tìm kiếm</Text>
-          {renderSearchHistory()}
-        </View>
-      )}
-
-      {/* Recent Jobs Section */}
-      <Text style={styles.sectionTitle}>Việc làm cho bạn</Text>
-
-      {/* ScrollView for Job List */}
-      <ScrollView contentContainerStyle={styles.jobList} style={{ flex: 1 }}>
-        {filteredJobs.map((job) => (
+      <FlatList
+        ListHeaderComponent={
+          <>
+            {searchHistory.length > 0 && (
+              <View style={styles.historyContainer}>
+                <Text style={styles.sectionTitle}>Lịch sử tìm kiếm</Text>
+                {renderSearchHistory()}
+              </View>
+            )}
+            <Text style={styles.sectionTitle}>Việc làm cho bạn</Text>
+          </>
+        }
+        data={filteredJobs}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => (
           <JobCard
-            key={job._id} // Đảm bảo key là unique, dùng _id từ MongoDB
-            title={job.title}
-            company={job.company}
-            location={job.location}
-            salary={job.salary}
-            jobType={job.jobType}
+            title={item.title}
+            company={item.company}
+            location={item.location}
+            salary={item.salary}
+            jobType={item.jobType}
           />
-        ))}
-      </ScrollView>
+        )}
+        ListEmptyComponent={<Text style={styles.noJobsText}>Không có công việc nào phù hợp</Text>}
+        contentContainerStyle={styles.jobList}
+      />
     </View>
   );
 };
+
+
 
 export default JobList;
 
@@ -217,6 +271,8 @@ const styles = StyleSheet.create({
   searchButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
+    marginBottom: 0,
+    paddingBottom: 0,
   },
   sectionTitle: {
     fontSize: 18,
@@ -237,49 +293,82 @@ const styles = StyleSheet.create({
     borderColor: '#B9D6F3',
     borderWidth: 1,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
   jobTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 5,
     color: '#011F82',
   },
   jobCompany: {
-    fontSize: 14,
     color: '#6D92D0',
-    marginBottom: 5,
   },
   jobLocation: {
-    fontSize: 14,
     color: '#6D92D0',
-    marginBottom: 5,
   },
   jobSalary: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#10B981',
-    marginBottom: 5,
+    color: '#8C8C8C',
   },
   jobType: {
-    fontSize: 14,
-    color: '#011F82',
+    color: '#8C8C8C',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  suggestionsContainer: {
+    backgroundColor: '#FFF',
+    borderRadius: 8,
+    marginTop: 4,
+    padding: 8,
+    elevation: 3,
+  },
+  suggestionText: {
+    paddingVertical: 8,
+    fontSize: 16,
+    color: '#011F82',
+  },
   historyContainer: {
-    marginHorizontal: 16,
-    marginVertical: 10,
+    padding: 1,
   },
   historyItem: {
     fontSize: 16,
     color: '#011F82',
-    marginBottom: 10,
+    paddingVertical: 4,
+  },
+  noJobsText: {
+    fontSize: 16,
+    color: '#8C8C8C',
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+  historyItemCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    borderColor: '#B9D6F3',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  historyItemTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#011F82',
+  },
+  historyItemLocation: {
+    color: '#6D92D0',
+  },
+  scrollViewContent: {
+    paddingBottom: 20,
   },
 });
+

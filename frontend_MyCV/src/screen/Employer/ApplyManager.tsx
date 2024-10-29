@@ -65,7 +65,7 @@ const ApplyManager: React.FC<Props> = ({ navigation }) => {
                     describe,
                 };
                 console.log('Submitting employer data:', employerData);
-                const response = await axios.post('http://10.106.25.87:3000/employers', employerData);
+                const response = await axios.post('http://192.168.1.5:3000/employers', employerData);
                 Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
                 navigation.navigate("HomeEmployer");
             } catch (error) {
