@@ -5,10 +5,13 @@ import {
 } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window'); // Lấy chiều rộng của màn hình
 
 const HomeEmployer = () => {
+  const navigation = useNavigation(); // Nhận đối tượng navigation
+
   const [selectedOrder, setSelectedOrder] = useState('Giảm dần');
   const [showFilter, setShowFilter] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -44,11 +47,10 @@ const HomeEmployer = () => {
     { title: 'Công cụ', icon: 'folder' },
   ];
 
-
   return (
-    
+
     <View style={styles.container}>
-    <StatusBar backgroundColor={'red'} />
+      <StatusBar backgroundColor={'red'} />
       {/* Header */}
       <View style={styles.header}>
         <Icon style={styles.menuIcon} name="menu" size={40} color="#fff" onPress={(openMenu)} />
@@ -81,7 +83,12 @@ const HomeEmployer = () => {
 
               <ScrollView style={styles.menu}>
                 {menuItems.map((item, index) => (
-                  <TouchableOpacity key={index} style={styles.menuItem}>
+                  <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
+                    if (item.title === 'Tạo mới') {
+                      navigation.navigate('ApplyManager' as never); // Điều hướng tới ApplyManager
+                    }
+                  }}
+                  >
                     <View style={styles.iconLabel}>
                       <Icon name={item.icon} size={25} color="#011F82" />
                       <Text style={styles.menuText}>{item.title}</Text>
