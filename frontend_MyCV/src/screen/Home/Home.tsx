@@ -8,7 +8,7 @@ const height = Dimensions.get('screen').height;
 // Sample job data
 const data = [
     { id: '1', title: 'Client Management Assistant (100% Remote)', company: 'AwePlus Cx Transformation', salary: '9.000.000 ₫ - 12.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '3 ngày trước', isPremium: true },
-    { id: '2', title: 'Content & Community Curator', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '2', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
 ];
 
 // Top section (Header)
@@ -18,7 +18,7 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
     return (
         <View style={styles.header}>
             <View style={styles.searchBar}>
-                <Icon name="search" type="font-awesome" color="#999" size={18} />
+                <Icon name="search" type="font-awesome" color="#373737" size={18} />
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Tìm kiếm"
@@ -26,7 +26,7 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
                     onFocus={onSearchFocus}  // Trigger search view when focused
                 />
                 <View style={styles.divider} />
-                <Icon name="map-marker" type="font-awesome" color="#999" size={18} />
+                <Icon name="map-marker" type="font-awesome" color="#373737" size={18} />
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Vị trí"
@@ -76,23 +76,28 @@ const SearchMap = ({ onCancel }: { onCancel: () => void }) => (
 // Job item component
 const JobItem = ({ title, company, salary, location, timePosted, isPremium }) => (
     <Card containerStyle={styles.cardContainer}>
-        {/* Nếu là công việc premium, hiển thị nhãn đặc biệt */}
+
         {isPremium && (
             <View style={styles.premiumTag}>
                 <Text style={styles.premiumText}>Tuyển dụng nhiều ứng viên</Text>
             </View>
-
         )}
-        <View style={styles.jobHeader}>
-            <Text style={styles.title}>{title}</Text>
-            {/* Icon bookmark luôn hiển thị */}
-            <Icon name="bookmark" type="font-awesome" color="#666" size={20} />
+        <TouchableOpacity style={styles.icon}>
+            <Icon name="bookmark" type="font-awesome" color="#666" size={25} />
+        </TouchableOpacity>
+
+        <Text style={styles.title}>{title}</Text>
+        <View style={{marginVertical:width*0.03}}>
+            <Text style={styles.company}>{company}</Text>
+            <Text style={styles.location}>{location}</Text>
         </View>
-        <Text style={styles.company}>{company}</Text>
+
         <Text style={styles.salary}>{salary}</Text>
-        <Text style={styles.location}>{location}</Text>
+        <View style={styles.easyApplyContainer}>
+            <Icon name="send" type="material" color="#007AFF" size={14} style={styles.sendIcon} />
+            <Text style={styles.easyApply}>Nộp đơn dễ dàng</Text>
+        </View>
         <Text style={styles.timePosted}>{timePosted}</Text>
-        <Text style={styles.easyApply}>Nộp đơn dễ dàng</Text>
     </Card>
 );
 
@@ -111,7 +116,6 @@ const Content = () => (
             />
         )}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.contentContainer}
     />
 );
 
@@ -144,12 +148,12 @@ const Home = () => {
 
     const handleSearchFocus = () => {
         setIsSearching(true);
-        setIsMapSearching(false);
+        setIsMapSearching(false); // Close map search if it’s open
     };
-
+    
     const handleMapSearchFocus = () => {
         setIsMapSearching(true);
-        setIsSearching(false);
+        setIsSearching(false); // Close text search if it’s open
     };
 
     const handleCancelSearch = () => {
@@ -163,9 +167,10 @@ const Home = () => {
 
     return (
         <View style={styles.container}>
-            <Image source={require('../../../assets/images/logo.png')} style={[styles.logo, { width: 130, height: logoWidth * 0.25 }]} />
-
-            {!isSearching && <Header onSearchFocus={handleSearchFocus} />}
+            <View style={styles.logo}>
+                <Image source={require('../../../assets/images/logo.png')} style={{ width: 130, height: logoWidth * 0.25 }} />
+            </View>
+            {!isSearching && !isMapSearching && <Header onSearchFocus={handleSearchFocus} onMapSearchFocus={handleMapSearchFocus} />}
             {isSearching ? (
                 <Search onCancel={handleCancelSearch} />
             ) : isMapSearching ? (
@@ -185,37 +190,35 @@ export default Home;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f9f9f9',
+        backgroundColor: '#FFFFFF',
+        paddingHorizontal: "2%",
+    },
+    logo: {
+        marginTop: "4%",
     },
     // Top section (Header)
     header: {
-        paddingHorizontal: 15,
         paddingVertical: 10,
-    },
-    logo: {
-        resizeMode: 'contain',
-        width: width * 0.5,  
-        height: width * 0.125,  
-        marginBottom: width * 0.05,
     },
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#f1f1f1',
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#CECECE',
         borderRadius: 9,
-        paddingHorizontal: 20,
-        marginTop: 10,
+        paddingHorizontal: 15,
     },
     searchInput: {
         flex: 1,
         marginLeft: 10,
-        color: '#333',
+        color: '#373737',
     },
     divider: {
         width: 1,
-        height: '80%',
-        backgroundColor: '#ddd',
-        marginHorizontal: 10,
+        height: '70%',
+        backgroundColor: '#CECECE',
+        marginHorizontal: 15,
     },
     // Search view styles
     searchContainer: {
@@ -248,64 +251,70 @@ const styles = StyleSheet.create({
     // Mid section (Content)
     cardContainer: {
         borderRadius: 10,
-        padding: width * 0.04,
-        marginBottom: width * 0.03,
+        padding: 15,
+        marginBottom: 15,
         borderWidth: 1,
         borderColor: '#ddd',
-        width: '95%',
+        width: '100%',
         alignSelf: 'center',
     },
     premiumTag: {
         backgroundColor: '#fdecef',
-        paddingVertical: width * 0.01,
-        paddingHorizontal: width * 0.03,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
         borderRadius: 5,
         alignSelf: 'flex-start',
-        marginBottom: width * 0.02, 
+        marginBottom: 10,
     },
     premiumText: {
         color: '#d32f2f',
         fontWeight: 'bold',
-        fontSize: width * 0.03,
-    },
-    jobHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: width * 0.02,
+        fontSize: 12,
     },
     title: {
-        fontSize: width * 0.045,  // Điều chỉnh kích thước chữ tiêu đề theo chiều rộng màn hình
+        fontSize: width * 0.05,
+        width: '85%',
+        flexWrap: 'wrap',
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 5,
     },
     company: {
-        fontSize: width * 0.035,  // Kích thước chữ nhỏ hơn cho tên công ty
+        fontSize: 14,
         color: '#555',
         marginBottom: 5,
     },
     salary: {
         color: '#007AFF',
         fontWeight: 'bold',
-        fontSize: width * 0.04,  
+        fontSize: 14,
+        marginBottom: 5,
     },
     location: {
-        fontSize: width * 0.035,  
+        fontSize: 14,
         color: '#666',
-        marginTop: 5,
+        marginBottom: 5,
     },
     timePosted: {
-        fontSize: width * 0.03,  
+        fontSize: 12,
         color: '#999',
+        marginTop: 10,
+    },
+    easyApplyContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    sendIcon: {
+        marginRight: 5,
     },
     easyApply: {
-        fontSize: width * 0.03, 
+        fontSize: 14,
         color: '#007AFF',
-        marginTop: 5,
     },
-    contentContainer: {
-        paddingBottom: height * 0.15, 
+    icon: {
+        position: 'absolute',
+        right: 0,
+        top: 0,
     },
     // Bottom section (Navbar)
     navbar: {
