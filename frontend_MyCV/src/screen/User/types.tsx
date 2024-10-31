@@ -8,6 +8,11 @@ export type RootStackParamList = {
     HomeEmployer: undefined;
     JobPost: undefined;
     JobList: undefined;
+    CvDetail: undefined;
+    ApplyManager: undefined;
+    JobDetail: undefined;
+    Service: undefined;
+    EditCv: undefined;
 };
 
 export type TPropsLoginScreen = NativeStackScreenProps<RootStackParamList, 'Login'>;
