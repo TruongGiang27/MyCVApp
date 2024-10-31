@@ -78,6 +78,15 @@ const HomeEmployer = () => {
     }).start(() => setShowMenu(false));
   };
 
+  const menuItems = [
+    { title: 'Tạo mới', icon: 'add-circle-outline' },
+    { title: 'Việc làm', icon: 'shopping-bag' },
+    { title: 'Ứng viên', icon: 'people-outline' },
+    { title: 'Phỏng vấn', icon: 'calendar-today' },
+    { title: 'Phân tích', icon: 'bar-chart' },
+    { title: 'Công cụ', icon: 'folder' },
+  ];
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={'red'} />
@@ -91,6 +100,47 @@ const HomeEmployer = () => {
         </TouchableOpacity>
         <Icon style={styles.accountIcon} name="account-circle" size={40} color="#011F82" onPress={openAccountMenu} />
       </View>
+
+        {/* Menu trượt */}
+        {showMenu && (
+        <TouchableNativeFeedback onPress={closeMenu}>
+          <View style={styles.overlay}>
+            <Animated.View
+              style={[styles.menuContainer,
+              { transform: [{ translateX: slideAnim_l }] },
+              ]}
+            >
+              <View style={styles.menuItem}>
+                <Image
+                  source={require('../../../assets/images/logo.png')}
+                  style={[styles.logo, { width: 150, height: 70 }]}
+                />
+                <TouchableOpacity onPress={closeMenu} style={styles.closeButton}>
+                  <Icon style={styles.closeItem} name="close" size={30} color="#011F82" />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView style={styles.menu}>
+                {menuItems.map((item, index) => (
+                  <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
+                    if (item.title === 'Tạo mới') {
+                      navigation.navigate('ApplyManager' as never); // Điều hướng tới ApplyManager
+                    }
+                  }}
+                  >
+                    <View style={styles.iconLabel}>
+                      <Icon name={item.icon} size={25} color="#011F82" />
+                      <Text style={styles.menuText}>{item.title}</Text>
+                    </View>
+                    <Icon name="chevron-right" size={30} color="#011F82" />
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </Animated.View>
+          </View>
+        </TouchableNativeFeedback>
+      )}
+
 
       <Modal visible={showAccountMenu} transparent animationType="fade">
         <TouchableNativeFeedback onPress={closeAccountMenu}>
@@ -192,6 +242,45 @@ const styles = StyleSheet.create({
     fontSize: 25,
     marginLeft: 10,
   },
+
+  menuContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: width * 0.9,
+    height: '100%',
+    backgroundColor: '#fff',
+    padding: 10,
+    zIndex: 11, // Đảm bảo menu nằm trên overlay
+    elevation: 11, // Cho Android
+    shadowColor: '#000', // Đổ bóng cho iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  closeButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 10,
+  },
+
+  closeItem: {
+    padding: 10,
+    borderRadius: 50,
+  },
+
+  headerMenu: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderColor: '#444',
+  },
+
+  menu: {
+    marginTop: 10,
+  },
+
   menuAccountContainer: {
     position: 'absolute',
     top: 0,
@@ -215,6 +304,11 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderColor: '#B9D6F3',
+  },
+
+  iconLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   filterSort: {
     paddingHorizontal: 15,
