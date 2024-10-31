@@ -20,7 +20,7 @@ export class Job {
   @Prop({ required: true })
   jobType: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   description: string;
   
 }

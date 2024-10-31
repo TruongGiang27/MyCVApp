@@ -10,5 +10,6 @@ import ApplyManager from './src/screen/Employer/ApplyManager';
 import CreateEmployer from './src/screen/Employer/CreateEmployer';
 import InforManager from './src/screen/Employer/InforManager';
 import HomeEmployer from './src/screen/Employer/HomeEmployer';
+import JobPost from './src/screen/Employer/JobPost';
 import App from './App';
 AppRegistry.registerComponent(appName, () => App);

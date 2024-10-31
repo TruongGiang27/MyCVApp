@@ -22,8 +22,8 @@ const App = () => {
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="CreateEmployer" component={CreateEmployer} />
                 <Stack.Screen name="InforEmployer" component={InforEmployer} /> */}
-                {/* <Stack.Screen name="JobPost" component={JobPost} />
-                <Stack.Screen name="JobList" component={JobList} /> */}
+                <Stack.Screen name="JobPost" component={JobPost} />
+                <Stack.Screen name="JobList" component={JobList} />
                 <Stack.Screen name="HomeEmployer" component={HomeEmployer} />
                 <Stack.Screen name="ApplyManager" component={ApplyManager} />
 
