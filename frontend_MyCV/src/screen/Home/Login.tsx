@@ -3,13 +3,14 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, ScrollView, Text, View } from 'react-native';
+import { BASE_URL } from './utils/url';
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState<SignInSuccessResponse | null>(null);
   const [dataUser, setDataUser] = useState<any[]>([]);
   const navigation = useNavigation<any>();
   useEffect(() => {
-    axios.get('http://10.106.20.177:3000/users')
+    axios.get(`${BASE_URL}/users`)
       .then(response => {
         setDataUser(response.data);``
         console.log(response.data);

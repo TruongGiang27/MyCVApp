@@ -10,13 +10,12 @@ import JobList from './src/screen/User/JobList';
 import JobDetail from './src/screen/User/JobDetail';
 import HomeEmployer from './src/screen/Employer/HomeEmployer';
 import JobPost from './src/screen/Employer/JobPost';
-
 const Stack = createNativeStackNavigator();
 
 const App = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="JobPost" screenOptions={{headerShown:false}}>
+            <Stack.Navigator initialRouteName="HomeEmployer" screenOptions={{ headerShown: false }}>
                 {/* <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="CreateEmployer" component={CreateEmployer} />
@@ -25,7 +24,9 @@ const App = () => {
                 {/* <Stack.Screen name="Home" component={HomeEmployer} /> */}
                 <Stack.Screen name="JobList" component={JobList} />
                 <Stack.Screen name="JobDetail" component={JobDetail} />
-                
+                {/* <Stack.Screen name="EditCv" component={EditCv} /> */}
+
+
             </Stack.Navigator>
         </NavigationContainer>
     );
