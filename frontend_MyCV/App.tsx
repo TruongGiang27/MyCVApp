@@ -10,6 +10,7 @@ import HomeEmployer from './src/screen/Employer/HomeEmployer';
 import JobPost from './src/screen/Employer/JobPost';
 import JobDetail from './src/screen/JobDetail';
 import JobList from './src/screen/JobList';
+import InforManager from './src/screen/Employer/InforManager';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -27,7 +28,7 @@ const App = () => {
                 <Stack.Screen name="ApplyManager" component={ApplyManager} />
                 <Stack.Screen name="JobDetail" component={JobDetail} />
                 <Stack.Screen name="EditCv" component={EditCv} />
-
+                <Stack.Screen name="InforManager" component={InforManager} />
 
             </Stack.Navigator>
         </NavigationContainer>

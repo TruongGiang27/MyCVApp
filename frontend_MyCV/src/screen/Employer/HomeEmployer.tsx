@@ -1,30 +1,35 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert, Animated, Dimensions, Image, Modal, ScrollView,
-  StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View, StatusBar
+  StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View, StatusBar, Keyboard
 } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import { BASE_URL } from '../utils/url';
 
 const { width } = Dimensions.get('window');
 
-interface ApplyDataItem {
-  companyName: string;
-  numberOfEmployees: number;
-  fullName: string;
+interface Job {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  salary: string;
+  jobType: string;
+  jobDescription: string;
 }
 
 const HomeEmployer = () => {
-  const [applyData, setApplyData] = useState<ApplyDataItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState(''); // Thêm state searchQuery cho tìm kiếm
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://192.168.0.121:3000/employers');
-        setApplyData(response.data);
+        const response = await axios.get(`${BASE_URL}/jobs`);
+        setJobs(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -32,8 +37,10 @@ const HomeEmployer = () => {
     fetchData();
   }, []);
 
-  const filteredData = applyData.filter((item) =>
-    item.companyName.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredData = jobs.filter((item) =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    || item.company.toLowerCase().includes(searchQuery.toLowerCase())
+    || item.location.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const navigation = useNavigation();
@@ -43,6 +50,10 @@ const HomeEmployer = () => {
   const [showMenu, setShowMenu] = useState(false);
   const slideAnim_l = useRef(new Animated.Value(-width)).current;
   const slideAnim_r = useRef(new Animated.Value(width)).current;
+
+  const handlePickerFocus = () => {
+    Keyboard.dismiss();
+  };
 
   const openAccountMenu = () => {
     setShowAccountMenu(true);
@@ -89,9 +100,9 @@ const HomeEmployer = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor={'red'} />
+      <StatusBar hidden />
       <View style={styles.header}>
-        <Icon style={styles.menuIcon} name="menu" size={40} color="#fff" onPress={(openMenu)} />
+        <Icon style={styles.menuIcon} name="menu" size={40} color="#fff" onPress={openMenu} />
         <TouchableOpacity onPress={() => navigation.navigate('HomeEmployer' as never)}>
           <Image
             source={require('../../../assets/images/logo.png')}
@@ -101,13 +112,14 @@ const HomeEmployer = () => {
         <Icon style={styles.accountIcon} name="account-circle" size={40} color="#011F82" onPress={openAccountMenu} />
       </View>
 
-        {/* Menu trượt */}
-        {showMenu && (
+      {/* Sliding menu */}
+      {showMenu && (
         <TouchableNativeFeedback onPress={closeMenu}>
           <View style={styles.overlay}>
             <Animated.View
-              style={[styles.menuContainer,
-              { transform: [{ translateX: slideAnim_l }] },
+              style={[
+                styles.menuContainer,
+                { transform: [{ translateX: slideAnim_l }] },
               ]}
             >
               <View style={styles.menuItem}>
@@ -124,7 +136,7 @@ const HomeEmployer = () => {
                 {menuItems.map((item, index) => (
                   <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
                     if (item.title === 'Tạo mới') {
-                      navigation.navigate('ApplyManager' as never); // Điều hướng tới ApplyManager
+                      navigation.navigate('ApplyManager' as never); // Navigate to ApplyManager
                     }
                   }}
                   >
@@ -140,7 +152,6 @@ const HomeEmployer = () => {
           </View>
         </TouchableNativeFeedback>
       )}
-
 
       <Modal visible={showAccountMenu} transparent animationType="fade">
         <TouchableNativeFeedback onPress={closeAccountMenu}>
@@ -167,8 +178,8 @@ const HomeEmployer = () => {
             style={styles.filterText}
             placeholder="Tìm kiếm việc làm"
             placeholderTextColor="#9E9E9E"
-            value={searchQuery} // Liên kết searchQuery với TextInput
-            onChangeText={(text) => setSearchQuery(text)} // Cập nhật searchQuery khi người dùng nhập
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
           />
           <TouchableOpacity style={styles.searchIcon} onPress={() => console.log("Tìm kiếm...")}>
             <Icon name="search" size={24} color="#fff" />
@@ -180,11 +191,13 @@ const HomeEmployer = () => {
           <Picker
             selectedValue={selectedOrder}
             style={styles.picker}
+            mode="dropdown"
+            onFocus={handlePickerFocus}
             onValueChange={(itemValue) => setSelectedOrder(itemValue)}
             dropdownIconColor="#1976D2"
           >
-            <Picker.Item label="Giảm dần" value="Giảm dần" />
-            <Picker.Item label="Tăng dần" value="Tăng dần" />
+            <Picker.Item label="Giảm dần" value="Giảm dần" style={{ color: '#1976D2' }} />
+            <Picker.Item label="Tăng dần" value="Tăng dần" style={{ color: '#1976D2' }} />
           </Picker>
         </View>
       </View>
@@ -192,9 +205,11 @@ const HomeEmployer = () => {
       <ScrollView style={styles.cardContainer}>
         {filteredData.map((item, index) => (
           <View key={index} style={styles.card}>
-            <Text style={styles.jobTitle}>Chức danh: {item.companyName}</Text>
-            <Text style={styles.jobDetail}>Số lượng cần tuyển: {item.numberOfEmployees}</Text>
-            <Text style={styles.jobDetail}>Địa điểm: {item.fullName}</Text>
+            <Text style={styles.jobTitle}>Chức vụ: {item.title}</Text>
+            <Text style={styles.jobDetail}>Tên công ty: {item.company}</Text>
+            <Text style={styles.jobDetail}>Địa điểm: {item.location}</Text>
+            <Text style={styles.jobDetail}>Mức lương: {item.salary}</Text>
+            <Text style={styles.jobDetail}>Loại việc làm: {item.jobType}</Text>
           </View>
         ))}
       </ScrollView>
@@ -236,13 +251,11 @@ const styles = StyleSheet.create({
     zIndex: 10,
     elevation: 10,
   },
-
   menuText: {
     color: '#011F82',
     fontSize: 25,
     marginLeft: 10,
   },
-
   menuContainer: {
     position: 'absolute',
     top: 0,
@@ -251,9 +264,9 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#fff',
     padding: 10,
-    zIndex: 11, // Đảm bảo menu nằm trên overlay
-    elevation: 11, // Cho Android
-    shadowColor: '#000', // Đổ bóng cho iOS
+    zIndex: 11,
+    elevation: 11,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
@@ -262,12 +275,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginBottom: 10,
   },
-
   closeItem: {
     padding: 10,
     borderRadius: 50,
   },
-
   headerMenu: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -276,11 +287,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#444',
   },
-
   menu: {
     marginTop: 10,
   },
-
   menuAccountContainer: {
     position: 'absolute',
     top: 0,
@@ -289,14 +298,13 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#fff',
     padding: 10,
-    zIndex: 11, // Đảm bảo menu nằm trên overlay
-    elevation: 11, // Cho Android
-    shadowColor: '#000', // Đổ bóng cho iOS
+    zIndex: 11,
+    elevation: 11,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
-
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -305,7 +313,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#B9D6F3',
   },
-
   iconLabel: {
     flexDirection: 'row',
     alignItems: 'center',

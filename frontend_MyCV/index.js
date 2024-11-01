@@ -13,4 +13,4 @@ import HomeEmployer from './src/screen/Employer/HomeEmployer';
 import JobPost from './src/screen/Employer/JobPost';
 import App from './App';
 import CvDetail from './src/screen/Employer/CvDetail';
-AppRegistry.registerComponent(appName, () => CvDetail);
+AppRegistry.registerComponent(appName, () => InforManager);
