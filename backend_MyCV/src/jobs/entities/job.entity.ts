@@ -14,14 +14,29 @@ export class Job {
   @Prop({ required: true })
   location: string;
 
-  @Prop({ required: true })
+  @Prop()
   salary: string;
 
-  @Prop({ required: true })
+  @Prop()
   jobType: string;
 
-  @Prop({ required: true })
-  description: string;
+  @Prop()
+  jobDescription: string;
+
+  @Prop()
+  requirements: string;
+
+  @Prop()
+  benefits: string;
+
+  @Prop({ type: Object })
+  additionalInfo: {
+    deadline: string;
+    experience: string;
+    education: string;
+    quantity: number;
+    gender: string;
+  };
   
 }
 
