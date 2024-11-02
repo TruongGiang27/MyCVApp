@@ -1,7 +1,8 @@
 import { Card, Icon } from '@rneui/themed';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions } from 'react-native';
-
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 //
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -9,6 +10,77 @@ const height = Dimensions.get('screen').height;
 const data = [
     { id: '1', title: 'Client Management Assistant (100% Remote)', company: 'AwePlus Cx Transformation', salary: '9.000.000 ₫ - 12.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '3 ngày trước', isPremium: true },
     { id: '2', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '3', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '4', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '5', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '6', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '7', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '8', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '9', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '10', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '11', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '12', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '13', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '14', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '15', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '16', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '17', title: 'Content & Community Curator aaaaaa aaaaaaaa aaa aaaa aaaa b aa a aa aaaaaaaa aaaaaaa aaaaa aaaa aaaa aa', company: 'Kobe Global Technologies', salary: '13.400.000 ₫ - 17.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: false },
+    { id: '18', title: 'Software Engineer', company: 'Tech Solutions', salary: '20.000.000 ₫ - 25.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '2 ngày trước', isPremium: true },
+    { id: '19', title: 'Project Manager', company: 'Innovatech', salary: '30.000.000 ₫ - 35.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '5 ngày trước', isPremium: false },
+    { id: '20', title: 'Data Scientist', company: 'DataCorp', salary: '25.000.000 ₫ - 30.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: true },
+    { id: '21', title: 'UX/UI Designer', company: 'Creative Minds', salary: '18.000.000 ₫ - 22.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '3 ngày trước', isPremium: false },
+    { id: '22', title: 'Marketing Specialist', company: 'MarketPro', salary: '15.000.000 ₫ - 20.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '4 ngày trước', isPremium: true },
+    { id: '23', title: 'Sales Executive', company: 'SalesForce', salary: '12.000.000 ₫ - 18.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '2 ngày trước', isPremium: false },
+    { id: '24', title: 'HR Manager', company: 'PeopleFirst', salary: '22.000.000 ₫ - 28.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '1 ngày trước', isPremium: true },
+    { id: '25', title: 'Business Analyst', company: 'BizAnalytica', salary: '20.000.000 ₫ - 25.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '3 ngày trước', isPremium: false },
+    { id: '26', title: 'Network Engineer', company: 'NetSecure', salary: '18.000.000 ₫ - 22.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '5 ngày trước', isPremium: true },
+    { id: '27', title: 'DevOps Engineer', company: 'CloudOps', salary: '25.000.000 ₫ - 30.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '2 ngày trước', isPremium: false },
+    { id: '28', title: 'Product Manager', company: 'ProdManage', salary: '30.000.000 ₫ - 35.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '1 ngày trước', isPremium: true },
+    { id: '29', title: 'Graphic Designer', company: 'DesignHub', salary: '15.000.000 ₫ - 20.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '4 ngày trước', isPremium: false },
+    { id: '30', title: 'Content Writer', company: 'WritePro', salary: '12.000.000 ₫ - 18.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '3 ngày trước', isPremium: true },
+    { id: '31', title: 'SEO Specialist', company: 'SearchMax', salary: '18.000.000 ₫ - 22.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '2 ngày trước', isPremium: false },
+    { id: '32', title: 'Customer Support', company: 'SupportPlus', salary: '10.000.000 ₫ - 15.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: true },
+    { id: '33', title: 'Mobile Developer', company: 'AppDev', salary: '20.000.000 ₫ - 25.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '5 ngày trước', isPremium: false },
+    { id: '34', title: 'QA Engineer', company: 'QualityFirst', salary: '18.000.000 ₫ - 22.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '3 ngày trước', isPremium: true },
+    { id: '35', title: 'System Administrator', company: 'SysAdminPro', salary: '22.000.000 ₫ - 28.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '2 ngày trước', isPremium: false },
+    { id: '36', title: 'IT Support', company: 'TechHelp', salary: '12.000.000 ₫ - 18.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '1 ngày trước', isPremium: true },
+    { id: '37', title: 'Database Administrator', company: 'DataManage', salary: '25.000.000 ₫ - 30.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '4 ngày trước', isPremium: false },
+    { id: '38', title: 'Cybersecurity Analyst', company: 'SecureNet', salary: '30.000.000 ₫ - 35.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '3 ngày trước', isPremium: true },
+    { id: '39', title: 'Cloud Architect', company: 'CloudTech', salary: '35.000.000 ₫ - 40.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '2 ngày trước', isPremium: false },
+    { id: '40', title: 'AI Engineer', company: 'AIMinds', salary: '40.000.000 ₫ - 45.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '1 ngày trước', isPremium: true },
+    { id: '41', title: 'Blockchain Developer', company: 'BlockChainTech', salary: '45.000.000 ₫ - 50.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '5 ngày trước', isPremium: false },
+    { id: '42', title: 'Full Stack Developer', company: 'FullStackPro', salary: '25.000.000 ₫ - 30.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '3 ngày trước', isPremium: true },
+    { id: '43', title: 'Frontend Developer', company: 'FrontEndTech', salary: '20.000.000 ₫ - 25.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '2 ngày trước', isPremium: false },
+    { id: '44', title: 'Backend Developer', company: 'BackEndSolutions', salary: '22.000.000 ₫ - 28.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: true },
+    { id: '45', title: 'Machine Learning Engineer', company: 'MLTech', salary: '35.000.000 ₫ - 40.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '4 ngày trước', isPremium: false },
+    { id: '46', title: 'Game Developer', company: 'GameStudio', salary: '30.000.000 ₫ - 35.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '3 ngày trước', isPremium: true },
+    { id: '47', title: 'IT Consultant', company: 'ITConsult', salary: '25.000.000 ₫ - 30.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '2 ngày trước', isPremium: false },
+    { id: '48', title: 'Technical Writer', company: 'TechWrite', salary: '15.000.000 ₫ - 20.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '1 ngày trước', isPremium: true },
+    { id: '49', title: 'Operations Manager', company: 'OpsManage', salary: '30.000.000 ₫ - 35.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '5 ngày trước', isPremium: false },
+    { id: '50', title: 'Digital Marketing Manager', company: 'DigitalMarket', salary: '25.000.000 ₫ - 30.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '3 ngày trước', isPremium: true },
+    { id: '51', title: 'Social Media Manager', company: 'SocialBuzz', salary: '20.000.000 ₫ - 25.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '2 ngày trước', isPremium: false },
+    { id: '52', title: 'E-commerce Manager', company: 'EcomManage', salary: '22.000.000 ₫ - 28.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '1 ngày trước', isPremium: true },
+    { id: '53', title: 'Supply Chain Manager', company: 'SupplyChainPro', salary: '30.000.000 ₫ - 35.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '4 ngày trước', isPremium: false },
+    { id: '54', title: 'Logistics Coordinator', company: 'LogiTech', salary: '18.000.000 ₫ - 22.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '3 ngày trước', isPremium: true },
+    { id: '55', title: 'Financial Analyst', company: 'FinancePro', salary: '25.000.000 ₫ - 30.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '2 ngày trước', isPremium: false },
+    { id: '56', title: 'Investment Banker', company: 'InvestBank', salary: '40.000.000 ₫ - 45.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: true },
+    { id: '57', title: 'Accountant', company: 'AccountPro', salary: '20.000.000 ₫ - 25.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '5 ngày trước', isPremium: false },
+    { id: '58', title: 'Auditor', company: 'AuditTech', salary: '22.000.000 ₫ - 28.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '3 ngày trước', isPremium: true },
+    { id: '59', title: 'Tax Consultant', company: 'TaxConsult', salary: '25.000.000 ₫ - 30.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '2 ngày trước', isPremium: false },
+    { id: '60', title: 'Legal Advisor', company: 'LegalPro', salary: '30.000.000 ₫ - 35.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '1 ngày trước', isPremium: true },
+    { id: '61', title: 'Paralegal', company: 'ParaLaw', salary: '18.000.000 ₫ - 22.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '4 ngày trước', isPremium: false },
+    { id: '62', title: 'Corporate Lawyer', company: 'CorpLaw', salary: '35.000.000 ₫ - 40.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '3 ngày trước', isPremium: true },
+    { id: '63', title: 'Research Scientist', company: 'ResearchLab', salary: '25.000.000 ₫ - 30.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '2 ngày trước', isPremium: false },
+    { id: '64', title: 'Lab Technician', company: 'LabTech', salary: '15.000.000 ₫ - 20.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '1 ngày trước', isPremium: true },
+    { id: '65', title: 'Pharmacist', company: 'PharmaCare', salary: '20.000.000 ₫ - 25.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '5 ngày trước', isPremium: false },
+    { id: '66', title: 'Nurse', company: 'HealthFirst', salary: '18.000.000 ₫ - 22.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '3 ngày trước', isPremium: true },
+    { id: '67', title: 'Doctor', company: 'MediCare', salary: '40.000.000 ₫ - 45.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '2 ngày trước', isPremium: false },
+    { id: '68', title: 'Dentist', company: 'DentalCare', salary: '35.000.000 ₫ - 40.000.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước', isPremium: true },
+    { id: '69', title: 'Physiotherapist', company: 'PhysioPro', salary: '25.000.000 ₫ - 30.000.000 ₫ / tháng', location: 'Hà Nội', timePosted: '4 ngày trước', isPremium: false },
+    { id: '70', title: 'Veterinarian', company: 'VetCare', salary: '30.000.000 ₫ - 35.000.000 ₫ / tháng', location: 'Đà Nẵng', timePosted: '3 ngày trước', isPremium: true },
+
+
+
 ];
 
 // Top section (Header)
@@ -87,7 +159,7 @@ const JobItem = ({ title, company, salary, location, timePosted, isPremium }) =>
         </TouchableOpacity>
 
         <Text style={styles.title}>{title}</Text>
-        <View style={{marginVertical:width*0.03}}>
+        <View style={{ marginVertical: width * 0.03 }}>
             <Text style={styles.company}>{company}</Text>
             <Text style={styles.location}>{location}</Text>
         </View>
@@ -102,7 +174,7 @@ const JobItem = ({ title, company, salary, location, timePosted, isPremium }) =>
 );
 
 
-const Content = () => (
+const Content = ({ onSearchFocus, onMapSearchFocus }) => (
     <FlatList
         data={data}
         renderItem={({ item }) => (
@@ -116,30 +188,12 @@ const Content = () => (
             />
         )}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={<Header onSearchFocus={onSearchFocus} onMapSearchFocus={onMapSearchFocus} />}
+        ListFooterComponent={<Footer />}
+        showsVerticalScrollIndicator={false}
     />
 );
 
-// Bottom section (Navigation Bar)
-const Navbar = () => (
-    <View style={styles.navbar}>
-        <TouchableOpacity style={styles.navItem}>
-            <Icon name="home" type="font-awesome" color="#007AFF" />
-            <Text style={styles.navText}>Trang chủ</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-            <Icon name="bookmark" type="font-awesome" color="#666" />
-            <Text style={styles.navText}>Việc làm của tôi</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-            <Icon name="envelope" type="font-awesome" color="#666" />
-            <Text style={styles.navText}>Tin nhắn</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-            <Icon name="user" type="font-awesome" color="#666" />
-            <Text style={styles.navText}>Hồ sơ</Text>
-        </TouchableOpacity>
-    </View>
-);
 
 // Main component
 const Home = () => {
@@ -150,7 +204,7 @@ const Home = () => {
         setIsSearching(true);
         setIsMapSearching(false); // Close map search if it’s open
     };
-    
+
     const handleMapSearchFocus = () => {
         setIsMapSearching(true);
         setIsSearching(false); // Close text search if it’s open
@@ -167,21 +221,27 @@ const Home = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.logo}>
-                <Image source={require('../../../assets/images/logo.png')} style={{ width: 130, height: logoWidth * 0.25 }} />
+            <View style={styles.headContainer}>
+
+
+                <View style={styles.logo}>
+                    <Image source={require('../../../assets/images/logo.png')} style={{ width: 130, height: logoWidth * 0.25 }} />
+                </View>
+                {isSearching ? (
+                    <Search onCancel={handleCancelSearch} />
+                ) : isMapSearching ? (
+                    <SearchMap onCancel={handleCancelSearch} />
+                ) : (
+                    <>
+                        <Content onSearchFocus={handleSearchFocus} onMapSearchFocus={handleMapSearchFocus} />
+                    </>
+                )}
             </View>
-            {!isSearching && !isMapSearching && <Header onSearchFocus={handleSearchFocus} onMapSearchFocus={handleMapSearchFocus} />}
-            {isSearching ? (
-                <Search onCancel={handleCancelSearch} />
-            ) : isMapSearching ? (
-                <SearchMap onCancel={handleCancelSearch} />
-            ) : (
-                <>
-                    <Content />
-                    <Navbar />
-                </>
-            )}
+            <View style={styles.navbar}>
+                <Navbar />
+            </View>
         </View>
+
     );
 };
 
@@ -191,10 +251,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        paddingHorizontal: "2%",
+    },
+    headContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: "4%",
+        width: '100%',
+    },
+    flatListContent: {
+        paddingBottom: -10, // Điều chỉnh khoảng cách dưới
+        paddingTop: 10,  // Điều chỉnh khoảng cách dưới
     },
     logo: {
-        marginTop: "4%",
+        height: width * 0.15,
     },
     // Top section (Header)
     header: {
@@ -316,24 +385,11 @@ const styles = StyleSheet.create({
         right: 0,
         top: 0,
     },
-    // Bottom section (Navbar)
     navbar: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        backgroundColor: '#fff',
-        paddingVertical: 10,
-        borderTopColor: '#ddd',
-        borderTopWidth: 1,
-        position: 'absolute',
-        bottom: 0,
         width: '100%',
-    },
-    navItem: {
+        position: 'relative',
         alignItems: 'center',
-    },
-    navText: {
-        color: '#666',
-        fontSize: 12,
-        marginTop: 2,
+        justifyContent: 'center',
+        backgroundColor: '#000000',
     },
 });
