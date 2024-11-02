@@ -12,7 +12,6 @@ import { Employer, EmployerSchema } from './employer/entities/employer.entity';
 import { User, UserSchema } from './userService/entity/user.entity';
 import { JobsModule } from './jobs/jobs.module';
 import { SearchHistoryModule } from './search_history/search_history.module';
-import { JobDetailModule } from './job-detail/job-detail.module';
 import { CvuserModule } from './cvuser/cvuser.module';
 
 const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryWrites=true&w=majority&appName=Admin';
@@ -27,7 +26,6 @@ const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryW
     AdminModule,
     JobsModule,
     SearchHistoryModule,
-    JobDetailModule,
     CvuserModule,
     // UserModule,
   ],
