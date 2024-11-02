@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Alert, Image, Keyboard, Platform, StyleSheet, Text, View } from 'react-native';
 import { ScrollView, TextInput, TouchableOpacity, GestureHandlerRootView } from 'react-native-gesture-handler';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Navbar from '../../components/Navbar';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import axios from 'axios';
@@ -22,7 +23,6 @@ type Props = {
 };
 
 const JobPost: React.FC<Props> = ({ navigation }) => {
-    const [selectedValue, setSelectedValue] = useState('');
     const [date, setDate] = useState<Date | undefined>(undefined);
     const [show, setShow] = useState<boolean>(false);
     const [showDataJob, setShowDataJob] = useState<boolean>(false);
@@ -37,7 +37,9 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
         setShow(Platform.OS === 'ios');
         setDate(currentDate);
     };
-
+    const BackHandler = () => {
+        navigation.goBack();
+    }
     const handlePickerFocus = () => {
         setShowDataJob(true);
         Keyboard.dismiss();
@@ -80,9 +82,10 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.container}>
                     <View style={styles.content}>
                         <View style={styles.header}>
-                            <Text style={styles.title}>Tạo bài đăng tuyển dụng</Text>
+                            {/* <Icon name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" /> */}
+                            <Text style={styles.title} onPress={BackHandler}>Tạo bài đăng tuyển dụng</Text>
                             <Image style={styles.imgPost}
-                                source={require('../../../assets/images/jobpostImg.jpg')}
+                                source={require('../../../assets/images/jobpostImg.jpg') }
                             />
                         </View>
                         <View style={styles.inputinfor}>
@@ -181,7 +184,7 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-            <Navbar />
+                <Navbar />
 
             </ScrollView>
         </GestureHandlerRootView>
@@ -232,7 +235,7 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 5,
         color: '#000',
-        
+
     },
     pickerContainer: {
         borderWidth: 1,

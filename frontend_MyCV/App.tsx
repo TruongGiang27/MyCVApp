@@ -5,7 +5,6 @@ import 'react-native-get-random-values';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ApplyManager from './src/screen/Employer/ApplyManager';
 import CvDetail from './src/screen/Employer/CvDetail';
-import EditCv from './src/screen/Employer/EditCv';
 import HomeEmployer from './src/screen/Employer/HomeEmployer';
 import JobPost from './src/screen/Employer/JobPost';
 import JobDetail from './src/screen/JobDetail';
@@ -26,7 +25,6 @@ const App = () => {
                 <Stack.Screen name="CvDetail" component={CvDetail} />
                 <Stack.Screen name="ApplyManager" component={ApplyManager} />
                 <Stack.Screen name="JobDetail" component={JobDetail} />
-                <Stack.Screen name="EditCv" component={EditCv} />
 
 
             </Stack.Navigator>
