@@ -73,7 +73,7 @@ const SearchMap = ({ onCancel }: { onCancel: () => void }) => (
 const JobItem = ({ title, company, salary, location }) => {
 
     return (
-        <View style={ {paddingHorizontal:10,paddingVertical:0}}>
+        <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>
             <Card containerStyle={styles.cardContainer}>
 
                 {/* {isPremium && (
@@ -127,7 +127,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => voi
                 }
                 const responseJson = await response.json();
                 // setDataJobs(responseJson);
-                console.log(JSON.stringify(responseJson,null,2));
+                console.log(JSON.stringify(responseJson, null, 2));
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             } finally {
