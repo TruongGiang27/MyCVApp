@@ -31,15 +31,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', // Pushes the navbar to the bottom
   },
   navbar: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: '#fff',
     paddingVertical: 10,
     borderTopColor: '#ddd',
     borderTopWidth: 1,
-    position: 'absolute',
+    position: 'relative',
     bottom: 0,
-    width: '100%',
   },
   navItem: {
     alignItems: 'center',

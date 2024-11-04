@@ -1,4 +1,4 @@
-buildscript {
+buildscript {2
     ext {
         buildToolsVersion = "34.0.0"
         minSdkVersion = 23

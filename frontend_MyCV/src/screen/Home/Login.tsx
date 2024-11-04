@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, ScrollView, Text, View } from 'react-native';
-import { BASE_URL } from './utils/url';
+import { BASE_URL } from '../utils/url';
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState<SignInSuccessResponse | null>(null);
