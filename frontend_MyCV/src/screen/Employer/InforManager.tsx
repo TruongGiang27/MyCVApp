@@ -34,13 +34,14 @@ const InforManager = () => {
 
         fetchData();
     }, []);
-    
+
     const handleSearch = () => {
-        const results = employers.filter(emp =>
-            emp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            emp.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            emp.location.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        const results = employers
+            .filter(emp =>
+                emp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                emp.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                emp.location.toLowerCase().includes(searchQuery.toLowerCase())
+            )
         setFilteredEmployers(results);
     };
 
@@ -111,6 +112,9 @@ const InforManager = () => {
             console.error('Error deleting job post:', error);
         }
     };
+    const displayEmployers = (filteredEmployers.length > 0 ? filteredEmployers : employers).slice(0, 3);
+
+
 
     return (
         <ScrollView style={styles.scrollView}>
@@ -242,7 +246,7 @@ const InforManager = () => {
                         )}
                     </View>
                 ) : (
-                    (filteredEmployers.length > 0 ? filteredEmployers : employers).map((employer, index) => (
+                    displayEmployers.map((employer, index) => (
                         <View key={index} style={styles.employerContainer}>
                             <View style={styles.employerInfo}>
                                 <Text style={styles.jobTitle}>Chức vụ: {employer.title}</Text>
