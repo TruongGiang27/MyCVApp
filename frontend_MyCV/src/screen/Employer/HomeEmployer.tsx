@@ -7,6 +7,7 @@ import { Icon } from '@rneui/themed';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import { BASE_URL } from '../utils/url';
 
 const { width } = Dimensions.get('window');
 
@@ -18,12 +19,12 @@ interface ApplyDataItem {
 
 const HomeEmployer = () => {
   const [applyData, setApplyData] = useState<ApplyDataItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState(''); // Thêm state searchQuery cho tìm kiếm
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://192.168.0.121:3000/employers');
+        const response = await axios.get(`${BASE_URL}/employers`);
         setApplyData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -89,7 +90,6 @@ const HomeEmployer = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor={'red'} />
       <View style={styles.header}>
         <Icon style={styles.menuIcon} name="menu" size={40} color="#fff" onPress={(openMenu)} />
         <TouchableOpacity onPress={() => navigation.navigate('HomeEmployer' as never)}>
@@ -382,6 +382,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#011F82',
   },
   jobDetail: {
     fontSize: 14,
