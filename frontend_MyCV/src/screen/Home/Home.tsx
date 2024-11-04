@@ -126,7 +126,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => voi
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const responseJson = await response.json();
-                // setDataJobs(responseJson);
+                setDataJobs(responseJson);
                 console.log(JSON.stringify(responseJson, null, 2));
             } catch (error) {
                 console.error("Failed to fetch data:", error);
@@ -292,11 +292,11 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         width: '100%',
         alignSelf: 'center',
-        shadowColor: '#000',            // Darker shadow color
-        shadowOffset: { width: 0, height: 4 },  // Adjust shadow offset
-        shadowOpacity: 0.2,             // Increase opacity for a stronger effect
-        shadowRadius: 6,                // Smaller radius for sharper edges
-        elevation: 6,
+        shadowColor: '#000',            
+        shadowOffset: { width: 0, height: 4 }, 
+        shadowOpacity: 0.2,             
+        shadowRadius: 6,                
+        elevation: 3,
     },
     premiumTag: {
         backgroundColor: '#fdecef',
