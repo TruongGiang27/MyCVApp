@@ -3,7 +3,22 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'r
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
-import { BASE_URL } from './utils/url';
+import { BASE_URL } from '../utils/url';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+
+type RootStackParamList = {
+  JobDetail: { jobId: string };
+};
+
+type JobDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'JobDetail'>;
+type JobDetailScreenRouteProp = RouteProp<RootStackParamList, 'JobDetail'>;
+
+interface Props {
+  navigation: JobDetailScreenNavigationProp;
+  route: JobDetailScreenRouteProp;
+}
 
 // Job Card Component
 const JobCard = ({
@@ -12,22 +27,27 @@ const JobCard = ({
   location,
   salary,
   jobType,
+  jobDescription,
+  jobId, // Thêm jobId vào props
 }: {
   title: string;
   company: string;
   location: string;
   salary: string;
   jobType: string;
+  jobDescription: string;
+  jobId: string; // Thêm kiểu cho jobId
 }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<JobDetailScreenNavigationProp>();
 
   return (
-    <TouchableOpacity style={styles.jobCard} onPress={() => navigation.navigate("JobDetail" as never)}>
+    <TouchableOpacity style={styles.jobCard} onPress={() => navigation.navigate("JobDetail", { jobId })}>
       <Text style={styles.jobTitle}>{title}</Text>
       <Text style={styles.jobCompany}>{company}</Text>
       <Text style={styles.jobLocation}>{location}</Text>
       <Text style={styles.jobSalary}>{salary}</Text>
       <Text style={styles.jobType}>{jobType}</Text>
+      <Text style={styles.jobDescription}>{jobDescription}</Text>
     </TouchableOpacity>
   );
 };
@@ -40,11 +60,11 @@ const JobList = () => {
     location: string;
     salary: string;
     jobType: string;
+    jobDescription: string;
   }
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [searchTitle, setSearchTitle] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
@@ -114,7 +134,7 @@ const JobList = () => {
     if (searchTitle || searchLocation) {
       setSearchHistory((prevHistory) => {
         const newHistory = [{ title: searchTitle, location: searchLocation }, ...prevHistory];
-        return newHistory.slice(0, 2);
+        return newHistory.slice(0, 2); // Giới hạn tối đa 5 mục lịch sử
       });
 
       try {
@@ -219,6 +239,8 @@ const JobList = () => {
             location={item.location}
             salary={item.salary}
             jobType={item.jobType}
+            jobDescription={item.jobDescription}
+            jobId={item._id} // Truyền jobId vào JobCard
           />
         )}
         ListEmptyComponent={<Text style={styles.noJobsText}>Không có công việc nào phù hợp</Text>}
@@ -227,10 +249,6 @@ const JobList = () => {
     </View>
   );
 };
-
-
-
-export default JobList;
 
 const styles = StyleSheet.create({
   container: {
@@ -262,46 +280,74 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#B9D6F3',
+    color: '#011F82',
+  },
+  suggestionsContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#B9D6F3',
+  },
+  suggestionText: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: '#B9D6F3',
+    color: '#011F82',
   },
   searchButton: {
     backgroundColor: '#011F82',
-    paddingVertical: 15,
     borderRadius: 8,
+    padding: 12,
     alignItems: 'center',
   },
   searchButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
-    marginBottom: 0,
-    paddingBottom: 0,
+  },
+  historyContainer: {
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    marginVertical: 10,
+    fontWeight: 'bold',
+    color: '#6D92D0',
+    marginBottom: 8,
     marginLeft: 16,
+  },
+  historyItemCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 5,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#B9D6F3',
+    height: 50,
+    marginHorizontal: 16,
+    paddingLeft: 10,
+  },
+  historyItemTitle: {
+    fontWeight: 'bold',
     color: '#011F82',
   },
+  historyItemLocation: {
+    color: '#6D92D0',
+  },
   jobList: {
-    padding: 16,
-    flexGrow: 1,
+    paddingBottom: 16,
   },
   jobCard: {
     backgroundColor: '#FFFFFF',
-    padding: 16,
-    marginBottom: 12,
     borderRadius: 8,
-    borderColor: '#B9D6F3',
+    padding: 10,
+    marginBottom: 10,
     borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 2,
+    borderColor: '#B9D6F3',
+    height: 200,
+    marginHorizontal: 16,
   },
   jobTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: '#011F82',
   },
   jobCompany: {
@@ -311,65 +357,29 @@ const styles = StyleSheet.create({
     color: '#6D92D0',
   },
   jobSalary: {
-    color: '#8C8C8C',
+    color: '#6D92D0',
   },
   jobType: {
-    color: '#8C8C8C',
+    color: '#6D92D0',
+  },
+  jobDescription: {
+    marginTop: 8,
+    color: '#011F82',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  suggestionsContainer: {
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    marginTop: 4,
-    padding: 8,
-    elevation: 3,
-  },
-  suggestionText: {
-    paddingVertical: 8,
-    fontSize: 16,
-    color: '#011F82',
-  },
-  historyContainer: {
-    padding: 1,
-  },
-  historyItem: {
-    fontSize: 16,
-    color: '#011F82',
-    paddingVertical: 4,
-  },
   noJobsText: {
-    fontSize: 16,
-    color: '#8C8C8C',
     textAlign: 'center',
-    marginVertical: 20,
-  },
-  historyItemCard: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-    borderColor: '#B9D6F3',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 2,
-  },
-  historyItemTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    marginTop: 20,
+    fontSize: 16,
     color: '#011F82',
-  },
-  historyItemLocation: {
-    color: '#6D92D0',
-  },
-  scrollViewContent: {
-    paddingBottom: 20,
   },
 });
 
+
+
+
+export default JobList;

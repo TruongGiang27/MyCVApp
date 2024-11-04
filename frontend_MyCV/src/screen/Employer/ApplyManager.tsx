@@ -37,6 +37,8 @@ const ApplyManager: React.FC<Props> = ({ navigation }) => {
     const [error, setError] = useState('');
     
     const [selectedLocation, setSelectedLocation] = useState('');
+
+    
   
 
     const handlePickerFocus = () => {
