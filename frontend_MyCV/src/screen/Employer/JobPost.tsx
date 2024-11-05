@@ -82,7 +82,7 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.container}>
                     <View style={styles.content}>
                         <View style={styles.header}>
-                            {/* <Icon name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" /> */}
+                            <Icon name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" />
                             <Text style={styles.title} onPress={BackHandler}>Tạo bài đăng tuyển dụng</Text>
                             <Image style={styles.imgPost}
                                 source={require('../../../assets/images/jobpostImg.jpg') }
