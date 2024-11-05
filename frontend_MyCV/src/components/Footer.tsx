@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
+import CreateEmployer from '../screen/Employer/CreateEmployer';
 
 const Footer = () => {
     return (
@@ -17,7 +18,7 @@ const Footer = () => {
             </View>
 
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Nhà tuyển dụng</Text>
+                <Text style={styles.sectionTitle} onPress={()=> CreateEmployer}>Nhà tuyển dụng</Text>
             </View>
 
             <View style={styles.section}>
