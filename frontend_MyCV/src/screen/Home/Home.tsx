@@ -1,35 +1,33 @@
 import { Card, Icon } from '@rneui/themed';
-import React, { useState } from 'react';
-import { FlatList, Image, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions } from 'react-native';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
+import { BASE_URL } from '../utils/url';
+import axios from 'axios';
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height;
 
-// Sample job data
-const data = [
-    { id: '1', title: 'Hệ Thống Bách Hóa Xanh - Nam Nữ Bán Hàng', company: 'Công Ty TNHH TM-DV PANPACIFIC', salary: '4.500.000 ₫ - 12.500.000 ₫ / tháng', location: 'Thành phố Hồ Chí Minh', timePosted: '3 ngày trước' },
-    { id: '2', title: 'Sale Executive', company: 'Roche', salary: 'Thỏa thuận', location: 'Thành phố Hồ Chí Minh', timePosted: '1 ngày trước' },
-];
-
-// Top section (Header)
-const Header = ({ onSearchFocus }: { onSearchFocus: () => void }) => {
-
+const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void, onMapSearchFocus: () => void }) => {
     const [searchTerm, setSearchTerm] = useState('');
+
     return (
         <View style={styles.header}>
-
             <View style={styles.searchBar}>
-                <Icon name="search" type="font-awesome" color="#999" size={18} />
+                <Icon name="search" type="font-awesome" color="#373737" size={18} />
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Tìm kiếm"
                     onChangeText={setSearchTerm}
                     onFocus={onSearchFocus}  // Trigger search view when focused
                 />
-
-                <Icon name="map-marker" type="font-awesome" color="#999" size={18} />
+                <View style={styles.divider} />
+                <Icon name="map-marker" type="font-awesome" color="#373737" size={18} />
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Vị trí"
                     onChangeText={setSearchTerm}
-                    onFocus={onSearchFocus}  // Trigger search view when focused
+                    onFocus={onMapSearchFocus}  // Trigger map search view when focused
                 />
             </View>
         </View>
@@ -49,113 +47,172 @@ const Search = ({ onCancel }: { onCancel: () => void }) => (
                 <Text style={styles.cancelButton}>Hủy</Text>
             </TouchableOpacity>
         </View>
-        {/* Content for search results can be added here */}
         <Text style={styles.searchText}>Hiển thị kết quả tìm kiếm...</Text>
     </View>
 );
 
+// Search Map
 const SearchMap = ({ onCancel }: { onCancel: () => void }) => (
     <View style={styles.searchContainer}>
         <View style={styles.searchHeader}>
             <TextInput
                 style={styles.fullSearchInput}
-                placeholder="Nhập từ khóa tìm kiếm"
-                autoFocus={true}  // Automatically focus when Search opens
+                placeholder="Nhập vị trí"
+                autoFocus={true}  // Automatically focus when Search Map opens
             />
             <TouchableOpacity onPress={onCancel}>
                 <Text style={styles.cancelButton}>Hủy</Text>
             </TouchableOpacity>
         </View>
-        {/* Content for search results can be added here */}
-        <Text style={styles.searchText}>Hiển thị kết quả tìm kiếm...</Text>
+        <Text style={styles.searchText}>Hiển thị kết quả tìm kiếm trên bản đồ...</Text>
     </View>
 );
+
 // Mid section (Content)
-interface JobItemProps {
-    title: string;
-    company: string;
-    salary: string;
-    location: string;
-    timePosted: string;
-}
+// Job item component
+const JobItem = ({ title, company, salary, location }) => {
 
-const JobItem: React.FC<JobItemProps> = ({ title, company, salary, location, timePosted }) => (
-    <Card containerStyle={styles.cardContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.company}>{company}</Text>
-        <Text style={styles.salary}>{salary}</Text>
-        <Text style={styles.location}>{location}</Text>
-        <Text style={styles.timePosted}>{timePosted}</Text>
-    </Card>
-);
+    return (
+        <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>
+            <Card containerStyle={styles.cardContainer}>
 
-const Content = () => (
-    <FlatList
-        data={data}
-        renderItem={({ item }) => (
-            <JobItem
-                title={item.title}
-                company={item.company}
-                salary={item.salary}
-                location={item.location}
-                timePosted={item.timePosted}
-            />
-        )}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.contentContainer}
-    />
-);
+                {/* {isPremium && (
+                <View style={styles.premiumTag}>
+                    <Text style={styles.premiumText}>Tuyển dụng nhiều ứng viên</Text>
+                </View>
+            )} */}
+                <TouchableOpacity style={styles.icon}>
+                    <Icon name="bookmark" type="font-awesome" color="#666" size={25} />
+                </TouchableOpacity>
 
-// Bottom section (Navigation Bar)
-const Navbar = () => (
-    <View style={styles.navbar}>
-        <TouchableOpacity style={styles.navItem}>
-            <Icon name="home" type="font-awesome" color="#007AFF" />
-            <Text style={styles.navText}>Trang chủ</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-            <Icon name="bookmark" type="font-awesome" color="#666" />
-            <Text style={styles.navText}>Việc làm của tôi</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-            <Icon name="envelope" type="font-awesome" color="#666" />
-            <Text style={styles.navText}>Tin nhắn</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-            <Icon name="user" type="font-awesome" color="#666" />
-            <Text style={styles.navText}>Hồ sơ</Text>
-        </TouchableOpacity>
-    </View>
-);
+                <Text style={styles.title}>{title}</Text>
+                <View style={{ marginVertical: width * 0.03 }}>
+                    <Text style={styles.company}>{company}</Text>
+                    <Text style={styles.location}>{location}</Text>
+                </View>
+
+                <Text style={styles.salary}>{salary}</Text>
+                <View style={styles.easyApplyContainer}>
+                    <Icon name="send" type="material" color="#007AFF" size={14} style={styles.sendIcon} />
+                    <Text style={styles.easyApply}>Nộp đơn dễ dàng</Text>
+                </View>
+                {/* <Text style={styles.timePosted}>{timePosted}</Text> */}
+            </Card>
+        </View>
+    )
+};
+
+
+const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void, onMapSearchFocus: () => void }) => {
+    interface dataJobsIteam {
+        _id: string;
+        title: string;
+        company: string;
+        location: string;
+        salary: string;
+        jobType: string;
+        jobDescription: string;
+    }
+    const [dataJobs, setDataJobs] = useState<dataJobsIteam[]>([]);
+    const [loading, setLoading] = useState(true);  // Trạng thái loading
+
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            try {
+                console.log("Fetching data from:", `${BASE_URL}/jobs`);
+                const response = await fetch(`${BASE_URL}/jobs`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const responseJson = await response.json();
+                // setDataJobs(responseJson);
+                console.log(JSON.stringify(responseJson, null, 2));
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadData();
+    }, []);
+
+
+
+    if (loading) {
+        return (
+            <ActivityIndicator size="large" color="#007AFF" />
+        );
+    }
+
+    return (
+        <FlatList
+            data={dataJobs}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+                <JobItem
+                    title={item.title}
+                    company={item.company}
+                    salary={item.salary}
+                    location={item.location}
+                // timePosted={item.timePosted}
+                // isPremium={item.isPremium}
+                />
+            )}
+            ListHeaderComponent={<Header onSearchFocus={onSearchFocus} onMapSearchFocus={onMapSearchFocus} />}
+            ListFooterComponent={loading ? <ActivityIndicator size="small" color="#007AFF" /> : <Footer />}
+            onEndReachedThreshold={0.5}  // Trigger load when 50% from bottom
+        />
+    );
+};
+
+
 
 // Main component
 const Home = () => {
     const [isSearching, setIsSearching] = useState(false);
+    const [isMapSearching, setIsMapSearching] = useState(false);
 
     const handleSearchFocus = () => {
         setIsSearching(true);
+        setIsMapSearching(false); // Close map search if it’s open
+    };
+
+    const handleMapSearchFocus = () => {
+        setIsMapSearching(true);
+        setIsSearching(false); // Close text search if it’s open
     };
 
     const handleCancelSearch = () => {
         setIsSearching(false);
+        setIsMapSearching(false);
         Keyboard.dismiss(); // Dismiss keyboard when search is canceled
     };
+
     const { width } = useWindowDimensions();  // Get the current screen width
     const logoWidth = width * 0.5;
+
     return (
         <View style={styles.container}>
-            <Image source={require('../../../assets/images/logo.png')} style={[styles.logo, { width: 130, height: logoWidth * 0.25 }]} />
-
-            {!isSearching && <Header onSearchFocus={handleSearchFocus} />}
-            {isSearching ? (
-                <Search onCancel={handleCancelSearch} />
-            ) : (
-                <>
-                    <Content />
-                    <Navbar />
-                </>
-            )}
+            <View style={styles.logo}>
+                <Image source={require('../../../assets/images/logo.png')} style={{ width: 130, height: logoWidth * 0.25 }} />
+            </View>
+            <View style={styles.headContainer}>
+                {isSearching ? (
+                    <Search onCancel={handleCancelSearch} />
+                ) : isMapSearching ? (
+                    <SearchMap onCancel={handleCancelSearch} />
+                ) : (
+                    <>
+                        <Content onSearchFocus={handleSearchFocus} onMapSearchFocus={handleMapSearchFocus} />
+                    </>
+                )}
+            </View>
+            <View style={styles.navbar}>
+                <Navbar />
+            </View>
         </View>
+
     );
 };
 
@@ -164,28 +221,41 @@ export default Home;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f9f9f9',
+        backgroundColor: '#FFFFFF',
+    },
+    headContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        width: '100%',
+    },
+    logo: {
+        padding: "3%",
+        position: 'relative',
+        height: width * 0.15,
     },
     // Top section (Header)
     header: {
-        paddingHorizontal: 15,
         paddingVertical: 10,
-    },
-    logo: {
-        resizeMode: 'contain',
     },
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#f1f1f1',
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#CECECE',
         borderRadius: 9,
-        paddingHorizontal: 20,
-        marginTop: 10,
+        paddingHorizontal: 15,
     },
     searchInput: {
         flex: 1,
         marginLeft: 10,
-        color: '#333',
+        color: '#373737',
+    },
+    divider: {
+        width: 1,
+        height: '70%',
+        backgroundColor: '#CECECE',
+        marginHorizontal: 15,
     },
     // Search view styles
     searchContainer: {
@@ -216,17 +286,37 @@ const styles = StyleSheet.create({
         color: '#666',
     },
     // Mid section (Content)
-    contentContainer: {
-        paddingBottom: 80, // Avoid overlap with navbar
-    },
     cardContainer: {
         borderRadius: 8,
-        padding: 15,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        width: '100%',
+        alignSelf: 'center',
+        shadowColor: '#000',            // Darker shadow color
+        shadowOffset: { width: 0, height: 4 },  // Adjust shadow offset
+        shadowOpacity: 0.2,             // Increase opacity for a stronger effect
+        shadowRadius: 6,                // Smaller radius for sharper edges
+        elevation: 6,
+    },
+    premiumTag: {
+        backgroundColor: '#fdecef',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+        alignSelf: 'flex-start',
         marginBottom: 10,
     },
-    title: {
-        fontSize: 16,
+    premiumText: {
+        color: '#d32f2f',
         fontWeight: 'bold',
+        fontSize: 12,
+    },
+    title: {
+        fontSize: width * 0.05,
+        width: '85%',
+        flexWrap: 'wrap',
+        fontWeight: 'bold',
+        color: '#333',
         marginBottom: 5,
     },
     company: {
@@ -237,34 +327,40 @@ const styles = StyleSheet.create({
     salary: {
         color: '#007AFF',
         fontWeight: 'bold',
+        fontSize: 14,
+        marginBottom: 5,
     },
     location: {
-        fontSize: 13,
+        fontSize: 14,
         color: '#666',
-        marginTop: 5,
+        marginBottom: 5,
     },
     timePosted: {
         fontSize: 12,
         color: '#999',
+        marginTop: 10,
     },
-
-    navbar: {
+    easyApplyContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        backgroundColor: '#fff',
-        paddingVertical: 10,
-        borderTopColor: '#ddd',
-        borderTopWidth: 1,
-        position: 'absolute',
-        bottom: 0,
-        width: '100%',
-    },
-    navItem: {
         alignItems: 'center',
     },
-    navText: {
-        color: '#666',
-        fontSize: 12,
-        marginTop: 2,
+    sendIcon: {
+        marginRight: 5,
+    },
+    easyApply: {
+        fontSize: 14,
+        color: '#007AFF',
+    },
+    icon: {
+        position: 'absolute',
+        right: 0,
+        top: 0,
+    },
+    navbar: {
+        width: '100%',
+        position: 'relative',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#000000',
     },
 });
