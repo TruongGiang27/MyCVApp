@@ -5,12 +5,16 @@ import {
 } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import axios from 'axios';
 import { BASE_URL } from '../utils/url';
 
 const { width } = Dimensions.get('window');
-
+// types.ts
+export type RootStackParamList = {
+  HomeEmployer: undefined;
+  EmployerDetail: { jobDetails: Job };
+};
 interface Job {
   id: string;
   title: string;
@@ -37,13 +41,16 @@ const HomeEmployer = () => {
     fetchData();
   }, []);
 
-  const filteredData = jobs.filter((item) =>
-    item.title.toLowerCase().includes(searchQuery.toLowerCase())
-    || item.company.toLowerCase().includes(searchQuery.toLowerCase())
-    || item.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredData = jobs
+    .filter((item) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+      || item.company.toLowerCase().includes(searchQuery.toLowerCase())
+      || item.location.toLowerCase().includes(searchQuery.toLowerCase())
 
-  const navigation = useNavigation();
+    )
+    .slice(0, 5); // Limit the number of items displayed
+
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const [selectedOrder, setSelectedOrder] = useState('Giảm dần');
   const [showAccountMenu, setShowAccountMenu] = useState(false);
@@ -87,6 +94,21 @@ const HomeEmployer = () => {
       duration: 300,
       useNativeDriver: true,
     }).start(() => setShowMenu(false));
+  };
+
+  const handleSortChange = (itemValue: string) => {
+    setSelectedOrder(itemValue);
+    const sortedData = [...jobs].sort((a, b) => {
+      const salaryA = parseFloat(a.salary.replace(/[^0-9.-]+/g, '')); // Chuyển đổi chuỗi lương thành số
+      const salaryB = parseFloat(b.salary.replace(/[^0-9.-]+/g, ''));
+
+      if (itemValue === 'Giảm dần') {
+        return salaryB - salaryA; // Sắp xếp giảm dần
+      } else {
+        return salaryA - salaryB; // Sắp xếp tăng dần
+      }
+    });
+    setJobs(sortedData);
   };
 
   const menuItems = [
@@ -136,7 +158,13 @@ const HomeEmployer = () => {
                 {menuItems.map((item, index) => (
                   <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
                     if (item.title === 'Tạo mới') {
-                      navigation.navigate('ApplyManager' as never); // Navigate to ApplyManager
+                      navigation.navigate('JobPost' as never); // Navigate to JobPost
+                    }
+                    if (item.title === 'Việc làm') {
+                      navigation.navigate('InforManager' as never); // Navigate to JobPost
+                    }
+                    if (item.title === 'Ứng viên') {
+                      navigation.navigate('ApplyManager' as never); // Navigate to JobPost
                     }
                   }}
                   >
@@ -193,7 +221,7 @@ const HomeEmployer = () => {
             style={styles.picker}
             mode="dropdown"
             onFocus={handlePickerFocus}
-            onValueChange={(itemValue) => setSelectedOrder(itemValue)}
+            onValueChange={handleSortChange}
             dropdownIconColor="#1976D2"
           >
             <Picker.Item label="Giảm dần" value="Giảm dần" style={{ color: '#1976D2' }} />
@@ -201,18 +229,37 @@ const HomeEmployer = () => {
           </Picker>
         </View>
       </View>
-
       <ScrollView style={styles.cardContainer}>
         {filteredData.map((item, index) => (
-          <View key={index} style={styles.card}>
-            <Text style={styles.jobTitle}>Chức vụ: {item.title}</Text>
-            <Text style={styles.jobDetail}>Tên công ty: {item.company}</Text>
-            <Text style={styles.jobDetail}>Địa điểm: {item.location}</Text>
-            <Text style={styles.jobDetail}>Mức lương: {item.salary}</Text>
-            <Text style={styles.jobDetail}>Loại việc làm: {item.jobType}</Text>
-          </View>
+          <TouchableOpacity
+            key={index}
+            style={styles.card}
+            onPress={() => navigation.navigate('EmployerDetail', { jobDetails: item })}
+          >
+            <View style={styles.infoRow}>
+              <Icon name="work-outline" size={20} color="#011F82" style={styles.icon} />
+              <Text style={styles.jobTitle}>Chức vụ: {item.title}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Icon name="business" size={20} color="#011F82" style={styles.icon} />
+              <Text style={styles.jobDetail}>Tên công ty: {item.company}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Icon name="location-on" size={20} color="#011F82" style={styles.icon} />
+              <Text style={styles.jobDetail}>Địa điểm: {item.location}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Icon name="attach-money" size={20} color="#011F82" style={styles.icon} />
+              <Text style={styles.jobDetail}>Mức lương: {item.salary}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Icon name="category" size={20} color="#011F82" style={styles.icon} />
+              <Text style={styles.jobDetail}>Loại việc làm: {item.jobType}</Text>
+            </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
+
     </View>
   );
 };
@@ -383,17 +430,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     padding: 15,
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  icon: {
+    marginRight: 10,
   },
   jobTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
     color: '#011F82',
   },
   jobDetail: {
     fontSize: 14,
-    color: '#777',
-    marginBottom: 5,
+    color: '#555',
   },
 });

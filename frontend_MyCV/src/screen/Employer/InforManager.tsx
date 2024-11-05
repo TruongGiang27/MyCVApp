@@ -1,8 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../utils/url';
+import {useNavigation } from '@react-navigation/native';
 
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
@@ -13,9 +15,19 @@ interface Employer {
     salary: string; // Mức lương
     jobType: string; // Loại công việc
     jobDescription: string; // Mô tả công việc
+    requirements?: string; // Yêu cầu công việc
+    benefits?: string; // Quyền lợi
+    additionalInfo?: {
+        deadline?: string;
+        experience?: string;
+        education?: string;
+        quantity?: string;
+        gender?: string;
+    };
 }
 
 const InforManager = () => {
+    const navigation = useNavigation();
     const [employers, setEmployers] = useState<Employer[]>([]);
     const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
     const [editingMode, setEditingMode] = useState<boolean>(false);
@@ -34,6 +46,10 @@ const InforManager = () => {
 
         fetchData();
     }, []);
+
+    const BackHandler = () => {
+        navigation.goBack();
+    }
 
     const handleSearch = () => {
         const results = employers
@@ -112,17 +128,18 @@ const InforManager = () => {
             console.error('Error deleting job post:', error);
         }
     };
-    const displayEmployers = (filteredEmployers.length > 0 ? filteredEmployers : employers).slice(0, 3);
+    const displayEmployers = (filteredEmployers.length > 0 ? filteredEmployers : employers).slice(0, 5);
 
 
 
     return (
         <ScrollView style={styles.scrollView}>
             <View style={styles.container}>
+                <Icon name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" />
                 <Text style={styles.pageTitle}>Quản lý thông tin tuyển dụng</Text>
 
                 <View style={styles.searchSection}>
-                    <Icon name="magnify" size={24} color="#666" style={styles.searchIcon} />
+                    <Icon name="search" size={24} color="#666" style={styles.searchIcon} />
                     <TextInput
                         style={styles.searchInput}
                         placeholder="Tìm kiếm theo chức vụ, công ty, địa điểm..."
@@ -143,7 +160,7 @@ const InforManager = () => {
                                     <Icon name="pencil" size={24} color="#007bff" />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => handleDeleteConfirmation(viewingEmployer._id)} style={styles.iconButton}>
-                                    <Icon name="delete" size={24} color="#ff0000" />
+                                    <Icon name="trash" size={24} color="#ff0000" />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -168,6 +185,14 @@ const InforManager = () => {
                                 <View style={styles.detailRow}>
                                     <Text style={styles.titleText}>Loại công việc:</Text>
                                     <Text style={styles.viewText}>{viewingEmployer.jobType}</Text>
+                                </View>
+                                <View style={styles.detailRow}>
+                                    <Text style={styles.titleText}>Yêu cầu công việc:</Text>
+                                    <Text style={styles.viewText}>{viewingEmployer.requirements}</Text>
+                                </View>
+                                <View style={styles.detailRow}>
+                                    <Text style={styles.titleText}>Quyền lợi được hưởng:</Text>
+                                    <Text style={styles.viewText}>{viewingEmployer.benefits}</Text>
                                 </View>
                                 <View style={styles.detailRow}>
                                     <Text style={styles.titleText}>Mô tả công việc:</Text>
@@ -226,6 +251,26 @@ const InforManager = () => {
                                     />
                                 </View>
                                 <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>Yêu cầu công việc</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={formData?.requirements}
+                                        onChangeText={text => handleInputChange('requirements', text)}
+                                        placeholder="Nhập yêu cầu công việc"
+                                        multiline={true}
+                                    />
+                                </View>
+                                <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>Quyền lợi được hưởng</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={formData?.benefits}
+                                        onChangeText={text => handleInputChange('benefits', text)}
+                                        placeholder="Nhập quyền lợi được hưởng"
+                                        multiline={true}
+                                    />
+                                </View>
+                                <View style={styles.inputGroup}>
                                     <Text style={styles.inputLabel}>Mô tả công việc</Text>
                                     <TextInput
                                         style={[styles.input, styles.inputDescription]}
@@ -258,7 +303,7 @@ const InforManager = () => {
                                     <Icon name="eye" size={24} color="#007bff" />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => handleDeleteConfirmation(employer._id)} style={styles.iconButton}>
-                                    <Icon name="delete" size={24} color="#ff0000" />
+                                    <Icon name="trash" size={24} color="#ff0000" />
                                 </TouchableOpacity>
                             </View>
                         </View>

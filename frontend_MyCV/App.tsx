@@ -9,25 +9,29 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import JobList from './src/screen/User/JobList';
 import JobDetail from './src/screen/User/JobDetail';
 import HomeEmployer from './src/screen/Employer/HomeEmployer';
+import EmployerDetail from './src/screen/Employer/EmployerDetail';
 import JobPost from './src/screen/Employer/JobPost';
 import InforManager from './src/screen/Employer/InforManager';
+import ApplyManager from './src/screen/Employer/ApplyManager';
 // import EditCv from './src/screen/User/CVEdit';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="JobList" screenOptions={{ headerShown: false }}>
+            <Stack.Navigator initialRouteName="HomeEmployer" screenOptions={{ headerShown: false }}>
                 {/* <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Home" component={Home} />
-                <Stack.Screen name="CreateEmployer" component={CreateEmployer} />
-                <Stack.Screen name="InforEmployer" component={InforEmployer} /> */}
-                {/* <Stack.Screen name="JobPost" component={JobPost} /> */}
-                {/* <Stack.Screen name="Home" component={HomeEmployer} /> */}
-                <Stack.Screen name="JobList" component={JobList} />
-                <Stack.Screen name="JobDetail" component={JobDetail} />
-                {/* <Stack.Screen name="EditCv" component={EditCv} /> */}
+                <Stack.Screen name="CreateEmployer" component={CreateEmployer} /> */}
                 <Stack.Screen name="InforManager" component={InforManager} />
+                <Stack.Screen name="HomeEmployer" component={HomeEmployer} />
+                <Stack.Screen name="ApplyManager" component={ApplyManager} />
+                <Stack.Screen name="EmployerDetail" component={EmployerDetail} />
+                <Stack.Screen name="JobPost" component={JobPost} />
+                {/* <Stack.Screen name="Home" component={HomeEmployer} /> */}
+                {/* <Stack.Screen name="JobList" component={JobList} /> */}
+                {/* <Stack.Screen name="JobDetail" component={JobDetail} /> */}
+                {/* <Stack.Screen name="EditCv" component={EditCv} /> */}
 
 
             </Stack.Navigator>

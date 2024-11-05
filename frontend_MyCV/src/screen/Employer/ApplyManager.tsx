@@ -1,8 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../utils/url';
+import { useNavigation } from '@react-navigation/native';
+
 
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
@@ -16,6 +18,7 @@ interface Employer {
 }
 
 const ApplyManager = () => {
+    const navigation = useNavigation();
     const [employers, setEmployers] = useState<Employer[]>([]);
     const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
     const [editingMode, setEditingMode] = useState<boolean>(false);
@@ -119,7 +122,9 @@ const ApplyManager = () => {
     return (
         <ScrollView style={styles.scrollView}>
             <View style={styles.container}>
-                <Text style={styles.pageTitle}>Quản lý thông tin tuyển dụng</Text>
+                <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.goBack()} />
+
+                <Text style={styles.pageTitle}>Quản lý thông tin CVs</Text>
 
                 <View style={styles.searchSection}>
                     <Icon name="magnify" size={24} color="#666" style={styles.searchIcon} />
