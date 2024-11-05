@@ -15,7 +15,6 @@ import InforManager from './src/screen/Employer/InforManager';
 import ApplyManager from './src/screen/Employer/ApplyManager';
 // import EditCv from './src/screen/User/CVEdit';
 const Stack = createNativeStackNavigator();
-
 const App = () => {
     return (
         <NavigationContainer>
@@ -32,8 +31,6 @@ const App = () => {
                 {/* <Stack.Screen name="JobList" component={JobList} /> */}
                 {/* <Stack.Screen name="JobDetail" component={JobDetail} /> */}
                 {/* <Stack.Screen name="EditCv" component={EditCv} /> */}
-
-
             </Stack.Navigator>
         </NavigationContainer>
     );
