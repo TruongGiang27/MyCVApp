@@ -126,7 +126,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => voi
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const responseJson = await response.json();
-                // setDataJobs(responseJson);
+                setDataJobs(responseJson);
                 console.log(JSON.stringify(responseJson, null, 2));
             } catch (error) {
                 console.error("Failed to fetch data:", error);
