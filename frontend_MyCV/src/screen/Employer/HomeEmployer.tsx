@@ -389,6 +389,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#011F82',
   },
   jobDetail: {
     fontSize: 14,
