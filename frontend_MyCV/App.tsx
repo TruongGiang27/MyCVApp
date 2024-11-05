@@ -1,18 +1,13 @@
 import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import 'react-native-get-random-values';
-import Home from './src/screen/Home/Home';
-import Login from './src/screen/Home/Login';
-import CreateEmployer from './src/screen/Employer/CreateEmployer';
 // import InforEmployers from './src/screen/Admin/InforEmployers';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import JobList from './src/screen/User/JobList';
-import JobDetail from './src/screen/User/JobDetail';
 import HomeEmployer from './src/screen/Employer/HomeEmployer';
 // import EmployerDetail from './src/screen/Employer/EmployerDetail';
-import JobPost from './src/screen/Employer/JobPost';
-import InforManager from './src/screen/Employer/InforManager';
 import ApplyManager from './src/screen/Employer/ApplyManager';
+import InforManager from './src/screen/Employer/InforManager';
+import JobPost from './src/screen/Employer/JobPost';
 // import EditCv from './src/screen/User/CVEdit';
 const Stack = createNativeStackNavigator();
 const App = () => {
