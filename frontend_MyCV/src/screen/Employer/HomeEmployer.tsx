@@ -1,3 +1,4 @@
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert, Animated, Dimensions, Image, Modal, ScrollView,
@@ -8,12 +9,15 @@ import { Picker } from '@react-native-picker/picker';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import axios from 'axios';
 import { BASE_URL } from '../utils/url';
+import InforManager from './InforManager';
 
 const { width } = Dimensions.get('window');
 // types.ts
 export type RootStackParamList = {
   HomeEmployer: undefined;
   EmployerDetail: { jobDetails: Job };
+  Login: undefined;
+  InforManager: undefined;
 };
 interface Job {
   id: string;
@@ -28,6 +32,7 @@ interface Job {
 const HomeEmployer = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [userInfo, setUserInfo] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -119,10 +124,20 @@ const HomeEmployer = () => {
     { title: 'Phân tích', icon: 'bar-chart' },
     { title: 'Công cụ', icon: 'folder' },
   ];
+  
+  const signOut = async () => {
+    try {
+      await GoogleSignin.signOut();
+      setUserInfo(null);
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <StatusBar hidden />
+      <StatusBar />
       <View style={styles.header}>
         <Icon style={styles.menuIcon} name="menu" size={40} color="#fff" onPress={openMenu} />
         <TouchableOpacity onPress={() => navigation.navigate('HomeEmployer' as never)}>
@@ -186,11 +201,11 @@ const HomeEmployer = () => {
           <View style={styles.overlay}>
             <Animated.View style={[styles.menuAccountContainer, { transform: [{ translateX: slideAnim_r }] }]}>
               <ScrollView>
-                <TouchableOpacity style={styles.menuItem}>
+                <TouchableOpacity style={styles.menuItem} onPress={()=> navigation.navigate('InforManager')}>
                   <Icon name="settings" size={25} color="#011F82" />
                   <Text style={styles.menuText}>Cài đặt tài khoản</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuItem} onPress={() => console.log('Đăng xuất')}>
+                <TouchableOpacity style={styles.menuItem} onPress={signOut}>
                   <Icon name="logout" size={25} color="#011F82" />
                   <Text style={styles.menuText}>Đăng xuất</Text>
                 </TouchableOpacity>

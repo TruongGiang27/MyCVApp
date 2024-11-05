@@ -1,9 +1,9 @@
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../utils/url';
-import { useNavigation } from '@react-navigation/native';
 
 
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
@@ -127,7 +127,7 @@ const ApplyManager = () => {
                 <Text style={styles.pageTitle}>Quản lý thông tin CVs</Text>
 
                 <View style={styles.searchSection}>
-                    <Icon name="magnify" size={24} color="#666" style={styles.searchIcon} />
+                    <Icon name="search" size={24} color="#666" style={styles.searchIcon} />
                     <TextInput
                         style={styles.searchInput}
                         placeholder="Tìm kiếm theo chức vụ, công ty, địa điểm..."
