@@ -337,7 +337,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     container: {
-        padding: 20
+        flex: 1,
+        padding: 20,
     },
     pageTitle: {
         flex: 1,

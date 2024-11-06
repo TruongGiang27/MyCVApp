@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#011F82',
   },
@@ -134,20 +134,20 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   companyName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
     color: '#011F82',
     marginBottom: 4,
   },
   location: {
-    fontSize: 14,
+    fontSize: 20,
     color: '#6D92D0',
   },
   section: {
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '600',
     color: '#011F82',
     marginBottom: 8,
@@ -159,11 +159,11 @@ const styles = StyleSheet.create({
   },
   detailText: {
     marginLeft: 8,
-    fontSize: 14,
+    fontSize: 18,
     color: '#011F82',
   },
   description: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#4B5563',
     lineHeight: 22,
   },
