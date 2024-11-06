@@ -178,11 +178,12 @@ const HomeEmployer = () => {
                       navigation.navigate('JobPost' as never); // Navigate to JobPost
                     }
                     if (item.title === 'Việc làm') {
-                      navigation.navigate('InforManager' as never); // Navigate to JobPost
+                      navigation.navigate('InforManager' as never); // Navigate to InforManager
                     }
                     if (item.title === 'Ứng viên') {
-                      navigation.navigate('ApplyManager' as never); // Navigate to JobPost
+                      navigation.navigate('ApplyManager' as never); // Navigate to ApplyManager
                     }
+
                   }}
                   >
                     <View style={styles.iconLabel}>
