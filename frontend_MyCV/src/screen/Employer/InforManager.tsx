@@ -4,7 +4,7 @@ import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View 
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../utils/url';
-import {useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
@@ -128,28 +128,31 @@ const InforManager = () => {
             console.error('Error deleting job post:', error);
         }
     };
-    const displayEmployers = (filteredEmployers.length > 0 ? filteredEmployers : employers).slice(0, 5);
+    const displayEmployers = (filteredEmployers.length > 0 ? filteredEmployers : employers);
 
 
 
     return (
-        <ScrollView style={styles.scrollView}>
-            <View style={styles.container}>
-                <Icon name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" />
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <Icon style={styles.icon} name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" />
                 <Text style={styles.pageTitle}>Quản lý thông tin tuyển dụng</Text>
+            </View>
 
-                <View style={styles.searchSection}>
-                    <Icon name="search" size={24} color="#666" style={styles.searchIcon} />
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Tìm kiếm theo chức vụ, công ty, địa điểm..."
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                    />
-                    <TouchableOpacity style={styles.buttonSearch} onPress={handleSearch}>
-                        <Text style={styles.searchButtonText}>Tìm kiếm</Text>
-                    </TouchableOpacity>
-                </View>
+            <View style={styles.searchSection}>
+                <Icon name="search" size={24} color="#666" style={styles.searchIcon} />
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Vui lòng nhập từ khóa tìm kiếm"
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                    placeholderTextColor={'#666'}
+                />
+                <TouchableOpacity style={styles.buttonSearch} onPress={handleSearch}>
+                    <Text style={styles.searchButtonText}>Tìm kiếm</Text>
+                </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.scrollView}>
 
                 {viewingEmployer ? (
                     <View style={styles.formContainer}>
@@ -166,6 +169,7 @@ const InforManager = () => {
                         </View>
                         {!editingMode ? (
                             <>
+                                {/* <ScrollView> */}
                                 <View style={styles.detailRow}>
                                     <Text style={styles.titleText}>Chức vụ:</Text>
                                     <Text style={styles.viewText}>{viewingEmployer.title}</Text>
@@ -202,6 +206,8 @@ const InforManager = () => {
                                 <TouchableOpacity style={styles.buttonCancel} onPress={handleBackToList}>
                                     <Text style={styles.textbtn}>Quay lại</Text>
                                 </TouchableOpacity>
+                                {/* </ScrollView> */}
+
                             </>
                         ) : (
                             <>
@@ -280,7 +286,6 @@ const InforManager = () => {
                                         multiline={true}
                                     />
                                 </View>
-
                                 <TouchableOpacity style={styles.buttonEdit} onPress={handleSave}>
                                     <Text style={styles.textbtn}>Lưu</Text>
                                 </TouchableOpacity>
@@ -309,8 +314,9 @@ const InforManager = () => {
                         </View>
                     ))
                 )}
-            </View>
-        </ScrollView>
+            </ScrollView >
+
+        </View>
     );
 };
 
@@ -321,17 +327,30 @@ const styles = StyleSheet.create({
     container: {
         padding: 20
     },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        // justifyContent: 'space-between',
+    },
+    icon: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+        color: '#011F82',
+    },
     pageTitle: {
         fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 20,
-        color: '#333'
+        color: '#011F82',
+        flex: 1,
     },
     searchSection: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 15
+        marginBottom: 15,
     },
     searchIcon: {
         paddingHorizontal: 10
@@ -344,7 +363,7 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     buttonSearch: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#011F82',
         paddingHorizontal: 15,
         paddingVertical: 10,
         borderRadius: 8,
@@ -431,6 +450,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         alignItems: 'center',
         marginTop: 20,
+        // position: 'absolute',
     },
     textbtn: {
         color: '#ffffff',
