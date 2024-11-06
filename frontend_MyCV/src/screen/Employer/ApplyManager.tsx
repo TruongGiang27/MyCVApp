@@ -1,248 +1,432 @@
-//Giang
-import { Picker } from '@react-native-picker/picker';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import React, { useState } from 'react';
-import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
-import { Button, Card, TextInput, Title, Text } from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../utils/url';
 
-type RootStackParamList = {
-    Login: undefined;
-    Home: undefined;
-    CreateEmployer: undefined;
-    InforEmployer: undefined;
-    HomeEmployer: undefined;
-    ApplyManager: undefined;
-};
-// Khai báo kiểu cho props 'navigation'
-type ApplyManagerScreenNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'ApplyManager'
->;
 
-type Props = {
-    navigation: ApplyManagerScreenNavigationProp;
-};
+// Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
+interface Employer {
+    _id: string;
+    title: string; // Chức vụ
+    company: string; // Tên công ty
+    location: string; // Địa điểm làm việc
+    salary: string; // Mức lương
+    jobType: string; // Loại công việc
+    jobDescription: string; // Mô tả công việc
+}
 
-
-const ApplyManager: React.FC<Props> = ({ navigation }) => {
-    const [selectedCompany, setSelectedCompany] = useState('');
-    const [companyName, setCompanyName] = useState('');
-    const [numberOfEmployees, setNumberOfEmployees] = useState('');
-    const [fullName, setFullName] = useState('');
-    const [howDidYouHear, setHowDidYouHear] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [describe, setDescribe] = useState('');
-    const [error, setError] = useState('');
-    
-    const [selectedLocation, setSelectedLocation] = useState('');
-
-    
-  
-
-    const handlePickerFocus = () => {
-        Keyboard.dismiss();
-    };
-
-    const validatePhoneNumber = (text: string) => {
-        const phoneRegex = /^0\d{0,9}$/;
-        if (text === '' || phoneRegex.test(text)) {
-            setError('');
-            setPhoneNumber(text);
-        } else {
-            setError('Số điện thoại phải bắt đầu bằng 0. Ví dụ: 0987654321');
-        }
-    };
-
-    const handleSubmit = async () => {
-        if (selectedCompany && companyName && numberOfEmployees && fullName && howDidYouHear && phoneNumber && describe) {
+const ApplyManager = () => {
+    const navigation = useNavigation();
+    const [employers, setEmployers] = useState<Employer[]>([]);
+    const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
+    const [editingMode, setEditingMode] = useState<boolean>(false);
+    const [formData, setFormData] = useState<Employer | null>(null);
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [filteredEmployers, setFilteredEmployers] = useState<Employer[]>([]); // Lưu danh sách đã lọc
+    useEffect(() => {
+        const fetchData = async () => {
             try {
-                const employerData = {
-                    selectedCompany,
-                    companyName,
-                    numberOfEmployees,
-                    fullName,
-                    howDidYouHear,
-                    phoneNumber,
-                    describe,
-                };
-                console.log('Submitting employer data:', employerData);
-                const response = await axios.post(`${BASE_URL}/employers`, employerData);
-                Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
-                navigation.navigate("HomeEmployer");
+                const response = await axios.get(`${BASE_URL}/jobs`); // Đường dẫn API từ JobPost
+                setEmployers(response.data);
             } catch (error) {
-                console.error('Error creating employer:', error);
-                Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
+                console.error('Error fetching job data:', error);
             }
-        } else {
-            Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin');
+        };
+
+        fetchData();
+    }, []);
+
+    const handleSearch = () => {
+        const results = employers
+            .filter(emp =>
+                emp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                emp.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                emp.location.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+        setFilteredEmployers(results);
+    };
+
+    const handleViewDetails = (employer: Employer) => {
+        setViewingEmployer(employer);
+        setFormData(employer);
+        setEditingMode(false);
+    };
+
+    const handleEdit = () => {
+        setEditingMode(true);
+    };
+
+    const handleInputChange = (key: keyof Employer, value: string) => {
+        setFormData(prev => prev ? { ...prev, [key]: value } : null);
+    };
+
+    const handleSave = async () => {
+        if (formData) {
+            try {
+                const response = await axios.put(`${BASE_URL}/jobs/${formData._id}`, formData);
+                setEmployers(employers.map(emp => emp._id === formData._id ? response.data : emp));
+                setViewingEmployer(null);
+                setEditingMode(false);
+                Alert.alert('Update', `Updated job post: ${formData.title}`);
+            } catch (error) {
+                Alert.alert('Error', 'Error updating job post');
+                console.error('Error updating job post:', error);
+            }
         }
     };
+
+    const handleCancel = () => {
+        setEditingMode(false);
+    };
+
+    const handleBackToList = () => {
+        setViewingEmployer(null);
+    };
+
+    const handleDeleteConfirmation = (_id: string) => {
+        Alert.alert(
+            'Xác nhận xóa',
+            'Bạn có chắc chắn muốn xóa bài đăng này?',
+            [
+                {
+                    text: 'Hủy',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Xóa',
+                    style: 'destructive',
+                    onPress: () => handleDelete(_id),
+                },
+            ],
+            { cancelable: true }
+        );
+    };
+
+    const handleDelete = async (_id: string) => {
+        try {
+            await axios.delete(`${BASE_URL}/jobs/${_id}`);
+            setEmployers(employers.filter(emp => emp._id !== _id));
+            Alert.alert('Delete', `Deleted job post: ${_id}`);
+            setViewingEmployer(null);
+        } catch (error) {
+            Alert.alert('Error', 'Error deleting job post');
+            console.error('Error deleting job post:', error);
+        }
+    };
+    const displayEmployers = (filteredEmployers.length > 0 ? filteredEmployers : employers).slice(0, 3);
+
 
 
     return (
-        <KeyboardAvoidingView
-            behavior="padding">
+        <ScrollView style={styles.scrollView}>
+            <View style={styles.container}>
+                <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.goBack()} />
 
-            <ScrollView>
-                <View style={styles.container}>
-                    <Title style={styles.title}>Tạo đơn tuyển dụng</Title>
-                    <Image style={styles.imgBg}
-                        source={require('../../../assets/images/applyManager.png')}
+                <Text style={styles.pageTitle}>Quản lý thông tin CVs</Text>
+
+                <View style={styles.searchSection}>
+                    <Icon name="search" size={24} color="#666" style={styles.searchIcon} />
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Tìm kiếm theo chức vụ, công ty, địa điểm..."
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
                     />
-                    <Card style={styles.card}>
-                        <Card.Content>
-                            <Title style={styles.subtitle}>Ngành của công ty</Title>
-                            <View style={styles.pickerContainer}>
-                                <Picker
-                                    selectedValue={selectedCompany}
-                                    onValueChange={(itemValue: string, itemIndex: number) => setSelectedCompany(itemValue)}
-                                    onFocus={handlePickerFocus}
-                                    style={styles.picker}
-                                    itemStyle={styles.pickerItem}
-                                    mode="dialog">
-                                    <Picker.Item label="Chọn một tùy chọn" value="choose" />
-                                    <Picker.Item label="Bán lẻ và buôn bán" value="sales" />
-                                    <Picker.Item label="Bảo hiểm" value="insurance" />
-                                    <Picker.Item label="Công nghệ" value="technology" />
-                                    <Picker.Item label="Dịch vụ" value="service" />
-                                    <Picker.Item label="Giáo dục" value="education" />
-                                    <Picker.Item label="IT" value="IT" />
-                                    <Picker.Item label="Y tế" value="healthcare" />
-                                    <Picker.Item label="Xây dựng" value="construction" />
-                                    <Picker.Item label="Bất động sản" value="realEstate" />
-                                </Picker>
-                            </View>
-
-                            <Title style={styles.subtitle}>Chức danh</Title>
-                            <TextInput
-                                label="Vui lòng nhập chức danh muốn tuyển dụng"
-                                value={companyName}
-                                onChangeText={setCompanyName}
-                                style={styles.input}
-                                mode="outlined"
-                                textColor='#6D92D0'
-                                theme={{ colors: { primary: '#011F82', outline: '#B9D6F3' } }}
-                            />
-                            <Title style={styles.subtitle}>Số lượng người cần tuyển dụng cho việc làm này</Title>
-                            <View style={styles.pickerContainer}>
-                                <Picker
-                                    selectedValue={numberOfEmployees}
-                                    onValueChange={(itemValue: string, itemIndex: number) => setNumberOfEmployees(itemValue)}
-                                    onFocus={handlePickerFocus}
-                                    style={styles.picker}
-                                    itemStyle={styles.pickerItem}
-
-                                >
-                                    <Picker.Item label="Chọn một tùy chọn" value="choose" />
-                                    <Picker.Item label="1" value="1" />
-                                    <Picker.Item label="2" value="2" />
-                                    <Picker.Item label="3" value="3" />
-                                    <Picker.Item label="4" value="4" />
-                                    <Picker.Item label="5" value="5" />
-                                    <Picker.Item label="6" value="6" />
-                                    <Picker.Item label="7" value="7" />
-                                    <Picker.Item label="8" value="8" />
-                                    <Picker.Item label="9" value="9" />
-                                    <Picker.Item label="10" value="10" />
-                                    <Picker.Item label="10+" value="10-n" />
-                                    <Picker.Item label="Tôi cần liên tục tuyển dụng cho vị trí này" value="continuous" />
-
-                                </Picker>
-                            </View>
-
-                            <Title style={styles.subtitle}>Bạn muốn quảng cáo việc làm này ở đâu?</Title>
-
-                            <TextInput
-                                label="Nhập địa điểm của bạn"
-                                value={fullName}
-                                onChangeText={setFullName}
-                                style={styles.input}
-                                mode="outlined"
-                                textColor='#6D92D0'
-                                theme={{ colors: { primary: '#011F82', outline: '#B9D6F3' } }}
-                            />
-                            <Button mode="contained" onPress={handleSubmit} style={styles.button}>Submit</Button>
-                        </Card.Content>
-                    </Card>
+                    <TouchableOpacity style={styles.buttonSearch} onPress={handleSearch}>
+                        <Text style={styles.searchButtonText}>Tìm kiếm</Text>
+                    </TouchableOpacity>
                 </View>
-            </ScrollView>
-        </KeyboardAvoidingView>
+
+                {viewingEmployer ? (
+                    <View style={styles.formContainer}>
+                        <View style={styles.employerHeader}>
+                            <Text style={styles.formTitle}>Thông tin chi tiết</Text>
+                            <View style={styles.actionIconsRight}>
+                                <TouchableOpacity onPress={handleEdit} style={styles.iconButton}>
+                                    <Icon name="pencil" size={24} color="#007bff" />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => handleDeleteConfirmation(viewingEmployer._id)} style={styles.iconButton}>
+                                    <Icon name="delete" size={24} color="#ff0000" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        {!editingMode ? (
+                            <>
+                                <View style={styles.detailRow}>
+                                    <Text style={styles.titleText}>Chức vụ:</Text>
+                                    <Text style={styles.viewText}>{viewingEmployer.title}</Text>
+                                </View>
+                                <View style={styles.detailRow}>
+                                    <Text style={styles.titleText}>Tên công ty:</Text>
+                                    <Text style={styles.viewText}>{viewingEmployer.company}</Text>
+                                </View>
+                                <View style={styles.detailRow}>
+                                    <Text style={styles.titleText}>Địa điểm:</Text>
+                                    <Text style={styles.viewText}>{viewingEmployer.location}</Text>
+                                </View>
+                                <View style={styles.detailRow}>
+                                    <Text style={styles.titleText}>Mức lương:</Text>
+                                    <Text style={styles.viewText}>{viewingEmployer.salary}</Text>
+                                </View>
+                                <View style={styles.detailRow}>
+                                    <Text style={styles.titleText}>Loại công việc:</Text>
+                                    <Text style={styles.viewText}>{viewingEmployer.jobType}</Text>
+                                </View>
+                                <View style={styles.detailRow}>
+                                    <Text style={styles.titleText}>Mô tả công việc:</Text>
+                                    <Text style={styles.viewText}>{viewingEmployer.jobDescription}</Text>
+                                </View>
+
+                                <TouchableOpacity style={styles.buttonCancel} onPress={handleBackToList}>
+                                    <Text style={styles.textbtn}>Quay lại</Text>
+                                </TouchableOpacity>
+                            </>
+                        ) : (
+                            <>
+                                <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>Chức vụ</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={formData?.title}
+                                        onChangeText={text => handleInputChange('title', text)}
+                                        placeholder="Nhập chức vụ"
+                                    />
+                                </View>
+                                <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>Tên công ty</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={formData?.company}
+                                        onChangeText={text => handleInputChange('company', text)}
+                                        placeholder="Nhập tên công ty"
+                                    />
+                                </View>
+                                <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>Địa điểm</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={formData?.location}
+                                        onChangeText={text => handleInputChange('location', text)}
+                                        placeholder="Nhập địa điểm"
+                                    />
+                                </View>
+                                <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>Mức lương</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={formData?.salary}
+                                        onChangeText={text => handleInputChange('salary', text)}
+                                        placeholder="Nhập mức lương"
+                                    />
+                                </View>
+                                <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>Loại công việc</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={formData?.jobType}
+                                        onChangeText={text => handleInputChange('jobType', text)}
+                                        placeholder="Nhập loại công việc"
+                                    />
+                                </View>
+                                <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>Mô tả công việc</Text>
+                                    <TextInput
+                                        style={[styles.input, styles.inputDescription]}
+                                        value={formData?.jobDescription}
+                                        onChangeText={text => handleInputChange('jobDescription', text)}
+                                        placeholder="Nhập mô tả công việc"
+                                        multiline={true}
+                                    />
+                                </View>
+
+                                <TouchableOpacity style={styles.buttonEdit} onPress={handleSave}>
+                                    <Text style={styles.textbtn}>Lưu</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.buttonCancel} onPress={handleCancel}>
+                                    <Text style={styles.textbtn}>Hủy chỉnh sửa</Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    </View>
+                ) : (
+                    displayEmployers.map((employer, index) => (
+                        <View key={index} style={styles.employerContainer}>
+                            <View style={styles.employerInfo}>
+                                <Text style={styles.jobTitle}>Chức vụ: {employer.title}</Text>
+                                <Text style={styles.jobLocation}>Công ty: {employer.company}</Text>
+                                <Text style={styles.jobDetail}>Mức lương: {employer.salary}</Text>
+                            </View>
+                            <View style={styles.actionIconsRight}>
+                                <TouchableOpacity onPress={() => handleViewDetails(employer)} style={styles.iconButton}>
+                                    <Icon name="eye" size={24} color="#007bff" />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => handleDeleteConfirmation(employer._id)} style={styles.iconButton}>
+                                    <Icon name="delete" size={24} color="#ff0000" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    ))
+                )}
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
-
+    scrollView: {
+        backgroundColor: '#f5f5f5'
+    },
     container: {
+        padding: 20
+    },
+    pageTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+        color: '#333'
+    },
+    searchSection: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 15
+    },
+    searchIcon: {
+        paddingHorizontal: 10
+    },
+    searchInput: {
         flex: 1,
-        justifyContent: 'center',
-        padding: 20,
-        backgroundColor: '#f5f5f5',
-    },
-    imgBg: {
-        width: '100%',
-        height: 250,
-        marginBottom: 16,
-    },
-    card: {
+        backgroundColor: '#fff',
+        padding: 10,
         borderRadius: 8,
-        padding: 16,
+        fontSize: 16
     },
-    title: {
-        marginBottom: 10,
-        lineHeight: 50,
-        marginTop: 10,
-        fontSize: 40,
-        fontWeight: 'bold',
-        color: '#011F82',
-        textAlign: 'center',
+    buttonSearch: {
+        backgroundColor: '#007bff',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 8,
+        marginLeft: 10
     },
-    subtitle: {
-        marginBottom: 3,
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#011F82',
-        textAlign: 'left',
+    searchButtonText: {
+        color: '#fff',
+        fontSize: 16
     },
-    describe: {
-        fontSize: 14,
-        marginBottom: 5,
-        color: '#6D92D0',
-    },
-    pickerContainer: {
+    employerContainer: {
+        backgroundColor: '#fff',
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 15,
+        borderColor: '#ddd',
         borderWidth: 1,
-        borderColor: '#B9D6F3',
-        borderRadius: 4,
-        marginBottom: 16,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
-    picker: {
-        height: 50,
-        width: '100%',
-        backgroundColor: 'white',
-        color: '#6D92D0',
+    employerInfo: {
+        flex: 3
     },
-    pickerItem: {
+    jobTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333'
+    },
+    jobLocation: {
         fontSize: 16,
-        color: '#6D92D0',
-        textAlign: 'center',
+        color: '#666',
+        marginBottom: 5
+    },
+    jobDetail: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 10
+    },
+    actionIconsRight: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        flex: 1,
+        marginLeft: 15
+    },
+    iconButton: {
+        marginLeft: 15
+    },
+    formContainer: {
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 20,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
+    employerHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 15
+    },
+    formTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333'
+    },
+    detailRow: {
+        marginBottom: 15,
+    },
+    titleText: {
+        fontSize: 18,
+        color: '#011F82',
+        fontWeight: 'bold',
+    },
+    viewText: {
+        fontSize: 16,
+        color: '#333',
+        lineHeight: 24,
+        marginBottom: 10,
+    },
+    buttonCancel: {
+        backgroundColor: '#011F82',
+        paddingVertical: 15,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    textbtn: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    buttonEdit: {
+        backgroundColor: '#007bff',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        paddingVertical: 15,
+        marginTop: 10
+    },
+    inputGroup: {
+        marginBottom: 15,
+    },
+    inputLabel: {
+        fontSize: 16,
+        color: '#011F82',
+        fontWeight: 'bold',
+        marginBottom: 5,
     },
     input: {
-        backgroundColor: 'white',
-        marginBottom: 16,
-        borderRadius: 8,
-        color: '#6D92D0',
+        backgroundColor: '#f0f0f0',
+        padding: 10,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        fontSize: 16,
+        color: '#333',
     },
-    button: {
-        marginTop: 16,
-        backgroundColor: '#011F82',
-
-    },
-    error: {
-        color: 'red',
-        marginTop: 5,
-    },
-
+    inputDescription: {
+        height: 80,
+        textAlignVertical: 'top'
+    }
 });
 
 export default ApplyManager;

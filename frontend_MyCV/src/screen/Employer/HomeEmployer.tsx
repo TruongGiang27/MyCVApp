@@ -1,30 +1,46 @@
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { Picker } from '@react-native-picker/picker';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { Icon } from '@rneui/themed';
+import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Alert, Animated, Dimensions, Image, Modal, ScrollView,
-  StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View, StatusBar
+  Animated, Dimensions, Image,
+  Keyboard,
+  Modal, ScrollView,
+  StatusBar,
+  StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View
 } from 'react-native';
-import { Icon } from '@rneui/themed';
-import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
+import { BASE_URL } from '../utils/url';
 
 const { width } = Dimensions.get('window');
-
-interface ApplyDataItem {
-  companyName: string;
-  numberOfEmployees: number;
-  fullName: string;
+// types.ts
+export type RootStackParamList = {
+  HomeEmployer: undefined;
+  EmployerDetail: { jobDetails: Job };
+  Login: undefined;
+  InforManager: undefined;
+};
+interface Job {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  salary: string;
+  jobType: string;
+  jobDescription: string;
 }
 
 const HomeEmployer = () => {
-  const [applyData, setApplyData] = useState<ApplyDataItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState(''); // Thêm state searchQuery cho tìm kiếm
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [userInfo, setUserInfo] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://192.168.0.121:3000/employers');
-        setApplyData(response.data);
+        const response = await axios.get(`${BASE_URL}/jobs`);
+        setJobs(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -32,17 +48,26 @@ const HomeEmployer = () => {
     fetchData();
   }, []);
 
-  const filteredData = applyData.filter((item) =>
-    item.companyName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredData = jobs
+    .filter((item) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+      || item.company.toLowerCase().includes(searchQuery.toLowerCase())
+      || item.location.toLowerCase().includes(searchQuery.toLowerCase())
 
-  const navigation = useNavigation();
+    )
+    .slice(0, 5); // Limit the number of items displayed
+
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const [selectedOrder, setSelectedOrder] = useState('Giảm dần');
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const slideAnim_l = useRef(new Animated.Value(-width)).current;
   const slideAnim_r = useRef(new Animated.Value(width)).current;
+
+  const handlePickerFocus = () => {
+    Keyboard.dismiss();
+  };
 
   const openAccountMenu = () => {
     setShowAccountMenu(true);
@@ -78,6 +103,21 @@ const HomeEmployer = () => {
     }).start(() => setShowMenu(false));
   };
 
+  const handleSortChange = (itemValue: string) => {
+    setSelectedOrder(itemValue);
+    const sortedData = [...jobs].sort((a, b) => {
+      const salaryA = parseFloat(a.salary.replace(/[^0-9.-]+/g, '')); // Chuyển đổi chuỗi lương thành số
+      const salaryB = parseFloat(b.salary.replace(/[^0-9.-]+/g, ''));
+
+      if (itemValue === 'Giảm dần') {
+        return salaryB - salaryA; // Sắp xếp giảm dần
+      } else {
+        return salaryA - salaryB; // Sắp xếp tăng dần
+      }
+    });
+    setJobs(sortedData);
+  };
+
   const menuItems = [
     { title: 'Tạo mới', icon: 'add-circle-outline' },
     { title: 'Việc làm', icon: 'shopping-bag' },
@@ -86,12 +126,22 @@ const HomeEmployer = () => {
     { title: 'Phân tích', icon: 'bar-chart' },
     { title: 'Công cụ', icon: 'folder' },
   ];
+  
+  const signOut = async () => {
+    try {
+      await GoogleSignin.signOut();
+      setUserInfo(null);
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor={'red'} />
+      <StatusBar />
       <View style={styles.header}>
-        <Icon style={styles.menuIcon} name="menu" size={40} color="#fff" onPress={(openMenu)} />
+        <Icon style={styles.menuIcon} name="menu" size={40} color="#fff" onPress={openMenu} />
         <TouchableOpacity onPress={() => navigation.navigate('HomeEmployer' as never)}>
           <Image
             source={require('../../../assets/images/logo.png')}
@@ -101,13 +151,14 @@ const HomeEmployer = () => {
         <Icon style={styles.accountIcon} name="account-circle" size={40} color="#011F82" onPress={openAccountMenu} />
       </View>
 
-        {/* Menu trượt */}
-        {showMenu && (
+      {/* Sliding menu */}
+      {showMenu && (
         <TouchableNativeFeedback onPress={closeMenu}>
           <View style={styles.overlay}>
             <Animated.View
-              style={[styles.menuContainer,
-              { transform: [{ translateX: slideAnim_l }] },
+              style={[
+                styles.menuContainer,
+                { transform: [{ translateX: slideAnim_l }] },
               ]}
             >
               <View style={styles.menuItem}>
@@ -124,8 +175,15 @@ const HomeEmployer = () => {
                 {menuItems.map((item, index) => (
                   <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
                     if (item.title === 'Tạo mới') {
-                      navigation.navigate('ApplyManager' as never); // Điều hướng tới ApplyManager
+                      navigation.navigate('JobPost' as never); // Navigate to JobPost
                     }
+                    if (item.title === 'Việc làm') {
+                      navigation.navigate('InforManager' as never); // Navigate to InforManager
+                    }
+                    if (item.title === 'Ứng viên') {
+                      navigation.navigate('ApplyManager' as never); // Navigate to ApplyManager
+                    }
+
                   }}
                   >
                     <View style={styles.iconLabel}>
@@ -141,17 +199,16 @@ const HomeEmployer = () => {
         </TouchableNativeFeedback>
       )}
 
-
       <Modal visible={showAccountMenu} transparent animationType="fade">
         <TouchableNativeFeedback onPress={closeAccountMenu}>
           <View style={styles.overlay}>
             <Animated.View style={[styles.menuAccountContainer, { transform: [{ translateX: slideAnim_r }] }]}>
               <ScrollView>
-                <TouchableOpacity style={styles.menuItem}>
+                <TouchableOpacity style={styles.menuItem} onPress={()=> navigation.navigate('InforManager')}>
                   <Icon name="settings" size={25} color="#011F82" />
                   <Text style={styles.menuText}>Cài đặt tài khoản</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuItem} onPress={() => console.log('Đăng xuất')}>
+                <TouchableOpacity style={styles.menuItem} onPress={signOut}>
                   <Icon name="logout" size={25} color="#011F82" />
                   <Text style={styles.menuText}>Đăng xuất</Text>
                 </TouchableOpacity>
@@ -167,8 +224,8 @@ const HomeEmployer = () => {
             style={styles.filterText}
             placeholder="Tìm kiếm việc làm"
             placeholderTextColor="#9E9E9E"
-            value={searchQuery} // Liên kết searchQuery với TextInput
-            onChangeText={(text) => setSearchQuery(text)} // Cập nhật searchQuery khi người dùng nhập
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
           />
           <TouchableOpacity style={styles.searchIcon} onPress={() => console.log("Tìm kiếm...")}>
             <Icon name="search" size={24} color="#fff" />
@@ -180,24 +237,47 @@ const HomeEmployer = () => {
           <Picker
             selectedValue={selectedOrder}
             style={styles.picker}
-            onValueChange={(itemValue) => setSelectedOrder(itemValue)}
+            mode="dropdown"
+            onFocus={handlePickerFocus}
+            onValueChange={handleSortChange}
             dropdownIconColor="#1976D2"
           >
-            <Picker.Item label="Giảm dần" value="Giảm dần" />
-            <Picker.Item label="Tăng dần" value="Tăng dần" />
+            <Picker.Item label="Giảm dần" value="Giảm dần" style={{ color: '#1976D2' }} />
+            <Picker.Item label="Tăng dần" value="Tăng dần" style={{ color: '#1976D2' }} />
           </Picker>
         </View>
       </View>
-
       <ScrollView style={styles.cardContainer}>
         {filteredData.map((item, index) => (
-          <View key={index} style={styles.card}>
-            <Text style={styles.jobTitle}>Chức danh: {item.companyName}</Text>
-            <Text style={styles.jobDetail}>Số lượng cần tuyển: {item.numberOfEmployees}</Text>
-            <Text style={styles.jobDetail}>Địa điểm: {item.fullName}</Text>
-          </View>
+          <TouchableOpacity
+            key={index}
+            style={styles.card}
+            onPress={() => navigation.navigate('EmployerDetail', { jobDetails: item })}
+          >
+            <View style={styles.infoRow}>
+              <Icon name="work-outline" size={20} color="#011F82" style={styles.icon} />
+              <Text style={styles.jobTitle}>Chức vụ: {item.title}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Icon name="business" size={20} color="#011F82" style={styles.icon} />
+              <Text style={styles.jobDetail}>Tên công ty: {item.company}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Icon name="location-on" size={20} color="#011F82" style={styles.icon} />
+              <Text style={styles.jobDetail}>Địa điểm: {item.location}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Icon name="attach-money" size={20} color="#011F82" style={styles.icon} />
+              <Text style={styles.jobDetail}>Mức lương: {item.salary}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Icon name="category" size={20} color="#011F82" style={styles.icon} />
+              <Text style={styles.jobDetail}>Loại việc làm: {item.jobType}</Text>
+            </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
+
     </View>
   );
 };
@@ -221,6 +301,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     resizeMode: 'contain',
+    
   },
   accountIcon: {
     padding: 15,
@@ -236,13 +317,11 @@ const styles = StyleSheet.create({
     zIndex: 10,
     elevation: 10,
   },
-
   menuText: {
     color: '#011F82',
     fontSize: 25,
     marginLeft: 10,
   },
-
   menuContainer: {
     position: 'absolute',
     top: 0,
@@ -251,9 +330,9 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#fff',
     padding: 10,
-    zIndex: 11, // Đảm bảo menu nằm trên overlay
-    elevation: 11, // Cho Android
-    shadowColor: '#000', // Đổ bóng cho iOS
+    zIndex: 11,
+    elevation: 11,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
@@ -262,12 +341,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginBottom: 10,
   },
-
   closeItem: {
     padding: 10,
     borderRadius: 50,
   },
-
   headerMenu: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -276,11 +353,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#444',
   },
-
   menu: {
     marginTop: 10,
   },
-
   menuAccountContainer: {
     position: 'absolute',
     top: 0,
@@ -289,14 +364,13 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#fff',
     padding: 10,
-    zIndex: 11, // Đảm bảo menu nằm trên overlay
-    elevation: 11, // Cho Android
-    shadowColor: '#000', // Đổ bóng cho iOS
+    zIndex: 11,
+    elevation: 11,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
-
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -305,7 +379,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#B9D6F3',
   },
-
   iconLabel: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -376,16 +449,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     padding: 15,
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  icon: {
+    marginRight: 10,
   },
   jobTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
+    color: '#011F82',
   },
   jobDetail: {
     fontSize: 14,
-    color: '#777',
-    marginBottom: 5,
+    color: '#555',
   },
 });
