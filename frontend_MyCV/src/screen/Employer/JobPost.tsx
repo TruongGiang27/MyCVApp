@@ -78,16 +78,17 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            <ScrollView>
-                <View style={styles.container}>
-                    <View style={styles.header}>
-                        <View style={styles.content}>
-                            <Icon name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" />
-                            <Text style={styles.title} onPress={BackHandler}>Tạo bài đăng tuyển dụng</Text>
-                        </View>
-                        <Image style={styles.imgPost}
-                            source={require('../../../assets/images/jobpostImg.jpg')} />
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <View style={styles.content}>
+                        <Icon name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" />
+                        <Text style={styles.title} onPress={BackHandler}>Tạo bài đăng tuyển dụng</Text>
                     </View>
+                    <Image style={styles.imgPost}
+                        source={require('../../../assets/images/jobpostImg.jpg')} />
+                </View>
+                <ScrollView>
+
                     <View style={styles.inputinfor}>
                         {/* Job Title*/}
                         <View style={styles.inputRow}>
@@ -182,10 +183,10 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                     <TouchableOpacity onPress={handleSubmit}>
                         <Text style={styles.submitButton}>Đăng bài</Text>
                     </TouchableOpacity>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </View>
             <Navbar />
-        </GestureHandlerRootView>
+        </GestureHandlerRootView >
 
     );
 };
@@ -196,13 +197,25 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     header: {
-        padding: 15,
+        position: 'relative',
+        marginBottom: 10,
     },
     content: {
-        // alignItems: 'center',
-        display: 'flex',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 60,
+        backgroundColor: '#fff',
+        paddingLeft: 10,
+        alignItems: 'center',
+        zIndex: 1000, // Cho phần header hiển thị trên cùng
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 3,
         flexDirection: 'row',
-        marginBottom: 20,
     },
     title: {
         fontSize: 30,
@@ -214,7 +227,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 200,
         resizeMode: 'cover',
-        marginTop: 10,
+        marginTop: 60,
         borderRadius: 10,
     },
     inputinfor: {
@@ -260,7 +273,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         alignSelf: 'center',
-        marginBottom:5,
+        marginBottom: 5,
     },
 
 });

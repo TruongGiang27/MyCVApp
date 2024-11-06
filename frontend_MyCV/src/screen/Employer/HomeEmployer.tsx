@@ -1,15 +1,17 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { Picker } from '@react-native-picker/picker';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { Icon } from '@rneui/themed';
+import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Alert, Animated, Dimensions, Image, Modal, ScrollView,
-  StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View, StatusBar, Keyboard
+  Animated, Dimensions, Image,
+  Keyboard,
+  Modal, ScrollView,
+  StatusBar,
+  StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View
 } from 'react-native';
-import { Icon } from '@rneui/themed';
-import { Picker } from '@react-native-picker/picker';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import axios from 'axios';
 import { BASE_URL } from '../utils/url';
-import InforManager from './InforManager';
 
 const { width } = Dimensions.get('window');
 // types.ts
@@ -299,6 +301,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     resizeMode: 'contain',
+    
   },
   accountIcon: {
     padding: 15,

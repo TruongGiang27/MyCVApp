@@ -2,9 +2,9 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../utils/url';
-import { useNavigation } from '@react-navigation/native';
 
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
@@ -153,7 +153,6 @@ const InforManager = () => {
                 </TouchableOpacity>
             </View>
             <ScrollView style={styles.scrollView}>
-
                 {viewingEmployer ? (
                     <View style={styles.formContainer}>
                         <View style={styles.employerHeader}>
@@ -322,17 +321,35 @@ const InforManager = () => {
 
 const styles = StyleSheet.create({
     scrollView: {
-        backgroundColor: '#f5f5f5'
+        backgroundColor: '#f5f5f5',
+        },
+    header: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 60,
+        backgroundColor: '#fff',
+        paddingLeft: 10,
+        alignItems: 'center',
+        zIndex: 1000, // Cho phần header hiển thị trên cùng
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 3,
+        flexDirection: 'row',
     },
     container: {
         padding: 20,
         flex: 1,
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        // justifyContent: 'space-between',
-    },
+    // header: {
+    //     flexDirection: 'row',
+    //     alignItems: 'center',
+        
+    //     // justifyContent: 'space-between',
+    // },
     icon: {
         fontSize: 24,
         fontWeight: 'bold',
@@ -341,12 +358,12 @@ const styles = StyleSheet.create({
         color: '#011F82',
     },
     pageTitle: {
+        flex: 1,
         fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 20,
         color: '#011F82',
-        flex: 1,
     },
     searchSection: {
         flexDirection: 'row',
@@ -361,7 +378,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 10,
         borderRadius: 8,
-        fontSize: 16
+        fontSize: 16,
+        color: '#333',
     },
     buttonSearch: {
         backgroundColor: '#011F82',
