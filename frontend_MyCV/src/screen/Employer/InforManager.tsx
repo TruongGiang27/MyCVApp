@@ -2,9 +2,9 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../utils/url';
-import {useNavigation } from '@react-navigation/native';
 
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
@@ -133,24 +133,24 @@ const InforManager = () => {
 
 
     return (
-        <ScrollView style={styles.scrollView}>
-            <View style={styles.container}>
+        <View style={styles.container}>
+            <View style={styles.header}>
                 <Icon name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" />
-                <Text style={styles.pageTitle}>Quản lý thông tin tuyển dụng</Text>
-
-                <View style={styles.searchSection}>
-                    <Icon name="search" size={24} color="#666" style={styles.searchIcon} />
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Tìm kiếm theo chức vụ, công ty, địa điểm..."
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                    />
-                    <TouchableOpacity style={styles.buttonSearch} onPress={handleSearch}>
-                        <Text style={styles.searchButtonText}>Tìm kiếm</Text>
-                    </TouchableOpacity>
-                </View>
-
+                <Text style={styles.pageTitle}>Quản lý bài đăng tuyển dụng</Text>
+            </View>
+            <View style={styles.searchSection}>
+                <Icon name="search" size={24} color="#666" style={styles.searchIcon} />
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Tìm kiếm theo chức vụ, công ty, địa điểm..."
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                />
+                <TouchableOpacity style={styles.buttonSearch} onPress={handleSearch}>
+                    <Text style={styles.searchButtonText}>Tìm kiếm</Text>
+                </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.scrollView}>
                 {viewingEmployer ? (
                     <View style={styles.formContainer}>
                         <View style={styles.employerHeader}>
@@ -309,28 +309,49 @@ const InforManager = () => {
                         </View>
                     ))
                 )}
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View >
+
     );
 };
 
 const styles = StyleSheet.create({
     scrollView: {
-        backgroundColor: '#f5f5f5'
+        backgroundColor: '#f5f5f5',
+        },
+    header: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 60,
+        backgroundColor: '#fff',
+        paddingLeft: 10,
+        alignItems: 'center',
+        zIndex: 1000, // Cho phần header hiển thị trên cùng
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 3,
+        flexDirection: 'row',
     },
     container: {
         padding: 20
     },
     pageTitle: {
+        flex: 1,
         fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 20,
-        color: '#333'
+        color: '#333',
+        paddingTop: 15,
     },
     searchSection: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginTop: 60,
         marginBottom: 15
     },
     searchIcon: {
@@ -341,7 +362,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 10,
         borderRadius: 8,
-        fontSize: 16
+        fontSize: 16,
+        color: '#333',
     },
     buttonSearch: {
         backgroundColor: '#007bff',
