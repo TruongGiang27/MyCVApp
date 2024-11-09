@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import { BASE_URL } from '../utils/url';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+
+// Define the type for the navigation parameters
+type RootStackParamList = {
+    CVCreate: { startStep: number };
+};
 
 interface ProfileData {
     fullName: string;
@@ -18,6 +24,7 @@ interface ProfileData {
 
 const CVManagerment = () => {
     const [profileData, setProfileData] = useState<ProfileData | null>(null);
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -40,6 +47,10 @@ const CVManagerment = () => {
         fetchProfileData();
     }, []);
 
+    const handleNavigateToMessages = () => {
+        navigation.navigate('Message' as never);
+    };
+
     if (!profileData) {
         return (
             <View style={styles.container}>
@@ -56,7 +67,9 @@ const CVManagerment = () => {
                     <Text style={styles.headerText}>My CV</Text>
                 </View>
                 <View style={styles.headerIcons}>
-                    <Icon name="chat-bubble-outline" size={24} color="#011F82" style={styles.icon} />
+                    <TouchableOpacity onPress={handleNavigateToMessages}>
+                        <Icon name="chat-bubble-outline" size={24} color="#011F82" style={styles.icon} />
+                    </TouchableOpacity>
                     <Icon name="notifications-none" size={24} color="#011F82" style={styles.icon} />
                     <Icon name="menu" size={24} color="#011F82" style={styles.icon} />
                 </View>
@@ -94,7 +107,7 @@ const CVManagerment = () => {
             </View>
 
             {/* CV Section */}
-            <View style={styles.cvSection}>
+            <TouchableOpacity style={styles.cvSection} onPress={() => navigation.navigate('CVCreate', { startStep: 10 })}>
                 <Text style={styles.MyCVTitle}>CV của bạn</Text>
                 <View style={styles.cvCard}>
                     <Image
@@ -102,13 +115,13 @@ const CVManagerment = () => {
                         style={styles.cvLogo}
                     />
                     <View style={styles.cvInfo}>
-                        <Text style={styles.cvTitle}>Indeed CV</Text>
+                        <Text style={styles.cvTitle}>My CV</Text>
                         <Text style={styles.cvSubtitle}>Cập nhật hôm nay</Text>
                         <Text style={styles.cvStatus}>Không thể tìm được</Text>
                     </View>
                     <Icon name="chevron-right" size={24} color="#011F82" />
                 </View>
-            </View>
+            </TouchableOpacity>
         </View>
     );
 };

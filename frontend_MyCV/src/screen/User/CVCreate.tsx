@@ -10,23 +10,61 @@ import axios from 'axios';
 import { BASE_URL } from '../utils/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Define the type for the route parameters
+type RouteParams = {
+    startStep: number;
+};
+
 const CVCreate = () => {
   const { control, handleSubmit } = useForm();
-  const [currentStep, setCurrentStep] = useState(1);
   const navigation = useNavigation();
+  const route = useRoute();
+  const { startStep } = route.params as RouteParams || {};
+  const [currentStep, setCurrentStep] = useState(startStep || 1);
 
-  // State lưu trữ dữ liệu cho tất cả các bước
-  const [formData, setFormData] = useState({
+  type FormData = {
+    [key: string]: any;
+    fullName: string;
+    email: string;
+    phone: string;
+    country: string;
+    address: string;
+    city: string;
+    zipCode: string;
+    educationLevel: string;
+    fieldOfStudy: string;
+    schoolName: string;
+    educationCountry: string;
+    educationCity: string;
+    educationStartDate: Date;
+    educationEndDate: Date;
+    jobTitle: string;
+    companyName: string;
+    workCountry: string;
+    workCity: string;
+    workStartDate: Date;
+    workEndDate: Date;
+    workExperience: string;
+    certifications: string;
+    birthDate: Date;
+    educationDescription: string;
+    highestEducationLevel: string;
+    highestJobLevel: string;
+    desiredJobTitle: string;
+    jobType: string;
+    minimumSalary: string;
+    summary: string;
+    skills: string[];
+  };
+
+  const [formData, setFormData] = useState<FormData>({
     fullName: '',
     email: '',
     phone: '',
-    address: {
-      country: '',
-      address: '',
-      city: '',
-      zipCode: '',
-    },
-
+    country: '',
+    address: '',
+    city: '',
+    zipCode: '',
     educationLevel: '',
     fieldOfStudy: '',
     schoolName: '',
@@ -34,7 +72,6 @@ const CVCreate = () => {
     educationCity: '',
     educationStartDate: new Date(),
     educationEndDate: new Date(),
-
     jobTitle: '',
     companyName: '',
     workCountry: '',
@@ -42,20 +79,15 @@ const CVCreate = () => {
     workStartDate: new Date(),
     workEndDate: new Date(),
     workExperience: '',
-
     certifications: '',
-
     birthDate: new Date(),
     educationDescription: '',
     highestEducationLevel: '',
     highestJobLevel: '',
-
     desiredJobTitle: '',
     jobType: '',
     minimumSalary: '',
-
     summary: '',
-
     skills: [],
   });
 
@@ -66,6 +98,7 @@ const CVCreate = () => {
   const [showWorkStartDatePicker, setShowWorkStartDatePicker] = useState(false);
   const [showWorkEndDatePicker, setShowWorkEndDatePicker] = useState(false);
   const [showBirthDatePicker, setShowBirthDatePicker] = useState(false);
+  const [editingFields, setEditingFields] = useState<{ [key: string]: boolean }>({}); // Track editing status for each field
 
   // Load form data from AsyncStorage when the component mounts
   useEffect(() => {
@@ -110,10 +143,10 @@ const CVCreate = () => {
       email: formData.email,
       phone: formData.phone,
       address: {
-        country: formData.address.country,
-        address: formData.address.address,
-        city: formData.address.city,
-        zipCode: formData.address.zipCode,
+        country: formData.country,
+        address: formData.address,
+        city: formData.city,
+        zipCode: formData.zipCode,
       },
       education: {
         educationLevel: formData.educationLevel,
@@ -154,6 +187,19 @@ const CVCreate = () => {
       // Handle successful post, e.g., navigate to another screen or show a success message
     } catch (error) {
       console.error('Error posting data to MongoDB:', error);
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.log('Error response data:', error.response.data);
+          console.log('Error response status:', error.response.status);
+          console.log('Error response headers:', error.response.headers);
+        } else if (error.request) {
+          console.log('Error request:', error.request);
+        } else {
+          console.log('Error message:', error.message);
+        }
+      } else {
+        console.log('Unexpected error:', error);
+      }
       console.log('Data that failed to post:', formattedData);
       // Handle error, e.g., show an error message
     }
@@ -174,10 +220,54 @@ const CVCreate = () => {
 
   // Cập nhật formData khi người dùng thay đổi dữ liệu nhập
   const updateFormData = (name: string, value: any) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
+    const keys = name.split('.');
+    setFormData((prevData) => {
+      let updatedData = { ...prevData };
+      let tempData = updatedData;
+      for (let i = 0; i < keys.length - 1; i++) {
+        tempData = tempData[keys[i]];
+      }
+      tempData[keys[keys.length - 1]] = value;
+      return updatedData;
+    });
+  };
+
+  const toggleEditing = (key: any) => {
+    setEditingFields((prev) => ({
+      ...prev,
+      [key]: !prev[key],
     }));
+  };
+
+  const handleDeleteSkill = (skill: string) => {
+    setSelectedSkills(selectedSkills.filter((s) => s !== skill));
+  };
+
+  const renderEditableField = (label: string, key: string, value: string, isDate?: boolean) => {
+    return (
+      <View style={styles.editableFieldContainer}>
+        <Text style={styles.content}>{label}: </Text>
+        {editingFields[key] ? (
+          isDate ? (
+            <TouchableOpacity onPress={() => toggleEditing(key)}>
+              <Text style={styles.content}>{value}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TextInput
+              style={styles.input}
+              value={value}
+              onChangeText={(text) => updateFormData(key, text)}
+              onBlur={() => toggleEditing(key)}
+            />
+          )
+        ) : (
+          <Text style={styles.content}>{value}</Text>
+        )}
+        <TouchableOpacity onPress={() => toggleEditing(key)}>
+          <Icon name={editingFields[key] ? 'checkmark-outline' : 'pencil-outline'} size={20} color="#011F82" />
+        </TouchableOpacity>
+      </View>
+    );
   };
 
   const countryOptions = [
@@ -298,74 +388,73 @@ const CVCreate = () => {
             <Controller
               control={control}
               name="country"
-              defaultValue={formData.address?.country}
+              defaultValue={formData.country}
               render={({ field: { onChange, value } }) => (
                 <RNPickerSelect
                   onValueChange={(value) => {
                     onChange(value);
-                    updateFormData("address.country", value);
+                    updateFormData("country", value); // Save in real-time
                   }}
                   items={countryOptions}
-                  value={formData.address?.country}
+                  value={formData.country}
                   style={pickerSelectStyles}
                   placeholder={{ label: "Chọn quốc gia", value: null }}
                 />
               )}
             />
-            <Text style={styles.content}>Địa chỉ đường </Text>
+            <Text style={styles.content}>Địa chỉ đường</Text>
             <Controller
               control={control}
               name="address"
-              defaultValue={formData.address?.address}
+              defaultValue={formData.address}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
                   placeholder="Địa chỉ đường"
                   onChangeText={(text) => {
                     onChange(text);
-                    updateFormData("address.address", text);
+                    updateFormData("address", text); // Save in real-time
                   }}
-                  value={formData.address?.address}
+                  value={formData.address}
                 />
               )}
             />
-            <Text style={styles.content}>Thành phố </Text>
+            <Text style={styles.content}>Thành phố</Text>
             <Controller
               control={control}
               name="city"
-              defaultValue={formData.address?.city}
+              defaultValue={formData.city}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
                   placeholder="Thành phố"
                   onChangeText={(text) => {
                     onChange(text);
-                    updateFormData("address.city", text);
+                    updateFormData("city", text); // Save in real-time
                   }}
-                  value={formData.address?.city}
+                  value={formData.city}
                 />
               )}
             />
-            <Text style={styles.content}>Bưu chính</Text>
+            <Text style={styles.content}>Mã bưu chính</Text>
             <Controller
               control={control}
               name="zipCode"
-              defaultValue={formData.address?.zipCode}
+              defaultValue={formData.zipCode}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
                   placeholder="Mã bưu chính"
                   onChangeText={(text) => {
                     onChange(text);
-                    updateFormData("address.zipCode", text);
+                    updateFormData("zipCode", text); // Save in real-time
                   }}
-                  value={formData.address?.zipCode}
+                  value={formData.zipCode}
                 />
               )}
             />
           </>
         );
-
       case 4: // Thêm trình độ học vấn
         return (
           <>
@@ -806,71 +895,70 @@ const CVCreate = () => {
             />
           </>
         );
-      case 10: // Review CV with CRUD operations
+
+      case 10:
         return (
-          <>
+          <View>
             <Text style={styles.title}>CV của bạn đã sẵn sàng chưa?</Text>
             <Text style={styles.titleDown}>Đánh giá và thực hiện các thay đổi bên dưới.</Text>
 
-            {/* Display all information from previous steps */}
+            {/* Display Personal Information */}
             <Text style={styles.subtitle}>Thông tin cá nhân</Text>
-            <Text style={styles.content}>Họ và tên: {`${formData.fullName}`}</Text>
-            <Text style={styles.content}>Email: {formData.email}</Text>
-            <Text style={styles.content}>Số điện thoại: {formData.phone}</Text>
-            <Text style={styles.content}>Quốc gia: {formData.address.country}</Text>
-            <Text style={styles.content}>Địa chỉ: {formData.address.address}</Text>
-            <Text style={styles.content}>Thành phố: {formData.address.city}</Text>
-            <Text style={styles.content}>Mã bưu chính: {formData.address.zipCode}</Text>
-            <Text style={styles.content}>Ngày sinh: {formData.birthDate.toLocaleDateString()}</Text>
+            {renderEditableField("Họ và tên", "fullName", formData.fullName)}
+            {renderEditableField("Email", "email", formData.email)}
+            {renderEditableField("Số điện thoại", "phone", formData.phone)}
+            {renderEditableField("Quốc gia", "address.country", formData.country)}
+            {renderEditableField("Địa chỉ", "address.address", formData.address)}
+            {renderEditableField("Thành phố", "address.city", formData.city)}
+            {renderEditableField("Mã bưu chính", "address.zipCode", formData.zipCode)}
+            {renderEditableField("Ngày sinh", "birthDate", formData.birthDate ? formData.birthDate.toLocaleDateString() : '', true)}
 
+            {/* Display Summary */}
             <Text style={styles.subtitle}>Tóm tắt</Text>
-            <Controller
-              control={control}
-              name="summary"
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  style={styles.input}
-                  placeholder="Tóm tắt"
-                  onChangeText={(text) => {
-                    onChange(text);
-                    updateFormData('summary', text);
-                  }}
-                  value={formData.summary}
-                />
-              )}
-            />
+            {renderEditableField("Tóm tắt", "summary", formData.summary)}
 
+            {/* Display Education Information */}
             <Text style={styles.subtitle}>Trình độ học vấn</Text>
-            <Text style={styles.content}>Trình độ học vấn: {formData.educationLevel}</Text>
-            <Text style={styles.content}>Lĩnh vực học tập: {formData.fieldOfStudy}</Text>
-            <Text style={styles.content}>Tên trường học: {formData.schoolName}</Text>
-            <Text style={styles.content}>Quốc gia: {formData.educationCountry}</Text>
-            <Text style={styles.content}>Thành phố: {formData.educationCity}</Text>
-            <Text style={styles.content}>Giai đoạn: {formData.educationStartDate.toLocaleDateString()} - {formData.educationEndDate.toLocaleDateString()}</Text>
-            <Text style={styles.content}>Mô tả trình độ học vấn: {formData.educationDescription}</Text>
-            <Text style={styles.content}>Trình độ học vấn cao nhất: {formData.highestEducationLevel}</Text>
+            {renderEditableField("Trình độ học vấn", "educationLevel", formData.educationLevel)}
+            {renderEditableField("Lĩnh vực học tập", "fieldOfStudy", formData.fieldOfStudy)}
+            {renderEditableField("Tên trường học", "schoolName", formData.schoolName)}
+            {renderEditableField("Quốc gia", "educationCountry", formData.educationCountry)}
+            {renderEditableField("Thành phố", "educationCity", formData.educationCity)}
+            {renderEditableField("Giai đoạn", "educationStartDate", formData.educationStartDate ? formData.educationStartDate.toLocaleDateString() + " - " + formData.educationEndDate.toLocaleDateString() : '', true)}
+            {renderEditableField("Mô tả trình độ học vấn", "educationDescription", formData.educationDescription)}
+            {renderEditableField("Trình độ học vấn cao nhất", "highestEducationLevel", formData.highestEducationLevel)}
 
+            {/* Display Work Experience */}
             <Text style={styles.subtitle}>Kinh nghiệm làm việc</Text>
-            <Text style={styles.content}>Chức danh: {formData.jobTitle}</Text>
-            <Text style={styles.content}>Tên công ty: {formData.companyName}</Text>
-            <Text style={styles.content}>Quốc gia: {formData.workCountry}</Text>
-            <Text style={styles.content}>Thành phố: {formData.workCity}</Text>
-            <Text style={styles.content}>Giai đoạn: {formData.workStartDate.toLocaleDateString()} - {formData.workEndDate.toLocaleDateString()}</Text>
-            <Text style={styles.content}>Mô tả kinh nghiệm làm việc: {formData.workExperience}</Text>
+            {renderEditableField("Chức danh", "jobTitle", formData.jobTitle)}
+            {renderEditableField("Tên công ty", "companyName", formData.companyName)}
+            {renderEditableField("Quốc gia", "workCountry", formData.workCountry)}
+            {renderEditableField("Thành phố", "workCity", formData.workCity)}
+            {renderEditableField("Giai đoạn", "workStartDate", formData.workStartDate ? formData.workStartDate.toLocaleDateString() + " - " + formData.workEndDate.toLocaleDateString() : '', true)}
+            {renderEditableField("Mô tả kinh nghiệm làm việc", "workExperience", formData.workExperience)}
 
+            {/* Display Skills */}
             <Text style={styles.subtitle}>Kỹ năng</Text>
-            <Text style={styles.content}>{selectedSkills.join(', ')}</Text>
+            <View style={styles.selectedSkillsContainer}>
+              {selectedSkills.map((skill, index) => (
+                <TouchableOpacity key={index} onPress={() => handleDeleteSkill(skill)}>
+                  <View style={styles.skillCard}>
+                    <Text style={styles.skillCardText}>{skill}</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
 
+            {/* Display Certifications */}
             <Text style={styles.subtitle}>Chứng chỉ và Giấy phép</Text>
-            <Text style={styles.content}>{formData.certifications}</Text>
+            {renderEditableField("Chứng chỉ và giấy phép", "certifications", formData.certifications)}
 
+            {/* Display Job Preferences */}
             <Text style={styles.subtitle}>Sở thích công việc tiếp theo</Text>
-            <Text style={styles.content}>Chức danh mong muốn: {formData.desiredJobTitle}</Text>
-            <Text style={styles.content}>Loại công việc: {formData.jobType}</Text>
-            <Text style={styles.content}>Mức lương tối thiểu: {formData.minimumSalary}</Text>
-
-
-          </>
+            {renderEditableField("Chức danh mong muốn", "desiredJobTitle", formData.desiredJobTitle)}
+            {renderEditableField("Loại công việc", "jobType", formData.jobType)}
+            {renderEditableField("Mức lương tối thiểu", "minimumSalary", formData.minimumSalary)}
+          </View>
         );
       default:
         return null;
@@ -935,6 +1023,12 @@ const CVCreate = () => {
 };
 
 const styles = StyleSheet.create({
+  editableFieldContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 5,
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -975,6 +1069,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
+    flex: 1,
+    flexWrap: 'wrap', // Ensure text wraps within the input field
   },
   formContainer: {
     flex: 1,
@@ -1046,10 +1142,14 @@ const styles = StyleSheet.create({
   },
   content: {
     marginBottom: 2,
+    flexWrap: 'wrap', // Ensure text wraps within the content
+    // backgroundColor: 'red',
+    width: '40%',
   },
   boldText: {
     fontWeight: 'bold',
   },
+
 });
 
 const pickerSelectStyles = StyleSheet.create({
@@ -1061,6 +1161,7 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 15,
     color: 'black',
+    flexWrap: 'wrap', // Ensure text wraps within the picker select
   },
   inputAndroid: {
     height: 40,
@@ -1070,9 +1171,10 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 15,
     color: 'black',
-    // backgroundColor: 'white',
+    flexWrap: 'wrap', // Ensure text wraps within the picker select
   },
 
 });
 
 export default CVCreate;
+
