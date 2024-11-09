@@ -17,6 +17,10 @@ const Navbar = () => (
       <Text style={styles.navText}>Tin nhắn</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.navItem}>
+      <Icon name="post" type="font-awesome" color="#666" />
+      <Text style={styles.navText}>Đăng bài</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.navItem}>
       <Icon name="user" type="font-awesome" color="#666" />
       <Text style={styles.navText}>Hồ sơ</Text>
     </TouchableOpacity>

@@ -323,33 +323,16 @@ const styles = StyleSheet.create({
     scrollView: {
         backgroundColor: '#f5f5f5',
         },
-    header: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 60,
-        backgroundColor: '#fff',
-        paddingLeft: 10,
-        alignItems: 'center',
-        zIndex: 1000, // Cho phần header hiển thị trên cùng
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 3,
-        flexDirection: 'row',
-    },
     container: {
         padding: 20,
         flex: 1,
     },
-    // header: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
         
-    //     // justifyContent: 'space-between',
-    // },
+        justifyContent: 'space-between',
+    },
     icon: {
         fontSize: 24,
         fontWeight: 'bold',
