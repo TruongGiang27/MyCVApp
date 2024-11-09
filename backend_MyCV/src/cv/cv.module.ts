@@ -10,6 +10,7 @@ import { Cv, CvSchema } from './entities/cv.entity';
   ],
   controllers: [CvController],
   providers: [CvService],
-  exports: [CvService],
 })
 export class CvModule {}
+
+

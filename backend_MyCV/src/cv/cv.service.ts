@@ -5,7 +5,8 @@ import { Cv } from './entities/cv.entity';
 
 @Injectable()
 export class CvService {
-  constructor(@InjectModel(Cv.name) private cvModel: Model<Cv>) {}
+  [x: string]: any;
+  constructor(@InjectModel(Cv.name) private readonly cvModel: Model<Cv>) {}
 
   async createCv(data: any): Promise<Cv> {
     const newCv = new this.cvModel(data);
@@ -18,5 +19,13 @@ export class CvService {
 
   async getCv(id: string): Promise<Cv> {
     return this.cvModel.findById(id);
+  }
+
+  async deleteCv(id: string): Promise<Cv> {
+    return this.cvModel.findByIdAndDelete(id);
+  }
+
+  async getAllCvs(): Promise<Cv[]> {
+    return this.cvModel.find();
   }
 }
