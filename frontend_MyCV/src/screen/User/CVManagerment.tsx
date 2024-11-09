@@ -108,7 +108,7 @@ const CVManagerment = () => {
 
             {/* CV Section */}
             <TouchableOpacity style={styles.cvSection} onPress={() => navigation.navigate('CVCreate', { startStep: 10 })}>
-                <Text style={styles.MyCVTitle}>CV của bạn</Text>
+                <Text style={styles.MyCVTitle}>CV của bạn</Text> 
                 <View style={styles.cvCard}>
                     <Image
                         source={{ uri: 'https://e7.pngegg.com/pngimages/205/491/png-clipart-cv-library-employment-website-curriculum-vitae-recruitment-job-others-miscellaneous-blue.png' }}
