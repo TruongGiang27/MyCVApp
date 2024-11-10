@@ -28,6 +28,22 @@ const JobDetail = () => {
     fetchJobDetail();
   }, [jobId]);
 
+  const handleApply = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/cv_form`);
+      const hasCV = response.data.length > 0;
+      console.log('Has CV:', hasCV);
+
+      if (hasCV) {
+        navigation.navigate('CVCreate', { startStep: 10 });
+      } else {
+        navigation.navigate('CVCreate', { startStep: 1 });
+      }
+    } catch (error) {
+      console.error('Error checking CV:', error);
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -116,7 +132,7 @@ const JobDetail = () => {
       </View>
 
       {/* Apply Button */}
-      <TouchableOpacity style={styles.applyButton}>
+      <TouchableOpacity style={styles.applyButton} onPress={handleApply}>
         <Text style={styles.applyButtonText}>Ứng tuyển ngay</Text>
       </TouchableOpacity>
     </ScrollView>

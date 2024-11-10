@@ -1,65 +1,65 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
-@Schema() // Không cần đặt tên collection ở đây, vì chỉ định trong Cv
+@Schema()
 class Address {
   @Prop({ required: true }) country: string;
-  @Prop({ required: true }) street: string;
+  @Prop({ required: true }) address: string;
   @Prop({ required: true }) city: string;
-  @Prop({ required: true }) zip: string;
+  @Prop({ required: true }) zipCode: string;
 }
 const AddressSchema = SchemaFactory.createForClass(Address);
 
 @Schema()
 class Education {
-  @Prop({ required: true }) degree: string;
-  @Prop({ required: true }) field: string;
-  @Prop({ required: true }) school: string;
-  @Prop({ required: true }) city: string;
-  @Prop({ required: true }) state: string;
-  @Prop({ required: true }) country: string;
-  @Prop() details: string;
+  @Prop({ required: true }) educationLevel: string;
+  @Prop({ required: true }) fieldOfStudy: string;
+  @Prop({ required: true }) schoolName: string;
+  @Prop({ required: true }) educationCountry: string;
+  @Prop({ required: true }) educationCity: string;
+  @Prop({ required: true }) educationStartDate: Date;
+  @Prop({ required: true }) educationEndDate: Date;
+  @Prop() educationDescription?: string;
+  @Prop() highestEducationLevel?: string;
 }
+
 const EducationSchema = SchemaFactory.createForClass(Education);
 
 @Schema()
 class Experience {
-  @Prop({ required: true }) title: string;
-  @Prop({ required: true }) company: string;
-  @Prop({ required: true }) country: string;
-  @Prop({ required: true }) city: string;
-  @Prop() state?: string;
-  @Prop() description?: string;
+  @Prop({ required: true }) jobTitle: string;
+  @Prop({ required: true }) companyName: string;
+  @Prop({ required: true }) workCountry: string;
+  @Prop({ required: true }) workCity: string;
+  @Prop({ required: true }) workStartDate: Date;
+  @Prop({ required: true }) workEndDate: Date;
+  @Prop() workExperience?: string;
+  @Prop() highestJobLevel?: string;
 }
 const ExperienceSchema = SchemaFactory.createForClass(Experience);
 
 @Schema()
 class JobPreferences {
-  @Prop({ required: true }) title: string;
+  @Prop({ required: true }) desiredJobTitle: string;
   @Prop({ required: true }) jobType: string;
-  @Prop({ required: true }) minSalary: number;
-  @Prop({ required: true }) relocation: boolean;
+  @Prop({ required: true }) minimumSalary: number;
 }
+
 const JobPreferencesSchema = SchemaFactory.createForClass(JobPreferences);
 
-@Schema({ collection: 'cv_form' }) // Đặt tên collection là "cv_form"
+@Schema({ collection: 'cv_form' })
 export class Cv extends Document {
-  @Prop({ required: true }) fullName: string;
-  @Prop() phoneNumber: string;
-  
+  @Prop() fullName?: string;
+  @Prop({ required: true }) email: string;
+  @Prop({ required: true }) phone: string;
   @Prop({ type: AddressSchema, required: true }) address: Address;
-  
-  @Prop({ type: [EducationSchema], required: true }) education: Types.Array<Education>;
-  
-  @Prop({ type: [ExperienceSchema], required: true }) experience: Types.Array<Experience>;
-  
+  @Prop({ type: EducationSchema, required: true }) education: Education;
+  @Prop({ type: ExperienceSchema, required: true }) experience: Experience;
   @Prop({ type: [String], required: true }) skills: string[];
-  
-  @Prop({ type: [String], required: true }) certifications: string[];
-  
+  @Prop({ required: true }) certifications: string;
+  @Prop() birthDate: string;
+  @Prop() summary?: string;
   @Prop({ type: JobPreferencesSchema, required: true }) jobPreferences: JobPreferences;
-  
-  @Prop({ required: true, default: false }) visibleToRecruiters: boolean;
 }
 
 export const CvSchema = SchemaFactory.createForClass(Cv);
