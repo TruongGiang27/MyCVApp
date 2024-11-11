@@ -1,7 +1,11 @@
 import React from 'react';
 import { View, Text, Button, StatusBar, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const MessageScreen = () => {
+    const navigation = useNavigation<NavigationProp<any>>();
+
     return (
         <View style={styles.container}>
             <StatusBar barStyle="dark-content" />
@@ -25,10 +29,31 @@ const MessageScreen = () => {
                     <Text style={styles.buttonText}>Tìm việc làm</Text>
                 </TouchableOpacity>
                 <View style={styles.spacer} />
-                <TouchableOpacity style={styles.buttonSecondary}>
+                <TouchableOpacity style={styles.buttonSecondary} onPress={() => navigation.navigate('CVCreate')}>
                     <Text style={styles.buttonTextSecondary}>Tạo CV của bạn</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Navigation Bar */}
+            <View style={styles.navBar}>
+                <TouchableOpacity style={styles.navItem}>
+                    <Icon name="home-outline" size={25} color="#000" />
+                    <Text style={styles.navText}>Trang chủ</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem}>
+                    <Icon name="bookmark-outline" size={25} color="#000" />
+                    <Text style={styles.navText}>Việc làm của tôi</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Message')}>
+                    <Icon name="chatbubble-outline" size={25} color="#000" />
+                    <Text style={styles.navText}>Tin nhắn</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem}>
+                    <Icon name="person-outline" size={25} color="#007AFF" />
+                    <Text style={[styles.navText, { color: '#007AFF' }]}>Hồ sơ</Text>
+                </TouchableOpacity>
+            </View>
+
         </View>
     );
 };
@@ -101,6 +126,26 @@ const styles = StyleSheet.create({
         color: '#011F82', // Màu chữ trong nút phụ (Tạo CV)
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    navBar: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingVertical: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#ddd',
+        backgroundColor: '#FFF', // Nền trắng giống như trên hình
+        position: 'absolute', // Đưa thanh navbar xuống dưới
+        bottom: 0, // Căn dưới cùng màn hình
+        width: '100%',
+    },
+    navItem: {
+        alignItems: 'center',
+        paddingVertical: 8, // Tăng padding dọc cho icon và text
+    },
+    navText: {
+        fontSize: 12,
+        color: '#000', // Màu đen cho text các tab khác
+        marginTop: 5,
     },
 });
 

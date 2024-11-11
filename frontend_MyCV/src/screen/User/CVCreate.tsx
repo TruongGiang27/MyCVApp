@@ -16,7 +16,7 @@ type RouteParams = {
 };
 
 const CVCreate = () => {
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit, setValue, trigger, formState: { errors, isValid } } = useForm({ mode: 'onChange' });
   const navigation = useNavigation();
   const route = useRoute();
   const { startStep } = route.params as RouteParams || {};
@@ -105,6 +105,7 @@ const CVCreate = () => {
     const loadFormData = async () => {
       try {
         const savedFormData = await AsyncStorage.getItem('formData');
+        console.log('formData.fullName:', formData.fullName)
         if (savedFormData) {
           const parsedFormData = JSON.parse(savedFormData);
           // Convert date strings back to Date objects
@@ -115,6 +116,14 @@ const CVCreate = () => {
           parsedFormData.birthDate = new Date(parsedFormData.birthDate);
           setFormData(parsedFormData);
           setSelectedSkills(parsedFormData.skills || []);
+
+          // Set initial values for form fields
+          Object.keys(parsedFormData).forEach((key) => {
+            setValue(key, parsedFormData[key]);
+          });
+
+          // Trigger validation for the first screen
+          trigger(['fullName', 'email']);
         }
       } catch (error) {
         console.error('Failed to load form data:', error);
@@ -122,7 +131,7 @@ const CVCreate = () => {
     };
 
     loadFormData();
-  }, []);
+  }, [setValue, trigger]);
 
   // Save form data to AsyncStorage whenever it changes
   useEffect(() => {
@@ -243,6 +252,16 @@ const CVCreate = () => {
     setSelectedSkills(selectedSkills.filter((s) => s !== skill));
   };
 
+  const validateString = (value: string) => {
+    const regex = /^[a-zA-Z\s]+$/;
+    return regex.test(value) || '*Vui lòng nhập đúng định dạng';
+  };
+
+  const validateNumber = (value: string) => {
+    const regex = /^[0-9]+$/;
+    return regex.test(value) || '*Vui lòng nhập đúng định dạng';
+  };
+
   const renderEditableField = (label: string, key: string, value: string, isDate?: boolean) => {
     return (
       <View style={styles.editableFieldContainer}>
@@ -321,11 +340,15 @@ const CVCreate = () => {
         return (
           <>
             <Text style={styles.title}>Bạn tên là gì?</Text>
-            <Text style={styles.content}>Họ và tên</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Họ và tên</Text>
+              {errors.fullName && <Text style={styles.errorText}>{String(errors.fullName.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="fullName"
               defaultValue={formData.fullName}
+              rules={{ validate: validateString }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -361,11 +384,15 @@ const CVCreate = () => {
         return (
           <>
             <Text style={styles.title}>Bạn có muốn thêm số điện thoại vào CV của mình không?</Text>
-            <Text style={styles.content}>Số điện thoại</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Số điện thoại</Text>
+              {errors.phone && <Text style={styles.errorText}>{String(errors.phone.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="phone"
               defaultValue={formData.phone}
+              rules={{ validate: validateNumber }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -419,11 +446,15 @@ const CVCreate = () => {
                 />
               )}
             />
-            <Text style={styles.content}>Thành phố</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Thành phố</Text>
+              {errors.city && <Text style={styles.errorText}>{String(errors.city.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="city"
               defaultValue={formData.city}
+              rules={{ validate: validateString }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -436,11 +467,15 @@ const CVCreate = () => {
                 />
               )}
             />
-            <Text style={styles.content}>Mã bưu chính</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Mã bưu chính</Text>
+              {errors.zipCode && <Text style={styles.errorText}>{String(errors.zipCode.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="zipCode"
               defaultValue={formData.zipCode}
+              rules={{ validate: validateNumber }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -459,10 +494,15 @@ const CVCreate = () => {
         return (
           <>
             <Text style={styles.title}>Thêm trình độ học vấn</Text>
-            <Text style={styles.content}>Trình độ học vấn</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Trình độ học vấn</Text>
+              {errors.educationLevel && <Text style={styles.errorText}>{String(errors.educationLevel.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="educationLevel"
+              defaultValue={formData.educationLevel}
+              rules={{ validate: validateString }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -475,10 +515,15 @@ const CVCreate = () => {
                 />
               )}
             />
-            <Text style={styles.content}>Lĩnh vực học tập</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Lĩnh vực học tập</Text>
+              {errors.fieldOfStudy && <Text style={styles.errorText}>{String(errors.fieldOfStudy.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="fieldOfStudy"
+              defaultValue={formData.fieldOfStudy}
+              rules={{ validate: validateString }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -491,10 +536,15 @@ const CVCreate = () => {
                 />
               )}
             />
-            <Text style={styles.content}>Tên trường học</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Tên trường học</Text>
+              {errors.schoolName && <Text style={styles.errorText}>{String(errors.schoolName.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="schoolName"
+              defaultValue={formData.schoolName}
+              rules={{ validate: validateString }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -524,10 +574,15 @@ const CVCreate = () => {
                 />
               )}
             />
-            <Text style={styles.content}>Thành phố</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Thành phố</Text>
+              {errors.educationCity && <Text style={styles.errorText}>{String(errors.educationCity.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="educationCity"
+              defaultValue={formData.educationCity}
+              rules={{ validate: validateString }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -589,10 +644,15 @@ const CVCreate = () => {
         return (
           <>
             <Text style={styles.title}>Thêm kinh nghiệm làm việc</Text>
-            <Text style={styles.content}>Chức danh</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Chức danh</Text>
+              {errors.jobTitle && <Text style={styles.errorText}>{String(errors.jobTitle.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="jobTitle"
+              defaultValue={formData.jobTitle}
+              rules={{ validate: validateString }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -605,10 +665,15 @@ const CVCreate = () => {
                 />
               )}
             />
-            <Text style={styles.content}>Tên công ty</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Tên công ty</Text>
+              {errors.companyName && <Text style={styles.errorText}>{String(errors.companyName.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="companyName"
+              defaultValue={formData.companyName}
+              rules={{ validate: validateString }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -638,10 +703,15 @@ const CVCreate = () => {
                 />
               )}
             />
-            <Text style={styles.content}>Thành phố</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Thành phố</Text>
+              {errors.workCity && <Text style={styles.errorText}>{String(errors.workCity.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="workCity"
+              defaultValue={formData.workCity}
+              rules={{ validate: validateString }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -877,10 +947,15 @@ const CVCreate = () => {
                 />
               )}
             />
-            <Text style={styles.content}>Mức lương tối thiểu</Text>
+            <View style={styles.row}>
+              <Text style={styles.content}>Mức lương tối thiểu</Text>
+              {errors.minimumSalary && <Text style={styles.errorText}>{String(errors.minimumSalary.message)}</Text>}
+            </View>
             <Controller
               control={control}
               name="minimumSalary"
+              defaultValue={formData.minimumSalary}
+              rules={{ validate: validateNumber }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   style={styles.input}
@@ -892,7 +967,7 @@ const CVCreate = () => {
                   value={formData.minimumSalary}
                 />
               )}
-            />
+            />           
           </>
         );
 
@@ -1008,12 +1083,26 @@ const CVCreate = () => {
         <TouchableOpacity
           onPress={() => {
             if (currentStep < 10) {
+              if (
+                (currentStep === 1 && !isValid) ||
+                (currentStep === 2 && !isValid) ||
+                (currentStep === 3 && !isValid) ||
+                (currentStep === 4 && !isValid) ||
+                (currentStep === 5 && !isValid) ||
+                (currentStep === 9 && !isValid)
+              ) {
+                return; // Prevent moving to the next step if the fullName, phone, city, zipCode, educationLevel, fieldOfStudy, schoolName, educationCity, jobTitle, companyName, or workCity is invalid
+              }
               setCurrentStep(currentStep + 1);
             } else {
               handleSubmit(onSubmit)();
             }
           }}
-          style={styles.button}
+          style={[
+            styles.button,
+            (currentStep === 1 || currentStep === 2 || currentStep === 3 || currentStep === 4 || currentStep === 5 || currentStep === 9) && !isValid && styles.disabledButton,
+          ]}
+          disabled={(currentStep === 1 || currentStep === 2 || currentStep === 3 || currentStep === 4 || currentStep === 5|| currentStep === 9) && !isValid}
         >
           <Text style={styles.buttonText}>{currentStep < 10 ? 'Tiếp theo' : 'Hoàn tất'}</Text>
         </TouchableOpacity>
@@ -1144,10 +1233,21 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     flexWrap: 'wrap', // Ensure text wraps within the content
     // backgroundColor: 'red',
-    width: '40%',
+    width: '30%',
   },
   boldText: {
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 5,
+    width: '50%',
+    fontSize: 12,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 
 });

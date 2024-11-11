@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import { BASE_URL } from '../utils/url';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import Iconicon from 'react-native-vector-icons/Ionicons';
 
 // Define the type for the navigation parameters
 type RootStackParamList = {
@@ -25,6 +26,7 @@ interface ProfileData {
 const CVManagerment = () => {
     const [profileData, setProfileData] = useState<ProfileData | null>(null);
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const navigationMessage = useNavigation<NavigationProp<any>>();
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -67,11 +69,7 @@ const CVManagerment = () => {
                     <Text style={styles.headerText}>My CV</Text>
                 </View>
                 <View style={styles.headerIcons}>
-                    <TouchableOpacity onPress={handleNavigateToMessages}>
-                        <Icon name="chat-bubble-outline" size={24} color="#011F82" style={styles.icon} />
-                    </TouchableOpacity>
                     <Icon name="notifications-none" size={24} color="#011F82" style={styles.icon} />
-                    <Icon name="menu" size={24} color="#011F82" style={styles.icon} />
                 </View>
             </View>
 
@@ -122,6 +120,27 @@ const CVManagerment = () => {
                     <Icon name="chevron-right" size={24} color="#011F82" />
                 </View>
             </TouchableOpacity>
+
+            {/* Navigation Bar */}
+            <View style={styles.navBar}>
+                <TouchableOpacity style={styles.navItem}>
+                    <Iconicon name="home-outline" size={25} color="#000" />
+                    <Text style={styles.navText}>Trang chủ</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem}>
+                    <Icon name="bookmark-outline" size={25} color="#000" />
+                    <Text style={styles.navText}>Việc làm của tôi</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigationMessage.navigate('Message')}>
+                    <Iconicon name="chatbubble-outline" size={25} color="#000" />
+                    <Text style={styles.navText}>Tin nhắn</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem}>
+                    <Icon name="person-outline" size={25} color="#007AFF" />
+                    <Text style={[styles.navText, { color: '#007AFF' }]}>Hồ sơ</Text>
+                </TouchableOpacity>
+            </View>
+
         </View>
     );
 };
@@ -152,7 +171,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     icon: {
-        marginHorizontal: 8,
+        marginHorizontal: 28.5,
     },
     profileSection: {
         marginTop: 24,
@@ -253,7 +272,28 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#011F82',
         marginBottom: 16,
-    }
+    },
+    navBar: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingVertical: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#ddd',
+        backgroundColor: '#fff', // Nền trắng giống như trên hình
+        position: 'absolute', // Đưa thanh navbar xuống dưới
+        bottom: 0, // Căn dưới cùng màn hình
+        width: '100%',
+        marginLeft: 10,
+    },
+    navItem: {
+        alignItems: 'center',
+        paddingVertical: 8, // Tăng padding dọc cho icon và text
+    },
+    navText: {
+        fontSize: 12,
+        color: '#000', // Màu đen cho text các tab khác
+        marginTop: 5,
+    },
 });
 
 export default CVManagerment;

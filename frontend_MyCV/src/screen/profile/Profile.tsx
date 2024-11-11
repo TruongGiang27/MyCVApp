@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';  // Dùng Icon Ionicons, có thể đổi theo ý bạn.
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 const UploadCVScreen = () => {
+    const navigation = useNavigation<NavigationProp<any>>();
     return (
         <View style={styles.container}>
 
@@ -22,7 +24,7 @@ const UploadCVScreen = () => {
                     <Text style={styles.buttonText}>Tải lên CV</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>Xây dựng Indeed CV</Text>
+                    <Text style={styles.buttonText} onPress={() => navigation.navigate('CVCreate')} >Xây dựng Indeed CV</Text>
                 </TouchableOpacity>
                 <Text style={styles.agreementText}>
                     Bằng cách tiếp tục, bạn đồng ý nhận các cơ hội việc làm từ Indeed.
@@ -45,7 +47,7 @@ const UploadCVScreen = () => {
                     <Icon name="bookmark-outline" size={25} color="#000" />
                     <Text style={styles.navText}>Việc làm của tôi</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Message')}>
                     <Icon name="chatbubble-outline" size={25} color="#000" />
                     <Text style={styles.navText}>Tin nhắn</Text>
                 </TouchableOpacity>
