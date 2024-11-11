@@ -54,7 +54,7 @@ const App = () => {
                 <Stack.Screen name="CVCreate" component={CVCreate} />
                 <Stack.Screen name="CVManagerment" component={CVManagerment} />
                 <Stack.Screen name="Message" component={Message} />
-                {/* <Stack.Screen name="Profile" component={Profile} /> */}
+                <Stack.Screen name="Profile" component={Profile} />
             </Stack.Navigator>
         </NavigationContainer>
     );

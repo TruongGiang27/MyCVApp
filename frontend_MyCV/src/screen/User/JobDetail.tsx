@@ -6,6 +6,11 @@ import axios from 'axios';
 import { BASE_URL } from '../utils/url';
 import { useNavigation } from '@react-navigation/native';
 
+type RootStackParamList = {
+  CVCreate: { startStep: number };
+
+};
+
 const JobDetail = () => {
   const route = useRoute();
   const { jobId } = route.params as { jobId: string };
@@ -35,9 +40,9 @@ const JobDetail = () => {
       console.log('Has CV:', hasCV);
 
       if (hasCV) {
-        navigation.navigate('CVCreate', { startStep: 10 });
+        navigation.navigate('CVCreate' as never, { startStep: 10 });
       } else {
-        navigation.navigate('CVCreate', { startStep: 1 });
+        navigation.navigate('CVCreate' as never, { startStep: 1 });
       }
     } catch (error) {
       console.error('Error checking CV:', error);
