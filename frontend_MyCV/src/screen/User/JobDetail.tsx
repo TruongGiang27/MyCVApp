@@ -4,7 +4,7 @@ import { useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { BASE_URL } from '../utils/url';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 type RootStackParamList = {
   CVCreate: { startStep: number };
@@ -34,15 +34,16 @@ const JobDetail = () => {
   }, [jobId]);
 
   const handleApply = async () => {
+    // const navigation = useNavigation<NavigationProp<any>>();
     try {
       const response = await axios.get(`${BASE_URL}/cv_form`);
       const hasCV = response.data.length > 0;
       console.log('Has CV:', hasCV);
 
       if (hasCV) {
-        navigation.navigate('CVCreate' as never, { startStep: 10 });
+        navigation.navigate('CVCreate', { startStep: 10 });
       } else {
-        navigation.navigate('CVCreate' as never, { startStep: 1 });
+        navigation.navigate('CVCreate', { startStep: 1 });
       }
     } catch (error) {
       console.error('Error checking CV:', error);

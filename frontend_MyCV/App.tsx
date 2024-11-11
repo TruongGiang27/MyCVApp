@@ -15,7 +15,7 @@ import JobPost from './src/screen/Employer/JobPost';
 import CVCreate from './src/screen/User/CVCreate';
 import CVManagerment from './src/screen/User/CVManagerment';
 import Message from './src/screen/User/Message';   
-import Profile from './src/screen/profile/Profile'; // Add the new screen import 
+import Profile from './src/screen/profile/Profile';
 
 type RootStackParamList = {
     Login: undefined;
@@ -40,7 +40,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const App = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="CVCreate" screenOptions={{ headerShown: false }}>
+            <Stack.Navigator initialRouteName="JobList" screenOptions={{ headerShown: false }}>
                 {/* <Stack.Screen name="Login" component={Login} /> */}
                 {/* <Stack.Screen name="Home" component={Home} /> */}
                 {/* <Stack.Screen name="CreateEmployer" component={CreateEmployer} /> */}
@@ -55,6 +55,8 @@ const App = () => {
                 <Stack.Screen name="CVManagerment" component={CVManagerment} />
                 <Stack.Screen name="Message" component={Message} />
                 <Stack.Screen name="Profile" component={Profile} />
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Login" component={Login} />
             </Stack.Navigator>
         </NavigationContainer>
     );

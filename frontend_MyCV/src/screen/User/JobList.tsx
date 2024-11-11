@@ -167,6 +167,22 @@ const JobList = () => {
     />
   );
 
+  const handleApply = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/cv_form`);
+      const hasCV = response.data.length > 0;
+      console.log('Has CV:', hasCV);
+  
+      if (hasCV) {
+        navigation.navigate('CVCreate', { startStep: 10 });
+      } else {
+        navigation.navigate('CVCreate', { startStep: 1 });
+      }
+    } catch (error) {
+      console.error('Error checking CV:', error);
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
