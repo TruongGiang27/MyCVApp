@@ -40,23 +40,23 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const App = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="JobList" screenOptions={{ headerShown: false }}>
+            <Stack.Navigator initialRouteName="HomeEmployer" screenOptions={{ headerShown: false }}>
                 {/* <Stack.Screen name="Login" component={Login} /> */}
                 {/* <Stack.Screen name="Home" component={Home} /> */}
                 {/* <Stack.Screen name="CreateEmployer" component={CreateEmployer} /> */}
-                {/* <Stack.Screen name="InforManager" component={InforManager} /> */}
-                {/* <Stack.Screen name="HomeEmployer" component={HomeEmployer} /> */}
-                {/* <Stack.Screen name="ApplyManager" component={ApplyManager} /> */}
-                {/* <Stack.Screen name="EmployerDetail" component={EmployerDetail} /> */}
+                <Stack.Screen name="InforManager" component={InforManager} />
+                <Stack.Screen name="HomeEmployer" component={HomeEmployer} />
+                <Stack.Screen name="ApplyManager" component={ApplyManager} />
+                <Stack.Screen name="EmployerDetail" component={EmployerDetail} />
                 {/* <Stack.Screen name="JobPost" component={JobPost} /> */}
-                <Stack.Screen name="JobDetail" component={JobDetail} />
-                <Stack.Screen name="JobList" component={JobList} />
+                {/* <Stack.Screen name="JobDetail" component={JobDetail} /> */}
+                {/* <Stack.Screen name="JobList" component={JobList} />
                 <Stack.Screen name="CVCreate" component={CVCreate} />
                 <Stack.Screen name="CVManagerment" component={CVManagerment} />
                 <Stack.Screen name="Message" component={Message} />
                 <Stack.Screen name="Profile" component={Profile} />
                 <Stack.Screen name="Home" component={Home} />
-                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="Login" component={Login} /> */}
             </Stack.Navigator>
         </NavigationContainer>
     );

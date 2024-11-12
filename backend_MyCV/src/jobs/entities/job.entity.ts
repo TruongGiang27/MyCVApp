@@ -37,7 +37,10 @@ export class Job {
     quantity: number;
     gender: string;
   };
-  
+
+  // Thêm trường status với enum để lưu trạng thái đơn tuyển dụng
+  @Prop({ type: String, enum: ['Mở', 'Tạm dừng', 'Đóng'], default: 'Mở' })
+  status: 'Mở' | 'Tạm dừng' | 'Đóng';
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
