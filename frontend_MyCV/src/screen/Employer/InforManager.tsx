@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../utils/url';
@@ -36,6 +36,10 @@ const InforManager = () => {
     const [filteredEmployers, setFilteredEmployers] = useState<Employer[]>([]); // Lưu danh sách đã lọc
     const [statusCounts, setStatusCounts] = useState({ open: 0, paused: 0, closed: 0 });
     const [status, setStatus] = useState<"Mở" | "Tạm dừng" | "Đã đóng" | null>(null); // Trạng thái lọc
+    const [visibleCount, setVisibleCount] = useState(4); // Start by displaying 4 posts
+    // Adjust the list of displayed employers to be limited by `visibleCount`
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -147,8 +151,13 @@ const InforManager = () => {
         });
         setStatusCounts(counts);
     };
-    const displayEmployers = status ? employers.filter(emp => emp.status === status) : employers;
+    // const displayEmployers = status ? employers.filter(emp => emp.status === status) : employers;
+    // const displayedEmployers = displayEmployers.slice(0, visibleCount);
+    const displayEmployers = (status ? employers.filter(emp => emp.status === status) : employers).slice(0, visibleCount);
 
+    const handleViewMore = () => {
+        setVisibleCount(prev => prev + 4); // Increase the visible count by 4
+    };
 
     return (
         <View style={styles.container}>
@@ -170,25 +179,25 @@ const InforManager = () => {
                     <Text style={styles.searchButtonText}>Tìm kiếm</Text>
                 </TouchableOpacity>
             </View>
-
+            {/* 
             <View style={styles.statusSummary}>
                 <Text style={styles.statusSummaryText}>Mở: {statusCounts.open}</Text>
                 <Text style={styles.statusSummaryText}>Tạm dừng: {statusCounts.paused}</Text>
                 <Text style={styles.statusSummaryText}>Đã đóng: {statusCounts.closed}</Text>
-            </View>
+            </View> */}
             {/* Các nút lọc theo trạng thái */}
             <View style={styles.filterButtons}>
-                <TouchableOpacity onPress={() => setStatus(null)} style={styles.filterButton}>
+                {/* <TouchableOpacity onPress={() => setStatus(null)} style={styles.filterButton}>
                     <Text style={styles.filterButtonText}>Tất cả</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity onPress={() => setStatus('Mở')} style={styles.filterButton}>
-                    <Text style={styles.filterButtonText}>Mở</Text>
+                    <Text style={styles.filterButtonText}>Mở ( {statusCounts.open} )</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setStatus('Tạm dừng')} style={styles.filterButton}>
-                    <Text style={styles.filterButtonText}>Tạm dừng</Text>
+                    <Text style={styles.filterButtonText}>Tạm dừng ( {statusCounts.paused} )</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setStatus('Đã đóng')} style={styles.filterButton}>
-                    <Text style={styles.filterButtonText}>Đã đóng</Text>
+                    <Text style={styles.filterButtonText}>Đã đóng ( {statusCounts.closed} )</Text>
                 </TouchableOpacity>
             </View>
             <ScrollView style={styles.scrollView}>
@@ -362,7 +371,14 @@ const InforManager = () => {
                             </View>
                         </View>
                     ))
+
                 )}
+                {!viewingEmployer&& !editingMode && visibleCount < (status ? employers.filter(emp => emp.status === status).length : employers.length) && (
+                    <TouchableOpacity style={styles.viewMoreButton} onPress={handleViewMore}>
+                        <Text style={styles.viewMoreText}>Xem thêm</Text>
+                    </TouchableOpacity>
+                )}
+
             </ScrollView>
         </View>
     );
@@ -525,6 +541,18 @@ const styles = StyleSheet.create({
     iconButton: {
         marginLeft: 15
     },
+    viewMoreButton: {
+        backgroundColor: '#011F82',
+        paddingVertical: 10,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    viewMoreText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+
     formContainer: {
         backgroundColor: '#fff',
         borderRadius: 8,
