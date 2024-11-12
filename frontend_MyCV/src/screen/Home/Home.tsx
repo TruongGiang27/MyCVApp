@@ -70,7 +70,14 @@ const SearchMap = ({ onCancel }: { onCancel: () => void }) => (
 
 // Mid section (Content)
 // Job item component
-const JobItem = ({ title, company, salary, location }) => {
+interface JobItemProps {
+    title: string;
+    company: string;
+    salary: string;
+    location: string;
+}
+
+const JobItem: React.FC<JobItemProps> = ({ title, company, salary, location }) => {
 
     return (
         <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>
