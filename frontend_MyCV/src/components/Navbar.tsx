@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
+// import MessageScreen from '../screen/User/Message';
 // import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 // const navigation = useNavigation<NavigationProp<any>>();
@@ -20,7 +21,7 @@ const Navbar = () => (
       <Text style={styles.navText}>Tin nhắn</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.navItem}>
-      <Icon name="post" type="font-awesome" color="#666" />
+      <Icon name="plus-circle" type="font-awesome" color="#666" />
       <Text style={styles.navText}>Đăng bài</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.navItem} >

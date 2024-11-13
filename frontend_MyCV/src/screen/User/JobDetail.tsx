@@ -8,7 +8,6 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 type RootStackParamList = {
   CVCreate: { startStep: number };
-
 };
 
 const JobDetail = () => {
@@ -16,7 +15,8 @@ const JobDetail = () => {
   const { jobId } = route.params as { jobId: string };
   const [jobDetail, setJobDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
 
   useEffect(() => {
     const fetchJobDetail = async () => {
