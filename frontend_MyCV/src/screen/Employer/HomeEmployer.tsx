@@ -64,7 +64,7 @@ const HomeEmployer = () => {
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const [selectedOrder, setSelectedOrder] = useState('Giảm dần');
+  const [selectedOrder, setSelectedOrder] = useState('open');
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const slideAnim_l = useRef(new Animated.Value(-width)).current;
@@ -122,12 +122,12 @@ const HomeEmployer = () => {
       const statusA = statusPriority[a.status];
       const statusB = statusPriority[b.status];
 
-      if (itemValue === 'Giảm dần') {
+      if (itemValue === 'open') {
         // Sort in descending order (Đã đóng > Tạm dừng > Mở)
-        return statusB - statusA;
+        return statusA - statusB;
       } else {
         // Sort in ascending order (Mở < Tạm dừng < Đã đóng)
-        return statusA - statusB;
+        return statusB - statusA;
       }
     });
 
@@ -250,7 +250,7 @@ const HomeEmployer = () => {
         </View>
 
         <View style={styles.orderContainer}>
-          <Text style={styles.orderText}>Thứ tự:</Text>
+          <Text style={styles.orderText}>Trạng thái:</Text>
           <Picker
             selectedValue={selectedOrder}
             style={styles.picker}
@@ -259,8 +259,8 @@ const HomeEmployer = () => {
             onValueChange={handleSortChange}
             dropdownIconColor="#1976D2"
           >
-            <Picker.Item label="Giảm dần" value="Giảm dần" style={{ color: '#1976D2' }} />
-            <Picker.Item label="Tăng dần" value="Tăng dần" style={{ color: '#1976D2' }} />
+            <Picker.Item label="Mở" value="open" style={{ color: '#1976D2' }} />
+            <Picker.Item label="Đóng" value="close" style={{ color: '#1976D2' }} />
           </Picker>
         </View>
       </View>
