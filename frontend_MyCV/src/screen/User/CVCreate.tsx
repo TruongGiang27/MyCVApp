@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SectionList, Platform } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
-import { NavigationProp } from '@react-navigation/native';
+import { useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useRoute, useNavigation } from '@react-navigation/native';
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
@@ -194,6 +193,7 @@ const CVCreate = () => {
       console.log('Data successfully posted to MongoDB:', response.data);
       console.log('Response data structure:', response.data); // Add this line to log the response data structure
       // Handle successful post, e.g., navigate to another screen or show a success message
+      navigation.navigate('JobDetail', { jobId: (route.params as any)?.jobId }); // Navigate to JobDetail page with jobId
     } catch (error) {
       console.error('Error posting data to MongoDB:', error);
       if (axios.isAxiosError(error)) {
