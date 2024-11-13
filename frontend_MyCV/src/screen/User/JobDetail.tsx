@@ -13,7 +13,7 @@ type RootStackParamList = {
 
 const JobDetail = () => {
   const route = useRoute();
-  const { jobId } = route.params as { jobId: string };
+  const { jobId } = route.params ? route.params as { jobId: string } : { jobId: '' };
   const [jobDetail, setJobDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
