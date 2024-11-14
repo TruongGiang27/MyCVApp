@@ -18,6 +18,7 @@ const JobDetail = () => {
   const [jobDetail, setJobDetail] = useState<any>(null);
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  // Add the new navigation prop
   const navigationCVCreate = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
