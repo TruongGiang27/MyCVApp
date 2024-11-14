@@ -27,7 +27,7 @@ type RootStackParamList = {
     EmployerDetail: undefined;
     JobPost: undefined;
     JobDetail: { jobId: string };
-    CVCreate: undefined;
+    CVCreate: { startStep: number; jobId: string };
     Case10: undefined; // Add the new screen type
     JobList: undefined;
     CVManagerment: undefined;

@@ -18,6 +18,7 @@ const JobDetail = () => {
   const [jobDetail, setJobDetail] = useState<any>(null);
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigationCVCreate = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     const fetchJobDetail = async () => {
@@ -33,16 +34,15 @@ const JobDetail = () => {
   }, [jobId]);
 
   const handleEditAndCreate = async () => {
-    // const navigation = useNavigation<NavigationProp<any>>();
     try {
       const response = await axios.get(`${BASE_URL}/cv_form`);
       const hasCV = response.data.length > 0;
       console.log('Has CV:', hasCV);
 
       if (hasCV) {
-        navigation.navigate('CVCreate', { startStep: 10, jobId } as never);
+        navigationCVCreate.navigate('CVCreate', { startStep: 10, jobId } as never);
       } else {
-        navigation.navigate('CVCreate', { startStep: 1, jobId } as never);
+        navigationCVCreate.navigate('CVCreate', { startStep: 1, jobId } as never);
       }
     } catch (error) {
       console.error('Error checking CV:', error);
