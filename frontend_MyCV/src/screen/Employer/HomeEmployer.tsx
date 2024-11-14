@@ -30,10 +30,12 @@ interface Job {
   salary: string;
   jobType: string;
   jobDescription: string;
-  status: "Mở" | "Tạm dừng" | "Đã đóng"; // Add status field here
+  status: "Chọn trạng thái" | "Mở" | "Tạm dừng" | "Đã đóng"; // Add status field here
 }
 
 const HomeEmployer = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [allJobs, setAllJobs] = useState<Job[]>([]); // Original data
   const [jobs, setJobs] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [userInfo, setUserInfo] = useState<any>(null);
@@ -42,6 +44,7 @@ const HomeEmployer = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/jobs`);
+        setAllJobs(response.data); // Store original jobs list
         setJobs(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -61,8 +64,6 @@ const HomeEmployer = () => {
   const handleViewMore = () => {
     setVisibleCount(prev => prev + 5); // Load 5 more jobs each time
   };
-
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const [selectedOrder, setSelectedOrder] = useState('open');
   const [showAccountMenu, setShowAccountMenu] = useState(false);
@@ -108,33 +109,22 @@ const HomeEmployer = () => {
     }).start(() => setShowMenu(false));
   };
 
-  const statusPriority = {
-    "Mở": 1,         // Open
-    "Tạm dừng": 2,   // Paused
-    "Đã đóng": 3     // Closed
-  };
-
-
   const handleSortChange = (itemValue: string) => {
     setSelectedOrder(itemValue);
-
-    const sortedData = [...jobs].sort((a, b) => {
-      const statusA = statusPriority[a.status];
-      const statusB = statusPriority[b.status];
-
-      if (itemValue === 'open') {
-        // Sort in descending order (Đã đóng > Tạm dừng > Mở)
-        return statusA - statusB;
-      } else {
-        // Sort in ascending order (Mở < Tạm dừng < Đã đóng)
-        return statusB - statusA;
-      }
-    });
-
-    setJobs(sortedData);
+    let filteredJobs = [...allJobs];
+    if (itemValue === 'chooice status') {
+      filteredJobs;
+    }
+    else if (itemValue === 'open') {
+      filteredJobs = filteredJobs.filter(job => job.status === 'Mở');
+    } else if (itemValue === 'pause') {
+      filteredJobs = filteredJobs.filter(job => job.status === 'Tạm dừng');
+    } else if (itemValue === 'close') {
+      filteredJobs = filteredJobs.filter(job => job.status === 'Đã đóng');
+    }
+    setJobs(filteredJobs); // Update filtered jobs
+    setVisibleCount(filteredJobs.length); // Show all filtered jobs
   };
-
-
   const menuItems = [
     { title: 'Tạo mới', icon: 'add-circle-outline' },
     { title: 'Việc làm', icon: 'shopping-bag' },
@@ -255,12 +245,14 @@ const HomeEmployer = () => {
             selectedValue={selectedOrder}
             style={styles.picker}
             mode="dropdown"
-            onFocus={handlePickerFocus}
+            onFocus={() => Keyboard.dismiss()}
             onValueChange={handleSortChange}
             dropdownIconColor="#1976D2"
           >
+            <Picker.Item label="Chọn trạng thái" value="chooice status" style={{ color: '#1976D2' }} />
             <Picker.Item label="Mở" value="open" style={{ color: '#1976D2' }} />
-            <Picker.Item label="Đóng" value="close" style={{ color: '#1976D2' }} />
+            <Picker.Item label="Tạm dừng" value="pause" style={{ color: '#1976D2' }} />
+            <Picker.Item label="Đã đóng" value="close" style={{ color: '#1976D2' }} />
           </Picker>
         </View>
       </View>
@@ -307,7 +299,6 @@ const HomeEmployer = () => {
           </TouchableOpacity>
         )}
       </ScrollView>
-
     </View>
   );
 };
@@ -457,7 +448,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    width: width * 0.5,
+    width: width * 0.65,
     borderColor: '#1976D2',
     borderRadius: 8,
     paddingHorizontal: 10,
@@ -531,6 +522,5 @@ const styles = StyleSheet.create({
   viewMoreText: {
     color: '#fff',
     fontSize: 18,
-
   },
 });

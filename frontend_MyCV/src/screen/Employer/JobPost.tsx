@@ -1,16 +1,16 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import axios from 'axios';
 import * as React from 'react';
 import { useState } from 'react';
 import { Alert, Image, Keyboard, Platform, StyleSheet, Text, View } from 'react-native';
-import { ScrollView, TextInput, TouchableOpacity, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Navbar from '../../components/Navbar';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import axios from 'axios';
+import { RootStackParamList } from '../User/types';
 import { BASE_URL } from '../utils/url';
-import { RootStackParamList } from '../User/types'
 
 // Khai báo kiểu cho props 'navigation'
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
@@ -123,7 +123,7 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                                 style={styles.textinput}
                                 itemStyle={styles.pickerItem}
                                 mode='dialog'>
-                                <Picker.Item label="Chọn một tùy chọn" value="choose" />
+                                <Picker.Item label="Chọn một loại việc làm" value="choose" />
                                 <Picker.Item label="Bán thời gian" value="Part-Time" />
                                 <Picker.Item label="Toàn thời gian" value="Full-Time" />
                                 <Picker.Item label="Cố Định" value="Permanent" />
@@ -136,11 +136,23 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                             <FontAwesome5 name={'dollar-sign'} size={25} color={'#011F82'} />
                             <Text style={styles.label}>Mức lương</Text>
                         </View>
-                        <TextInput
-                            style={styles.textinput}
-                            placeholder='Mức lương'
-                            onChangeText={setSalary}
-                        />
+
+                        <View style={styles.pickerContainer}>
+                            <Picker
+                                selectedValue={salary}
+                                onValueChange={(itemValue: string, itemIndex: number) => setSalary(itemValue)}
+                                onFocus={handlePickerFocus}
+                                style={styles.textinput}
+                                itemStyle={styles.pickerItem}
+                                mode='dialog'>
+                                <Picker.Item label="Chọn một mức lương" value="choose" />
+                                <Picker.Item label="$1000 - $1500" value="salary" />
+                                <Picker.Item label="$1500 - $2000" value="salary" />
+                                <Picker.Item label="$2500 - $3000" value="salary" />
+                                <Picker.Item label="$3500 - $4000" value="salary" />
+                                <Picker.Item label="Bàn bạc sau" value="salary" />
+                            </Picker>
+                        </View>
                         <View style={styles.inputRow}>
                             <FontAwesome5 name={'map-marker-alt'} size={25} color={'#011F82'} />
                             <Text style={styles.label}>Địa chỉ</Text>

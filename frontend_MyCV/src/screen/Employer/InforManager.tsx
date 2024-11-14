@@ -1,7 +1,7 @@
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../utils/url';
 
@@ -38,7 +38,6 @@ const InforManager = () => {
     const [status, setStatus] = useState<"Mở" | "Tạm dừng" | "Đã đóng" | null>(null); // Trạng thái lọc
     const [visibleCount, setVisibleCount] = useState(4); // Start by displaying 4 posts
     // Adjust the list of displayed employers to be limited by `visibleCount`
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -144,10 +143,10 @@ const InforManager = () => {
 
     const countStatuses = (jobs: Employer[]) => {
         const counts = { open: 0, paused: 0, closed: 0 };
-        jobs.forEach(job => {
-            if (job.status === 'Mở') counts.open++;
-            else if (job.status === 'Tạm dừng') counts.paused++;
-            else if (job.status === 'Đã đóng') counts.closed++;
+        jobs.forEach(jobs => {
+            if (jobs.status === 'Mở') counts.open++;
+            else if (jobs.status === 'Tạm dừng') counts.paused++;
+            else if (jobs.status === 'Đã đóng') counts.closed++;
         });
         setStatusCounts(counts);
     };
