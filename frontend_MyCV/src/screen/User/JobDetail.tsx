@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, Modal, Alert } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
@@ -8,14 +8,18 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 type RootStackParamList = {
   CVCreate: { startStep: number };
+  JobList: undefined;
+  JobDetail: { jobId: string };
 };
 
 const JobDetail = () => {
   const route = useRoute();
   const { jobId } = route.params ? route.params as { jobId: string } : { jobId: '' };
   const [jobDetail, setJobDetail] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  // Add the new navigation prop
+  const navigationCVCreate = useNavigation<NavigationProp<RootStackParamList>>();
 
 
   useEffect(() => {
@@ -25,38 +29,63 @@ const JobDetail = () => {
         setJobDetail(response.data);
       } catch (error) {
         console.error('Error fetching job detail:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchJobDetail();
   }, [jobId]);
 
-  const handleApply = async () => {
-    // const navigation = useNavigation<NavigationProp<any>>();
+  const handleEditAndCreate = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/cv_form`);
       const hasCV = response.data.length > 0;
       console.log('Has CV:', hasCV);
 
       if (hasCV) {
-        navigation.navigate('CVCreate', { startStep: 10 });
+        navigationCVCreate.navigate('CVCreate', { startStep: 10, jobId } as never);
       } else {
-        navigation.navigate('CVCreate', { startStep: 1 });
+        navigationCVCreate.navigate('CVCreate', { startStep: 1, jobId } as never);
       }
     } catch (error) {
       console.error('Error checking CV:', error);
     }
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#011F82" />
-      </View>
-    );
-  }
+  const handleApplyNow = () => {
+    setIsModalVisible(true);
+  };
+
+  const confirmApplyNow = async () => {
+    setIsModalVisible(false);
+    try {
+      const response = await axios.get(`${BASE_URL}/cv_form`);
+      const cv = response.data[0]; // Assuming the first CV is the one to be used
+      if (cv) {
+        const cvId = cv._id;
+        const CVfullNameUser = cv.fullName;
+        const CVEmailUser = cv.email;
+        const status = 'applied';
+
+        // Check if the application already exists
+        const existingApplicationResponse = await axios.get(`${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}`);
+        if (existingApplicationResponse.data.length > 0) {
+          Alert.alert('Thông báo', 'Bạn đã ứng tuyển vào công việc này rồi!');
+        } else {
+          await axios.post(`${BASE_URL}/applications`, { cvId, jobId, CVfullNameUser, CVEmailUser, status });
+          console.log('Application submitted successfully');
+          Alert.alert('Thành công', 'Bạn đã ứng tuyển thành công!');
+        }
+      } else {
+        console.error('No CV found to apply with');
+      }
+    } catch (error) {
+      console.error('Error submitting application:', error);
+    }
+  };
+
+  const cancelApplyNow = () => {
+    setIsModalVisible(false);
+  };
 
   if (!jobDetail) {
     return (
@@ -138,9 +167,36 @@ const JobDetail = () => {
       </View>
 
       {/* Apply Button */}
-      <TouchableOpacity style={styles.applyButton} onPress={handleApply}>
-        <Text style={styles.applyButtonText}>Ứng tuyển ngay</Text>
+      <TouchableOpacity style={styles.applyButton} onPress={handleEditAndCreate}>
+        <Text style={styles.applyButtonText}>Chỉnh sửa / Tạo CV</Text>
       </TouchableOpacity>
+
+      {/* New Apply Now Button */}
+      <TouchableOpacity style={styles.applyNowButton} onPress={handleApplyNow}>
+        <Text style={styles.applyNowButtonText}>Ứng tuyển ngay</Text>
+      </TouchableOpacity>
+
+      {/* Apply Now Confirmation Modal */}
+      <Modal
+        visible={isModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={cancelApplyNow}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Bạn có chắc chắn muốn ứng tuyển ngay?</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.modalButton} onPress={confirmApplyNow}>
+                <Text style={styles.modalButtonText}>Xác nhận</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={cancelApplyNow}>
+                <Text style={styles.modalButtonText}>Hủy</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -214,7 +270,53 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  applyNowButton: {
+    backgroundColor: '#10B981',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10, // Add some margin to separate from the "Tạo CV" button
+  },
+  applyNowButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    padding: 10,
+    margin: 5,
+    borderRadius: 5,
+    alignItems: 'center',
+    backgroundColor: '#011F82',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
-
 
 export default JobDetail;

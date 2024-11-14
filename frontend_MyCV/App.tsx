@@ -16,9 +16,24 @@ import CVCreate from './src/screen/User/CVCreate';
 import CVManagerment from './src/screen/User/CVManagerment';
 import Message from './src/screen/User/Message';
 import Profile from './src/screen/profile/Profile';
-import Service from './src/screen/Employer/Service';
-import CVDetail from './src/screen/Employer/CVDetail';
-import { RootStackParamList } from './src/screen/User/types';
+
+type RootStackParamList = {
+    Login: undefined;
+    Home: undefined;
+    CreateEmployer: undefined;
+    InforManager: undefined;
+    HomeEmployer: undefined;
+    ApplyManager: undefined;
+    EmployerDetail: undefined;
+    JobPost: undefined;
+    JobDetail: { jobId: string };
+    CVCreate: { startStep: number; jobId: string };
+    Case10: undefined; // Add the new screen type
+    JobList: undefined;
+    CVManagerment: undefined;
+    Message: undefined;
+    Profile: undefined; // Add the new screen type
+};
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
