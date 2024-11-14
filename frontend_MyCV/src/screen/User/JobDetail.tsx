@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, Modal, Alert } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
@@ -56,10 +56,22 @@ const JobDetail = () => {
     setIsModalVisible(false);
     try {
       const response = await axios.get(`${BASE_URL}/cv_form`);
-      const cvId = response.data[0]?._id; // Assuming the first CV is the one to be used
-      if (cvId) {
-        await axios.post(`${BASE_URL}/applications`, { cvId, jobId });
-        console.log('Application submitted successfully');
+      const cv = response.data[0]; // Assuming the first CV is the one to be used
+      if (cv) {
+        const cvId = cv._id;
+        const CVfullNameUser = cv.fullName;
+        const CVEmailUser = cv.email;
+        const status = 'applied';
+
+        // Check if the application already exists
+        const existingApplicationResponse = await axios.get(`${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}`);
+        if (existingApplicationResponse.data.length > 0) {
+          Alert.alert('Thông báo', 'Bạn đã ứng tuyển vào công việc này rồi!');
+        } else {
+          await axios.post(`${BASE_URL}/applications`, { cvId, jobId, CVfullNameUser, CVEmailUser, status });
+          console.log('Application submitted successfully');
+          Alert.alert('Thành công', 'Bạn đã ứng tuyển thành công!');
+        }
       } else {
         console.error('No CV found to apply with');
       }
