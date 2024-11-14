@@ -8,7 +8,8 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 type RootStackParamList = {
   CVCreate: { startStep: number };
-
+  JobList: undefined;
+  JobDetail: { jobId: string };
 };
 
 const JobDetail = () => {

@@ -1,25 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SectionList, Platform } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
-import { useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
+import { useRoute, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
 import { BASE_URL } from '../utils/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+type RootStackParamList = {
+  JobDetail: { jobId: string };
+};
+
+type JobDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'JobDetail'>;
+type JobDetailScreenRouteProp = RouteProp<RootStackParamList, 'JobDetail'>;
+
+interface Props {
+  navigation: JobDetailScreenNavigationProp;
+  route: JobDetailScreenRouteProp;
+}
 
 // Define the type for the route parameters
 type RouteParams = {
     startStep: number;
+    jobId: string;
 };
 
 const CVCreate = () => {
   const { control, handleSubmit, setValue, trigger, formState: { errors, isValid } } = useForm({ mode: 'onChange' });
   const navigation = useNavigation();
-  const route = useRoute();
+  const route = useRoute<JobDetailScreenRouteProp>();
   const { startStep } = route.params as RouteParams || {};
   const [currentStep, setCurrentStep] = useState(startStep || 1);
+  const navigationJobDetail = useNavigation<JobDetailScreenNavigationProp>();
 
   type FormData = {
     [key: string]: any;
@@ -193,7 +208,8 @@ const CVCreate = () => {
       console.log('Data successfully posted to MongoDB:', response.data);
       console.log('Response data structure:', response.data); // Add this line to log the response data structure
       // Handle successful post, e.g., navigate to another screen or show a success message
-      navigation.navigate('JobDetail', { jobId: (route.params as any)?.jobId }); // Navigate to JobDetail page with jobId
+      navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
+
     } catch (error) {
       console.error('Error posting data to MongoDB:', error);
       if (axios.isAxiosError(error)) {
