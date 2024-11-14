@@ -1,18 +1,16 @@
 //Uyên
 //+1popup contact
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Modal, TextInput, BackHandler } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Navbar from '../../components/Navbar';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { RootStackParamList } from '../User/types';
 import { BASE_URL } from '../utils/url';
-import { RootStackParamList } from '../User/types'
 // Khai báo kiểu cho props 'navigation'
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
-    'CvDetail'
+    'CVDetail'
 >;
 
 type Props = {
@@ -20,7 +18,7 @@ type Props = {
     // name: string;
 };
 
-const CvDetail: React.FC<Props> = ({ navigation}) => {
+const CVDetail: React.FC<Props> = ({ navigation}) => {
     const [cv, setCv] = useState<any>();
     const [name, setName] = useState<string>();
     const BackHandler = () => {
@@ -42,7 +40,7 @@ const CvDetail: React.FC<Props> = ({ navigation}) => {
     }, []);
 
     const handleEdit = () => {
-        navigation.navigate('EditCv');
+        navigation.navigate('CVCreate');
     }
 
     return (
@@ -95,12 +93,17 @@ const CvDetail: React.FC<Props> = ({ navigation}) => {
                         <Icon name='chevron-forward-outline' size={24} color="#011F82" onPress={handleEdit}/>
                     </View>
                 </View>
+                :
+                <View style={styles.detail}>
+                    <Text style={styles.headerText}>Chi tiết CV</Text>
+                    <Text style={styles.headerText}>{cv?.detail}</Text>
+                </View>
             </View>
         </ScrollView>
     );
 };
 
-export default CvDetail;
+export default CVDetail;
 const styles = StyleSheet.create({
     container: {
         flex: 1,

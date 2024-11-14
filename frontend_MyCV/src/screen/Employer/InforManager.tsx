@@ -1,8 +1,7 @@
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../utils/url';
 
@@ -17,6 +16,7 @@ interface Employer {
     jobDescription: string; // Mô tả công việc
     requirements?: string; // Yêu cầu công việc
     benefits?: string; // Quyền lợi
+    status: "Mở" | "Tạm dừng" | "Đã đóng"; // Trạng thái công việc
     additionalInfo?: {
         deadline?: string;
         experience?: string;
@@ -34,11 +34,17 @@ const InforManager = () => {
     const [formData, setFormData] = useState<Employer | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [filteredEmployers, setFilteredEmployers] = useState<Employer[]>([]); // Lưu danh sách đã lọc
+    const [statusCounts, setStatusCounts] = useState({ open: 0, paused: 0, closed: 0 });
+    const [status, setStatus] = useState<"Mở" | "Tạm dừng" | "Đã đóng" | null>(null); // Trạng thái lọc
+    const [visibleCount, setVisibleCount] = useState(4); // Start by displaying 4 posts
+    // Adjust the list of displayed employers to be limited by `visibleCount`
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${BASE_URL}/jobs`); // Đường dẫn API từ JobPost
                 setEmployers(response.data);
+                countStatuses(response.data);
             } catch (error) {
                 console.error('Error fetching job data:', error);
             }
@@ -49,7 +55,7 @@ const InforManager = () => {
 
     const BackHandler = () => {
         navigation.goBack();
-    }
+    };
 
     const handleSearch = () => {
         const results = employers
@@ -57,7 +63,7 @@ const InforManager = () => {
                 emp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 emp.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 emp.location.toLowerCase().includes(searchQuery.toLowerCase())
-            )
+            );
         setFilteredEmployers(results);
     };
 
@@ -103,15 +109,8 @@ const InforManager = () => {
             'Xác nhận xóa',
             'Bạn có chắc chắn muốn xóa bài đăng này?',
             [
-                {
-                    text: 'Hủy',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Xóa',
-                    style: 'destructive',
-                    onPress: () => handleDelete(_id),
-                },
+                { text: 'Hủy', style: 'cancel' },
+                { text: 'Xóa', style: 'destructive', onPress: () => handleDelete(_id) }
             ],
             { cancelable: true }
         );
@@ -128,9 +127,36 @@ const InforManager = () => {
             console.error('Error deleting job post:', error);
         }
     };
-    const displayEmployers = (filteredEmployers.length > 0 ? filteredEmployers : employers);
 
+    const handleStatusChange = async (status: "Mở" | "Tạm dừng" | "Đã đóng", employerId: string) => {
+        try {
+            const response = await axios.put(`${BASE_URL}/jobs/${employerId}`, { status });
+            const updatedEmployers = employers.map(emp => emp._id === employerId ? { ...emp, status } : emp);
+            setEmployers(updatedEmployers);
+            countStatuses(updatedEmployers);
+            Alert.alert('Cập nhật trạng thái', `Trạng thái đã thay đổi thành: ${status}`);
+        } catch (error) {
+            Alert.alert('Lỗi', 'Có lỗi khi cập nhật trạng thái');
+            console.error('Error updating job status:', error);
+        }
+    };
 
+    const countStatuses = (jobs: Employer[]) => {
+        const counts = { open: 0, paused: 0, closed: 0 };
+        jobs.forEach(jobs => {
+            if (jobs.status === 'Mở') counts.open++;
+            else if (jobs.status === 'Tạm dừng') counts.paused++;
+            else if (jobs.status === 'Đã đóng') counts.closed++;
+        });
+        setStatusCounts(counts);
+    };
+    // const displayEmployers = status ? employers.filter(emp => emp.status === status) : employers;
+    // const displayedEmployers = displayEmployers.slice(0, visibleCount);
+    const displayEmployers = (status ? employers.filter(emp => emp.status === status) : employers).slice(0, visibleCount);
+
+    const handleViewMore = () => {
+        setVisibleCount(prev => prev + 4); // Increase the visible count by 4
+    };
 
     return (
         <View style={styles.container}>
@@ -152,6 +178,27 @@ const InforManager = () => {
                     <Text style={styles.searchButtonText}>Tìm kiếm</Text>
                 </TouchableOpacity>
             </View>
+            {/* 
+            <View style={styles.statusSummary}>
+                <Text style={styles.statusSummaryText}>Mở: {statusCounts.open}</Text>
+                <Text style={styles.statusSummaryText}>Tạm dừng: {statusCounts.paused}</Text>
+                <Text style={styles.statusSummaryText}>Đã đóng: {statusCounts.closed}</Text>
+            </View> */}
+            {/* Các nút lọc theo trạng thái */}
+            <View style={styles.filterButtons}>
+                {/* <TouchableOpacity onPress={() => setStatus(null)} style={styles.filterButton}>
+                    <Text style={styles.filterButtonText}>Tất cả</Text>
+                </TouchableOpacity> */}
+                <TouchableOpacity onPress={() => setStatus('Mở')} style={styles.filterButton}>
+                    <Text style={styles.filterButtonText}>Mở ( {statusCounts.open} )</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setStatus('Tạm dừng')} style={styles.filterButton}>
+                    <Text style={styles.filterButtonText}>Tạm dừng ( {statusCounts.paused} )</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setStatus('Đã đóng')} style={styles.filterButton}>
+                    <Text style={styles.filterButtonText}>Đã đóng ( {statusCounts.closed} )</Text>
+                </TouchableOpacity>
+            </View>
             <ScrollView style={styles.scrollView}>
                 {viewingEmployer ? (
                     <View style={styles.formContainer}>
@@ -168,7 +215,20 @@ const InforManager = () => {
                         </View>
                         {!editingMode ? (
                             <>
-                                {/* <ScrollView> */}
+                                <View style={styles.statusContainer}>
+                                    <Text style={styles.statusLabel}>Trạng thái:</Text>
+                                    <View style={styles.statusButtons}>
+                                        <TouchableOpacity onPress={() => viewingEmployer && handleStatusChange("Mở", viewingEmployer._id)} style={viewingEmployer?.status === "Mở" ? styles.activeStatusButton : styles.statusButton}>
+                                            <Text style={styles.statusText}>Mở</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => viewingEmployer && handleStatusChange("Tạm dừng", viewingEmployer._id)} style={viewingEmployer?.status === "Tạm dừng" ? styles.activeStatusButton : styles.statusButton}>
+                                            <Text style={styles.statusText}>Tạm dừng</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => viewingEmployer && handleStatusChange("Đã đóng", viewingEmployer._id)} style={viewingEmployer?.status === "Đã đóng" ? styles.activeStatusButton : styles.statusButton}>
+                                            <Text style={styles.statusText}>Đã đóng</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
                                 <View style={styles.detailRow}>
                                     <Text style={styles.titleText}>Chức vụ:</Text>
                                     <Text style={styles.viewText}>{viewingEmployer.title}</Text>
@@ -205,8 +265,6 @@ const InforManager = () => {
                                 <TouchableOpacity style={styles.buttonCancel} onPress={handleBackToList}>
                                     <Text style={styles.textbtn}>Quay lại</Text>
                                 </TouchableOpacity>
-                                {/* </ScrollView> */}
-
                             </>
                         ) : (
                             <>
@@ -312,9 +370,15 @@ const InforManager = () => {
                             </View>
                         </View>
                     ))
-                )}
-            </ScrollView >
 
+                )}
+                {!viewingEmployer&& !editingMode && visibleCount < (status ? employers.filter(emp => emp.status === status).length : employers.length) && (
+                    <TouchableOpacity style={styles.viewMoreButton} onPress={handleViewMore}>
+                        <Text style={styles.viewMoreText}>Xem thêm</Text>
+                    </TouchableOpacity>
+                )}
+
+            </ScrollView>
         </View>
     );
 };
@@ -322,7 +386,7 @@ const InforManager = () => {
 const styles = StyleSheet.create({
     scrollView: {
         backgroundColor: '#f5f5f5',
-        },
+    },
     container: {
         padding: 20,
         flex: 1,
@@ -330,7 +394,6 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        
         justifyContent: 'space-between',
     },
     icon: {
@@ -375,6 +438,70 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16
     },
+
+    statusSummary: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingVertical: 10,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 8,
+        marginVertical: 10,
+    },
+    statusSummaryText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    filterButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 20,
+    },
+    filterButton: {
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        backgroundColor: '#011F82',
+        borderRadius: 5,
+    },
+    filterButtonText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+
+    statusContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 15,
+    },
+    statusLabel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#011F82',
+        marginRight: 10,
+    },
+    statusButtons: {
+        flexDirection: 'row',
+    },
+    statusButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        borderRadius: 5,
+        backgroundColor: '#ddd',
+        marginHorizontal: 5,
+    },
+    activeStatusButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        borderRadius: 5,
+        backgroundColor: '#011F82',
+        marginHorizontal: 5,
+    },
+    statusText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+
     employerContainer: {
         backgroundColor: '#fff',
         padding: 15,
@@ -413,6 +540,18 @@ const styles = StyleSheet.create({
     iconButton: {
         marginLeft: 15
     },
+    viewMoreButton: {
+        backgroundColor: '#011F82',
+        paddingVertical: 10,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    viewMoreText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+
     formContainer: {
         backgroundColor: '#fff',
         borderRadius: 8,
@@ -452,7 +591,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         alignItems: 'center',
         marginTop: 20,
-        // position: 'absolute',
     },
     textbtn: {
         color: '#ffffff',
