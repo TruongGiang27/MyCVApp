@@ -7,7 +7,7 @@ import { BASE_URL } from '../utils/url';
 import axios from 'axios';
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
-
+import { useNavigation } from '@react-navigation/native';
 const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void, onMapSearchFocus: () => void }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -70,7 +70,7 @@ const SearchMap = ({ onCancel }: { onCancel: () => void }) => (
 
 // Mid section (Content)
 // Job item component
-const JobItem = ({ title, company, salary, location }) => {
+const JobItem = ({ title, company, salary, location }:{title:string , company:string, salary:string, location:string}) => {
 
     return (
         <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>
@@ -167,8 +167,8 @@ const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => voi
 };
 
 
+// Home component
 
-// Main component
 const Home = () => {
     const [isSearching, setIsSearching] = useState(false);
     const [isMapSearching, setIsMapSearching] = useState(false);
@@ -186,12 +186,12 @@ const Home = () => {
     const handleCancelSearch = () => {
         setIsSearching(false);
         setIsMapSearching(false);
-        Keyboard.dismiss(); // Dismiss keyboard when search is canceled
+        Keyboard.dismiss(); 
     };
-
-    const { width } = useWindowDimensions();  // Get the current screen width
+// responsive window width
+    const { width } = useWindowDimensions();  
     const logoWidth = width * 0.5;
-
+    const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <View style={styles.logo}>
@@ -209,7 +209,7 @@ const Home = () => {
                 )}
             </View>
             <View style={styles.navbar}>
-                <Navbar />
+                <Navbar navigation={navigation}/>
             </View>
         </View>
 

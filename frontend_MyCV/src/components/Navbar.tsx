@@ -1,48 +1,65 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Icon } from '@rneui/themed';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { NativeStackScreenProps} from '@react-navigation/native-stack'
+import { RootStackParamList } from './navigator/RootStackParamList ';
+import ScreenName from '../constant/ScreenName';
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
-const Navbar = () => (
-  <View style={styles.navbar}>
-    <TouchableOpacity style={styles.navItem}>
-      <Icon name="home" type="font-awesome" color="#007AFF" />
-      <Text style={styles.navText}>Trang chủ</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem}>
-      <Icon name="bookmark" type="font-awesome" color="#666" />
-      <Text style={styles.navText}>Việc làm của tôi</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem}>
-      <Icon name="envelope" type="font-awesome" color="#666" />
-      <Text style={styles.navText}>Tin nhắn</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem}>
-      <Icon name="user" type="font-awesome" color="#666" />
-      <Text style={styles.navText}>Hồ sơ</Text>
-    </TouchableOpacity>
-  </View>
-);
+const Navbar = ({ navigation}:Props) => {
+  return (
+    <View style={styles.navbar}>
+      <View style={styles.group}>
+        <TouchableOpacity style={styles.navItem}>
+          <Icon name="home" size={25} color="#011F82" />
+          <Text style={styles.navText}>Trang chủ</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Icon name="bookmark" size={25} color="#011F82" />
+          <Text style={styles.navText}>Việc làm của tôi</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.group}>
+        <TouchableOpacity style={styles.navItem}>
+          <Icon name="chatbox-ellipses" size={25} color="#011F82" />
+          <Text style={styles.navText}>Tin nhắn</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profile')}>
+          <Icon name="person" size={25} color="#011F82" />
+          <Text style={styles.navText}>Hồ sơ</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+};
 
 export default Navbar;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, // Takes up full screen height
-    justifyContent: 'flex-end', // Pushes the navbar to the bottom
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   navbar: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-around',
     backgroundColor: '#fff',
     paddingVertical: 10,
     borderTopColor: '#ddd',
-    borderTopWidth: 1,
-    position: 'relative',
-    bottom: 0,
+    borderTopWidth: 0.1,
+    paddingHorizontal: 15,
+  },
+  group: {
+    width: '50%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
   navItem: {
+
     alignItems: 'center',
+    paddingHorizontal: 10, // Adjust padding between items within each group
   },
   navText: {
     color: '#666',
