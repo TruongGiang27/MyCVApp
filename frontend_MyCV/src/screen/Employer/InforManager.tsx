@@ -150,10 +150,12 @@ const InforManager = () => {
         });
         setStatusCounts(counts);
     };
-    // const displayEmployers = status ? employers.filter(emp => emp.status === status) : employers;
-    // const displayedEmployers = displayEmployers.slice(0, visibleCount);
-    const displayEmployers = (status ? employers.filter(emp => emp.status === status) : employers).slice(0, visibleCount);
 
+    const displayEmployers = employers.filter(emp => {
+        if (status === null) return true; // Hiển thị tất cả nếu status là null
+        return emp.status === status; // Lọc theo status
+    }).slice(0, visibleCount);
+    
     const handleViewMore = () => {
         setVisibleCount(prev => prev + 4); // Increase the visible count by 4
     };
@@ -186,9 +188,9 @@ const InforManager = () => {
             </View> */}
             {/* Các nút lọc theo trạng thái */}
             <View style={styles.filterButtons}>
-                {/* <TouchableOpacity onPress={() => setStatus(null)} style={styles.filterButton}>
+                <TouchableOpacity onPress={() => setStatus(null)} style={styles.filterButton}>
                     <Text style={styles.filterButtonText}>Tất cả</Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
                 <TouchableOpacity onPress={() => setStatus('Mở')} style={styles.filterButton}>
                     <Text style={styles.filterButtonText}>Mở ( {statusCounts.open} )</Text>
                 </TouchableOpacity>
@@ -372,7 +374,7 @@ const InforManager = () => {
                     ))
 
                 )}
-                {!viewingEmployer&& !editingMode && visibleCount < (status ? employers.filter(emp => emp.status === status).length : employers.length) && (
+                {!viewingEmployer && !editingMode && visibleCount < (status ? employers.filter(emp => emp.status === status).length : employers.length) && (
                     <TouchableOpacity style={styles.viewMoreButton} onPress={handleViewMore}>
                         <Text style={styles.viewMoreText}>Xem thêm</Text>
                     </TouchableOpacity>
@@ -454,14 +456,19 @@ const styles = StyleSheet.create({
     },
     filterButtons: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        flexWrap: 'wrap',  // Allows buttons to wrap if space is limited
+        justifyContent: 'space-between', // Distributes buttons evenly
         marginBottom: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
     },
     filterButton: {
+        flex: 1, // Each button takes equal space
         paddingVertical: 10,
-        paddingHorizontal: 20,
+        marginHorizontal: 5, // Adds spacing between buttons
         backgroundColor: '#011F82',
         borderRadius: 5,
+        alignItems: 'center', // Centers text within each button
     },
     filterButtonText: {
         color: '#fff',

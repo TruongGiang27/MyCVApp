@@ -16,24 +16,9 @@ import CVCreate from './src/screen/User/CVCreate';
 import CVManagerment from './src/screen/User/CVManagerment';
 import Message from './src/screen/User/Message';
 import Profile from './src/screen/profile/Profile';
-
-type RootStackParamList = {
-    Login: undefined;
-    Home: undefined;
-    CreateEmployer: undefined;
-    InforManager: undefined;
-    HomeEmployer: undefined;
-    ApplyManager: undefined;
-    EmployerDetail: undefined;
-    JobPost: undefined;
-    JobDetail: { jobId: string };
-    CVCreate: { startStep: number; jobId: string };
-    Case10: undefined; // Add the new screen type
-    JobList: undefined;
-    CVManagerment: undefined;
-    Message: undefined;
-    Profile: undefined; // Add the new screen type
-};
+import Service from './src/screen/Employer/Service';
+// import CVDetail from './src/screen/Employer/CvDetail';
+import { RootStackParamList } from './src/screen/User/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -55,7 +40,7 @@ const App = () => {
                 {/* Employer */}
                 <Stack.Screen name='CreateEmployer' component={CreateEmployer} />
                 <Stack.Screen name='ApplyManager' component={ApplyManager} />
-                <Stack.Screen name='CVDetail' component={CVDetail} />
+                {/* <Stack.Screen name='CVDetail' component={CVDetail} /> */}
                 <Stack.Screen name='EmployerDetail' component={EmployerDetail} />
                 <Stack.Screen name='HomeEmployer' component={HomeEmployer} />
                 <Stack.Screen name='InforManager' component={InforManager} />
