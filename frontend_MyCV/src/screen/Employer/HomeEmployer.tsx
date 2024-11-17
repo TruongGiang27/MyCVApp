@@ -1,9 +1,9 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Picker } from '@react-native-picker/picker';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useCallback, useState, useRef } from 'react';
 import {
   Animated, Dimensions, Image,
   Keyboard,
@@ -39,7 +39,7 @@ const HomeEmployer = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [userInfo, setUserInfo] = useState<any>(null);
-  const [visibleCount, setVisibleCount] = useState(5); // Start by showing 5 jobs
+  const [visibleCount, setVisibleCount] = useState(2); // Start by showing 5 jobs
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -52,6 +52,24 @@ const HomeEmployer = () => {
     };
     fetchData();
   }, []);
+  
+  // Hàm tải dữ liệu từ API
+  const fetchJobs = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/jobs`);
+      setAllJobs(response.data);
+      setJobs(response.data);
+      setVisibleCount(2); // Reset số lượng hiển thị mỗi lần tải lại
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  // Tải lại dữ liệu khi màn hình `HomeEmployer` được focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchJobs();
+    }, [])
+  );
 
   const filteredData = jobs
     .filter((item) =>
@@ -62,10 +80,10 @@ const HomeEmployer = () => {
     .slice(0, visibleCount); // Show only `visibleCount` items
 
   const handleViewMore = () => {
-    setVisibleCount(prev => prev + 5); // Load 5 more jobs each time
+    setVisibleCount(prev => prev + 2); // Load 5 more jobs each time
   };
 
-  const [selectedOrder, setSelectedOrder] = useState('open');
+  const [selectedOrder, setSelectedOrder] = useState('');
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const slideAnim_l = useRef(new Animated.Value(-width)).current;
@@ -121,9 +139,11 @@ const HomeEmployer = () => {
       filteredJobs = filteredJobs.filter(job => job.status === 'Tạm dừng');
     } else if (itemValue === 'close') {
       filteredJobs = filteredJobs.filter(job => job.status === 'Đã đóng');
+    } else if (itemValue === 'chooice status') {
+      filteredJobs = filteredJobs.filter(job => job.status === 'Chọn trạng thái');
     }
     setJobs(filteredJobs); // Update filtered jobs
-    setVisibleCount(filteredJobs.length); // Show all filtered jobs
+    setVisibleCount(2); // Show all filtered jobs
   };
   const menuItems = [
     { title: 'Tạo mới', icon: 'add-circle-outline' },

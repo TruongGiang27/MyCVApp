@@ -1,21 +1,36 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { BASE_URL } from '../utils/url';
 
 const EmployerDetail = () => {
   const route = useRoute();
   const { jobDetails } = route.params as { jobDetails: any };
   const navigation = useNavigation();
+  // State to manage job status selection
+  const [jobStatus, setJobStatus] = useState(jobDetails.status);
+  const handleStatusChange = async (newStatus: string) => {
+    setJobStatus(newStatus); // Cập nhật trạng thái trong giao diện
 
-  if (!jobDetails) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Không có thông tin công việc.</Text>
-      </View>
-    );
-  }
+    try {
+      // Gửi yêu cầu cập nhật trạng thái lên server
+      const response = await axios.put(`${BASE_URL}/jobs/${jobDetails._id}`, {
+        status: newStatus,
+      });
 
+      if (response.status === 200) {
+        Alert.alert("Thành công", "Trạng thái công việc đã được cập nhật.");
+      } else {
+        Alert.alert("Lỗi", "Có lỗi xảy ra khi cập nhật trạng thái.");
+      }
+    } catch (error) {
+      console.error("Error updating job status:", error);
+      Alert.alert("Lỗi", "Không thể kết nối với server.");
+    }
+  };
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
       {/* Header */}
@@ -30,18 +45,19 @@ const EmployerDetail = () => {
         <Text style={styles.companyName}>{jobDetails.company}</Text>
         <Text style={styles.location}>{jobDetails.location}</Text>
       </View>
-
       {/* Job Status */}
       <View style={styles.statusContainer}>
         <Icon name="information-circle-outline" size={20} color="#011F82" />
-        <Text style={[
-          styles.statusText,
-          jobDetails.status === 'Mở' ? styles.statusOpen :
-          jobDetails.status === 'Tạm dừng' ? styles.statusPaused :
-          styles.statusClosed
-        ]}>
-          Trạng thái: {jobDetails.status}
-        </Text>
+        <Text style={styles.statusLabel}>Trạng thái:</Text>
+        <Picker
+          selectedValue={jobStatus}
+          style={styles.statusPicker}
+          onValueChange={(itemValue) => handleStatusChange(itemValue)}
+        >
+          <Picker.Item label="Mở" value="Mở" />
+          <Picker.Item label="Tạm dừng" value="Tạm dừng" />
+          <Picker.Item label="Đã đóng" value="Đã đóng" />
+        </Picker>
       </View>
 
       {/* Job Details */}
@@ -107,9 +123,16 @@ const EmployerDetail = () => {
       )}
 
       {/* Apply Button */}
-      <TouchableOpacity style={styles.applyButton} onPress={() => navigation.navigate('JobPost' as never)}>
-        <Text style={styles.applyButtonText}>Tạo đơn tuyển dụng mới</Text>
-      </TouchableOpacity>
+      <View style={styles.btn}>
+        <TouchableOpacity style={styles.applyButton} onPress={() => navigation.navigate('JobPost' as never)}>
+          <Text style={styles.applyButtonText}>Tạo đơn tuyển dụng mới</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.viewcv} onPress={() => navigation.navigate('ApplyManager' as never)}>
+          <Text style={styles.applyButtonText}>Xem thông tin ứng viên</Text>
+        </TouchableOpacity>
+      </View>
+
     </ScrollView>
   );
 };
@@ -154,6 +177,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
+  statusLabel: {
+    fontSize: 18,
+    marginLeft: 8,
+    color: '#011F82',
+  },
+  statusPicker: {
+    flex: 1,
+    marginLeft: 8,
+    color: '#011F82',
+  },
   statusText: {
     fontSize: 18,
     marginLeft: 8,
@@ -195,6 +228,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   applyButton: {
+    width: '48%',
     backgroundColor: '#011F82',
     paddingVertical: 15,
     borderRadius: 8,
@@ -204,5 +238,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  btn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  viewcv: {
+    width: '48%',
+    backgroundColor: '#10B981',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
   },
 });
