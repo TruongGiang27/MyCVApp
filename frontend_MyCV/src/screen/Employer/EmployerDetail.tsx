@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import { Picker } from '@react-native-picker/picker';
-import { BASE_URL } from '../utils/url';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
+import React, { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { BASE_URL } from '../utils/url';
+
 const EmployerDetail = () => {
   const route = useRoute();
   const { jobDetails } = route.params as { jobDetails: any };
@@ -122,9 +123,16 @@ const EmployerDetail = () => {
       )}
 
       {/* Apply Button */}
-      <TouchableOpacity style={styles.applyButton} onPress={() => navigation.navigate('JobPost' as never)}>
-        <Text style={styles.applyButtonText}>Tạo đơn tuyển dụng mới</Text>
-      </TouchableOpacity>
+      <View style={styles.btn}>
+        <TouchableOpacity style={styles.applyButton} onPress={() => navigation.navigate('JobPost' as never)}>
+          <Text style={styles.applyButtonText}>Tạo đơn tuyển dụng mới</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.viewcv} onPress={() => navigation.navigate('ApplyManager' as never)}>
+          <Text style={styles.applyButtonText}>Xem thông tin ứng viên</Text>
+        </TouchableOpacity>
+      </View>
+
     </ScrollView>
   );
 };
@@ -220,6 +228,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   applyButton: {
+    width: '48%',
     backgroundColor: '#011F82',
     paddingVertical: 15,
     borderRadius: 8,
@@ -229,5 +238,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  btn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  viewcv: {
+    width: '48%',
+    backgroundColor: '#10B981',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
   },
 });

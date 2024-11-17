@@ -9,6 +9,9 @@ export class Application extends Document {
   jobId: string;
 
   @Prop({ required: true })
+  jobName: string;
+
+  @Prop({ required: true })
   cvId: string;
   
   @Prop({ required: true })

@@ -9,29 +9,28 @@ import { BASE_URL } from '../utils/url';
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
     _id: string;
-    title: string; // Chức vụ
-    company: string; // Tên công ty
-    location: string; // Địa điểm làm việc
-    salary: string; // Mức lương
-    jobType: string; // Loại công việc
-    jobDescription: string; // Mô tả công việc
+    jobId: string;
+    jobName: string;
+    cvId: string;
+    CVfullNameUser: string;
+    CVEmailUser: string;
+    status: string;
 }
 
 const ApplyManager = () => {
     const navigation = useNavigation();
     const [employers, setEmployers] = useState<Employer[]>([]);
     const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
-    const [editingMode, setEditingMode] = useState<boolean>(false);
     const [formData, setFormData] = useState<Employer | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [filteredEmployers, setFilteredEmployers] = useState<Employer[]>([]); // Lưu danh sách đã lọc
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/jobs`); // Đường dẫn API từ JobPost
+                const response = await axios.get(`${BASE_URL}/applications`); // Đường dẫn API từ JobPost
                 setEmployers(response.data);
             } catch (error) {
-                console.error('Error fetching job data:', error);
+                console.error('Error fetching cv data:', error);
             }
         };
 
@@ -41,9 +40,9 @@ const ApplyManager = () => {
     const handleSearch = () => {
         const results = employers
             .filter(emp =>
-                emp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                emp.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                emp.location.toLowerCase().includes(searchQuery.toLowerCase())
+                emp.CVfullNameUser.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                emp.CVEmailUser.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                emp.status.toLowerCase().includes(searchQuery.toLowerCase())
             )
         setFilteredEmployers(results);
     };
@@ -51,69 +50,6 @@ const ApplyManager = () => {
     const handleViewDetails = (employer: Employer) => {
         setViewingEmployer(employer);
         setFormData(employer);
-        setEditingMode(false);
-    };
-
-    const handleEdit = () => {
-        setEditingMode(true);
-    };
-
-    const handleInputChange = (key: keyof Employer, value: string) => {
-        setFormData(prev => prev ? { ...prev, [key]: value } : null);
-    };
-
-    const handleSave = async () => {
-        if (formData) {
-            try {
-                const response = await axios.put(`${BASE_URL}/jobs/${formData._id}`, formData);
-                setEmployers(employers.map(emp => emp._id === formData._id ? response.data : emp));
-                setViewingEmployer(null);
-                setEditingMode(false);
-                Alert.alert('Update', `Updated job post: ${formData.title}`);
-            } catch (error) {
-                Alert.alert('Error', 'Error updating job post');
-                console.error('Error updating job post:', error);
-            }
-        }
-    };
-
-    const handleCancel = () => {
-        setEditingMode(false);
-    };
-
-    const handleBackToList = () => {
-        setViewingEmployer(null);
-    };
-
-    const handleDeleteConfirmation = (_id: string) => {
-        Alert.alert(
-            'Xác nhận xóa',
-            'Bạn có chắc chắn muốn xóa bài đăng này?',
-            [
-                {
-                    text: 'Hủy',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Xóa',
-                    style: 'destructive',
-                    onPress: () => handleDelete(_id),
-                },
-            ],
-            { cancelable: true }
-        );
-    };
-
-    const handleDelete = async (_id: string) => {
-        try {
-            await axios.delete(`${BASE_URL}/jobs/${_id}`);
-            setEmployers(employers.filter(emp => emp._id !== _id));
-            Alert.alert('Delete', `Deleted job post: ${_id}`);
-            setViewingEmployer(null);
-        } catch (error) {
-            Alert.alert('Error', 'Error deleting job post');
-            console.error('Error deleting job post:', error);
-        }
     };
     const displayEmployers = (filteredEmployers.length > 0 ? filteredEmployers : employers).slice(0, 3);
 
@@ -123,162 +59,42 @@ const ApplyManager = () => {
         <ScrollView style={styles.scrollView}>
             <View style={styles.container}>
                 <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.goBack()} />
-
-                <Text style={styles.pageTitle}>Quản lý thông tin CVs</Text>
-
+                <Text style={styles.pageTitle}>Danh sách ứng viên</Text>
+            </View>
                 <View style={styles.searchSection}>
-                    <Icon name="search" size={24} color="#666" style={styles.searchIcon} />
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Tìm kiếm theo chức vụ, công ty, địa điểm..."
+                        placeholder="Search"
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                     />
                     <TouchableOpacity style={styles.buttonSearch} onPress={handleSearch}>
-                        <Text style={styles.searchButtonText}>Tìm kiếm</Text>
+                        <Text style={styles.searchButtonText}>Search</Text>
                     </TouchableOpacity>
                 </View>
 
-                {viewingEmployer ? (
-                    <View style={styles.formContainer}>
-                        <View style={styles.employerHeader}>
-                            <Text style={styles.formTitle}>Thông tin chi tiết</Text>
-                            <View style={styles.actionIconsRight}>
-                                <TouchableOpacity onPress={handleEdit} style={styles.iconButton}>
-                                    <Icon name="pencil" size={24} color="#007bff" />
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => handleDeleteConfirmation(viewingEmployer._id)} style={styles.iconButton}>
-                                    <Icon name="delete" size={24} color="#ff0000" />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        {!editingMode ? (
-                            <>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.titleText}>Chức vụ:</Text>
-                                    <Text style={styles.viewText}>{viewingEmployer.title}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.titleText}>Tên công ty:</Text>
-                                    <Text style={styles.viewText}>{viewingEmployer.company}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.titleText}>Địa điểm:</Text>
-                                    <Text style={styles.viewText}>{viewingEmployer.location}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.titleText}>Mức lương:</Text>
-                                    <Text style={styles.viewText}>{viewingEmployer.salary}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.titleText}>Loại công việc:</Text>
-                                    <Text style={styles.viewText}>{viewingEmployer.jobType}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.titleText}>Mô tả công việc:</Text>
-                                    <Text style={styles.viewText}>{viewingEmployer.jobDescription}</Text>
-                                </View>
-
-                                <TouchableOpacity style={styles.buttonCancel} onPress={handleBackToList}>
-                                    <Text style={styles.textbtn}>Quay lại</Text>
-                                </TouchableOpacity>
-                            </>
-                        ) : (
-                            <>
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Chức vụ</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        value={formData?.title}
-                                        onChangeText={text => handleInputChange('title', text)}
-                                        placeholder="Nhập chức vụ"
-                                    />
-                                </View>
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Tên công ty</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        value={formData?.company}
-                                        onChangeText={text => handleInputChange('company', text)}
-                                        placeholder="Nhập tên công ty"
-                                    />
-                                </View>
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Địa điểm</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        value={formData?.location}
-                                        onChangeText={text => handleInputChange('location', text)}
-                                        placeholder="Nhập địa điểm"
-                                    />
-                                </View>
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Mức lương</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        value={formData?.salary}
-                                        onChangeText={text => handleInputChange('salary', text)}
-                                        placeholder="Nhập mức lương"
-                                    />
-                                </View>
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Loại công việc</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        value={formData?.jobType}
-                                        onChangeText={text => handleInputChange('jobType', text)}
-                                        placeholder="Nhập loại công việc"
-                                    />
-                                </View>
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>Mô tả công việc</Text>
-                                    <TextInput
-                                        style={[styles.input, styles.inputDescription]}
-                                        value={formData?.jobDescription}
-                                        onChangeText={text => handleInputChange('jobDescription', text)}
-                                        placeholder="Nhập mô tả công việc"
-                                        multiline={true}
-                                    />
-                                </View>
-
-                                <TouchableOpacity style={styles.buttonEdit} onPress={handleSave}>
-                                    <Text style={styles.textbtn}>Lưu</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.buttonCancel} onPress={handleCancel}>
-                                    <Text style={styles.textbtn}>Hủy chỉnh sửa</Text>
-                                </TouchableOpacity>
-                            </>
-                        )}
+            {displayEmployers.map(employer => (
+                <View style={styles.employerContainer} key={employer._id}>
+                    <View style={styles.employerInfo}>
+                        <Text style={styles.jobTitle}>{employer.CVfullNameUser}</Text>
+                        <Text style={styles.jobLocation}>{employer.CVEmailUser}</Text>
+                        <Text style={styles.jobDetail}>{employer.status}</Text>
                     </View>
-                ) : (
-                    displayEmployers.map((employer, index) => (
-                        <View key={index} style={styles.employerContainer}>
-                            <View style={styles.employerInfo}>
-                                <Text style={styles.jobTitle}>Chức vụ: {employer.title}</Text>
-                                <Text style={styles.jobLocation}>Công ty: {employer.company}</Text>
-                                <Text style={styles.jobDetail}>Mức lương: {employer.salary}</Text>
-                            </View>
-                            <View style={styles.actionIconsRight}>
-                                <TouchableOpacity onPress={() => handleViewDetails(employer)} style={styles.iconButton}>
-                                    <Icon name="eye" size={24} color="#007bff" />
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => handleDeleteConfirmation(employer._id)} style={styles.iconButton}>
-                                    <Icon name="delete" size={24} color="#ff0000" />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    ))
-                )}
-            </View>
+                    <View style={styles.actionIconsRight}>
+                        <Icon name="eye" size={20} color="#007bff" style={styles.iconButton} onPress={() => handleViewDetails(employer)} />
+                    </View>
+                </View>
+            ))}
         </ScrollView>
-    );
-};
-
+    )
+}
 const styles = StyleSheet.create({
     scrollView: {
         backgroundColor: '#f5f5f5'
     },
     container: {
+        display: 'flex',
+        flexDirection: 'row',
         padding: 20
     },
     pageTitle: {
@@ -291,7 +107,8 @@ const styles = StyleSheet.create({
     searchSection: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 15
+        marginBottom: 15,
+        marginHorizontal: 20
     },
     searchIcon: {
         paddingHorizontal: 10
