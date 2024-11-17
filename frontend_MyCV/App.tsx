@@ -17,7 +17,7 @@ import CVManagerment from './src/screen/User/CVManagerment';
 import Message from './src/screen/User/Message';
 import Profile from './src/screen/profile/Profile';
 import Service from './src/screen/Employer/Service';
-import CVDetail from './src/screen/Employer/CVDetail';
+// import CVDetail from './src/screen/Employer/CvDetail';
 import { RootStackParamList } from './src/screen/User/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -40,7 +40,7 @@ const App = () => {
                 {/* Employer */}
                 <Stack.Screen name='CreateEmployer' component={CreateEmployer} />
                 <Stack.Screen name='ApplyManager' component={ApplyManager} />
-                <Stack.Screen name='CVDetail' component={CVDetail} />
+                {/* <Stack.Screen name='CVDetail' component={CVDetail} /> */}
                 <Stack.Screen name='EmployerDetail' component={EmployerDetail} />
                 <Stack.Screen name='HomeEmployer' component={HomeEmployer} />
                 <Stack.Screen name='InforManager' component={InforManager} />
