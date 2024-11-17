@@ -16,6 +16,7 @@ import CVCreate from './src/screen/User/CVCreate';
 import CVManagerment from './src/screen/User/CVManagerment';
 import Message from './src/screen/User/Message';   
 import Profile from './src/screen/profile/Profile';
+import NotificationScreen from './src/screen/User/Notification';
 
 type RootStackParamList = {
     Login: undefined;
@@ -33,6 +34,7 @@ type RootStackParamList = {
     CVManagerment: undefined;
     Message: undefined;
     Profile: undefined; // Add the new screen type
+    NotificationScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -57,6 +59,7 @@ const App = () => {
                 <Stack.Screen name="Profile" component={Profile} />
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

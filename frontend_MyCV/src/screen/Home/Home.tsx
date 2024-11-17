@@ -5,6 +5,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { BASE_URL } from '../utils/url';
 import axios from 'axios';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 
@@ -179,6 +180,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => voi
 const Home = () => {
     const [isSearching, setIsSearching] = useState(false);
     const [isMapSearching, setIsMapSearching] = useState(false);
+    const navigation = useNavigation<NavigationProp<any>>();
 
     const handleSearchFocus = () => {
         setIsSearching(true);
@@ -194,6 +196,27 @@ const Home = () => {
         setIsSearching(false);
         setIsMapSearching(false);
         Keyboard.dismiss(); // Dismiss keyboard when search is canceled
+    };
+
+    const handleProfilePress = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/cv_form`);
+            if (response.data.length > 0) {
+                navigation.navigate('CVManagerment');
+            } else {
+                navigation.navigate('Profile');
+            }
+        } catch (error) {
+            console.error('Failed to check CV:', error);
+        }
+    };
+
+    const handleMessagesPress = () => {
+        navigation.navigate('Message');
+    };
+
+    const handleHomePress = () => {
+        navigation.navigate('Home');
     };
 
     const { width } = useWindowDimensions();  // Get the current screen width
@@ -216,7 +239,7 @@ const Home = () => {
                 )}
             </View>
             <View style={styles.navbar}>
-                <Navbar />
+                <Navbar onProfilePress={handleProfilePress} onMessagesPress={handleMessagesPress} onHomePress={handleHomePress} />
             </View>
         </View>
 

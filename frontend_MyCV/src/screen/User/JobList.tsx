@@ -264,23 +264,23 @@ const JobList = () => {
 
       {/* Navigation Bar */}
       <View style={styles.navBar}>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="home-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Trang chủ</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="bookmark-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Việc làm của tôi</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Message')}>
-                    <Icon name="chatbubble-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Tin nhắn</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="person-outline" size={25} color="#007AFF" />
-                    <Text style={[styles.navText, { color: '#007AFF' }]}>Hồ sơ</Text>
-                </TouchableOpacity>
-            </View>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
+          <Icon name="home-outline" size={25} color="#000" />
+          <Text style={styles.navText}>Trang chủ</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Icon name="bookmark-outline" size={25} color="#000" />
+          <Text style={styles.navText}>Việc làm của tôi</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Message')}>
+          <Icon name="chatbubble-outline" size={25} color="#000" />
+          <Text style={styles.navText}>Tin nhắn</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Icon name="person-outline" size={25} color="#007AFF" />
+          <Text style={[styles.navText, { color: '#007AFF' }]}>Hồ sơ</Text>
+        </TouchableOpacity>
+      </View>
 
     </View>
   );

@@ -1,31 +1,30 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Icon } from '@rneui/themed';
-// import { useNavigation, NavigationProp } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-// const navigation = useNavigation<NavigationProp<any>>();
-// onPress={() => navigation.navigate('Message')}
-const Navbar = () => (
+interface NavbarProps {
+  onProfilePress: () => void;
+  onMessagesPress: () => void;
+  onHomePress: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ onProfilePress, onMessagesPress, onHomePress }) => (
   <View style={styles.navbar}>
-    <TouchableOpacity style={styles.navItem}>
-      <Icon name="home" type="font-awesome" color="#007AFF" />
+    <TouchableOpacity style={styles.navItem} onPress={onHomePress}>
+      <Icon name="home-outline" size={25} color="#000" />
       <Text style={styles.navText}>Trang chủ</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.navItem}>
-      <Icon name="bookmark" type="font-awesome" color="#666" />
+      <Icon name="bookmark-outline" size={25} color="#000" />
       <Text style={styles.navText}>Việc làm của tôi</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem} >
-      <Icon name="envelope" type="font-awesome" color="#666" />
+    <TouchableOpacity style={styles.navItem} onPress={onMessagesPress}>
+      <Icon name="chatbubble-outline" size={25} color="#000" />
       <Text style={styles.navText}>Tin nhắn</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem}>
-      <Icon name="post" type="font-awesome" color="#666" />
-      <Text style={styles.navText}>Đăng bài</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem} >
-      <Icon name="user" type="font-awesome" color="#666" />
-      <Text style={styles.navText}>Hồ sơ</Text>
+    <TouchableOpacity style={styles.navItem} onPress={onProfilePress}>
+      <Icon name="person-outline" size={25} color="#007AFF" />
+      <Text style={[styles.navText, { color: '#007AFF' }]}>Hồ sơ</Text>
     </TouchableOpacity>
   </View>
 );
