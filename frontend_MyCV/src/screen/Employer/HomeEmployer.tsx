@@ -22,6 +22,7 @@ export type RootStackParamList = {
   InforManager: undefined;
 };
 interface Job {
+  deadline: string;
   id: string;
   title: string;
   company: string;
@@ -29,17 +30,21 @@ interface Job {
   salary: string;
   jobType: string;
   jobDescription: string;
+  status: "Chọn trạng thái" | "Mở" | "Tạm dừng" | "Đã đóng"; // Add status field here
 }
 
 const HomeEmployer = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [allJobs, setAllJobs] = useState<Job[]>([]); // Original data
   const [jobs, setJobs] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [userInfo, setUserInfo] = useState<any>(null);
-
+  const [visibleCount, setVisibleCount] = useState(5); // Start by showing 5 jobs
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/jobs`);
+        setAllJobs(response.data); // Store original jobs list
         setJobs(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -50,16 +55,17 @@ const HomeEmployer = () => {
 
   const filteredData = jobs
     .filter((item) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
-      || item.company.toLowerCase().includes(searchQuery.toLowerCase())
-      || item.location.toLowerCase().includes(searchQuery.toLowerCase())
-
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.location.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    .slice(0, 5); // Limit the number of items displayed
+    .slice(0, visibleCount); // Show only `visibleCount` items
 
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const handleViewMore = () => {
+    setVisibleCount(prev => prev + 5); // Load 5 more jobs each time
+  };
 
-  const [selectedOrder, setSelectedOrder] = useState('Giảm dần');
+  const [selectedOrder, setSelectedOrder] = useState('open');
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const slideAnim_l = useRef(new Animated.Value(-width)).current;
@@ -105,19 +111,20 @@ const HomeEmployer = () => {
 
   const handleSortChange = (itemValue: string) => {
     setSelectedOrder(itemValue);
-    const sortedData = [...jobs].sort((a, b) => {
-      const salaryA = parseFloat(a.salary.replace(/[^0-9.-]+/g, '')); // Chuyển đổi chuỗi lương thành số
-      const salaryB = parseFloat(b.salary.replace(/[^0-9.-]+/g, ''));
-
-      if (itemValue === 'Giảm dần') {
-        return salaryB - salaryA; // Sắp xếp giảm dần
-      } else {
-        return salaryA - salaryB; // Sắp xếp tăng dần
-      }
-    });
-    setJobs(sortedData);
+    let filteredJobs = [...allJobs];
+    if (itemValue === 'chooice status') {
+      filteredJobs;
+    }
+    else if (itemValue === 'open') {
+      filteredJobs = filteredJobs.filter(job => job.status === 'Mở');
+    } else if (itemValue === 'pause') {
+      filteredJobs = filteredJobs.filter(job => job.status === 'Tạm dừng');
+    } else if (itemValue === 'close') {
+      filteredJobs = filteredJobs.filter(job => job.status === 'Đã đóng');
+    }
+    setJobs(filteredJobs); // Update filtered jobs
+    setVisibleCount(filteredJobs.length); // Show all filtered jobs
   };
-
   const menuItems = [
     { title: 'Tạo mới', icon: 'add-circle-outline' },
     { title: 'Việc làm', icon: 'shopping-bag' },
@@ -126,7 +133,7 @@ const HomeEmployer = () => {
     { title: 'Phân tích', icon: 'bar-chart' },
     { title: 'Công cụ', icon: 'folder' },
   ];
-  
+
   const signOut = async () => {
     try {
       await GoogleSignin.signOut();
@@ -204,7 +211,7 @@ const HomeEmployer = () => {
           <View style={styles.overlay}>
             <Animated.View style={[styles.menuAccountContainer, { transform: [{ translateX: slideAnim_r }] }]}>
               <ScrollView>
-                <TouchableOpacity style={styles.menuItem} onPress={()=> navigation.navigate('InforManager')}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InforManager')}>
                   <Icon name="settings" size={25} color="#011F82" />
                   <Text style={styles.menuText}>Cài đặt tài khoản</Text>
                 </TouchableOpacity>
@@ -233,21 +240,23 @@ const HomeEmployer = () => {
         </View>
 
         <View style={styles.orderContainer}>
-          <Text style={styles.orderText}>Thứ tự:</Text>
+          <Text style={styles.orderText}>Trạng thái:</Text>
           <Picker
             selectedValue={selectedOrder}
             style={styles.picker}
             mode="dropdown"
-            onFocus={handlePickerFocus}
+            onFocus={() => Keyboard.dismiss()}
             onValueChange={handleSortChange}
             dropdownIconColor="#1976D2"
           >
-            <Picker.Item label="Giảm dần" value="Giảm dần" style={{ color: '#1976D2' }} />
-            <Picker.Item label="Tăng dần" value="Tăng dần" style={{ color: '#1976D2' }} />
+            <Picker.Item label="Chọn trạng thái" value="chooice status" style={{ color: '#1976D2' }} />
+            <Picker.Item label="Mở" value="open" style={{ color: '#1976D2' }} />
+            <Picker.Item label="Tạm dừng" value="pause" style={{ color: '#1976D2' }} />
+            <Picker.Item label="Đã đóng" value="close" style={{ color: '#1976D2' }} />
           </Picker>
         </View>
       </View>
-      <ScrollView style={styles.cardContainer}>
+      <ScrollView style={styles.cardContainer} contentContainerStyle={styles.scrollContent}>
         {filteredData.map((item, index) => (
           <TouchableOpacity
             key={index}
@@ -274,10 +283,22 @@ const HomeEmployer = () => {
               <Icon name="category" size={20} color="#011F82" style={styles.icon} />
               <Text style={styles.jobDetail}>Loại việc làm: {item.jobType}</Text>
             </View>
+            {/* New view for job status */}
+            <View style={styles.infoRow}>
+              <Icon name="info" size={20} color="#011F82" style={styles.icon} />
+              <Text style={[styles.jobDetail, styles.jobStatus, item.status === 'Mở' ? styles.statusOpen : item.status === 'Tạm dừng' ? styles.statusPaused : styles.statusClosed]}>
+                Trạng thái: {item.status}
+              </Text>
+            </View>
           </TouchableOpacity>
         ))}
+        {/* "View More" button */}
+        {visibleCount < jobs.length && (
+          <TouchableOpacity style={styles.viewMoreButton} onPress={handleViewMore}>
+            <Text style={styles.viewMoreText}>Xem thêm</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
-
     </View>
   );
 };
@@ -288,6 +309,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  scrollContent: {
+    paddingBottom: 40, // Add padding to push the button up
   },
   header: {
     flexDirection: 'row',
@@ -301,7 +325,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     resizeMode: 'contain',
-    
+
   },
   accountIcon: {
     padding: 15,
@@ -424,7 +448,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    width: width * 0.5,
+    width: width * 0.65,
     borderColor: '#1976D2',
     borderRadius: 8,
     paddingHorizontal: 10,
@@ -461,6 +485,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
+  statusOpen: {
+    color: 'green',
+    fontWeight: 'bold',
+  },
+  statusPaused: {
+    color: 'orange',
+    fontWeight: 'bold',
+  },
+  statusClosed: {
+    color: 'red',
+    fontWeight: 'bold',
+  },
+  jobStatus: {
+    fontSize: 14,
+  },
   icon: {
     marginRight: 10,
   },
@@ -472,5 +511,16 @@ const styles = StyleSheet.create({
   jobDetail: {
     fontSize: 14,
     color: '#555',
+  },
+  viewMoreButton: {
+    backgroundColor: '#011F82',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  viewMoreText: {
+    color: '#fff',
+    fontSize: 18,
   },
 });

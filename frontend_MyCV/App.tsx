@@ -14,7 +14,7 @@ import HomeEmployer from './src/screen/Employer/HomeEmployer';
 import JobPost from './src/screen/Employer/JobPost';
 import CVCreate from './src/screen/User/CVCreate';
 import CVManagerment from './src/screen/User/CVManagerment';
-import Message from './src/screen/User/Message';   
+import Message from './src/screen/User/Message';
 import Profile from './src/screen/profile/Profile';
 import NotificationScreen from './src/screen/User/Notification';
 

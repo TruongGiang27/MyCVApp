@@ -21,6 +21,7 @@ const JobDetail = () => {
   // Add the new navigation prop
   const navigationCVCreate = useNavigation<NavigationProp<RootStackParamList>>();
 
+
   useEffect(() => {
     const fetchJobDetail = async () => {
       try {

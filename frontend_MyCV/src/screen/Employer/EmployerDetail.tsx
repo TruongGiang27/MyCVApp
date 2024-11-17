@@ -1,15 +1,7 @@
-//Uyên
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-
-// Navigation
-export type RootStackParamList = {
-  EmployerDetail: undefined;
-  JobPost: undefined;
-};
 
 const EmployerDetail = () => {
   const route = useRoute();
@@ -37,6 +29,19 @@ const EmployerDetail = () => {
       <View style={styles.companyInfo}>
         <Text style={styles.companyName}>{jobDetails.company}</Text>
         <Text style={styles.location}>{jobDetails.location}</Text>
+      </View>
+
+      {/* Job Status */}
+      <View style={styles.statusContainer}>
+        <Icon name="information-circle-outline" size={20} color="#011F82" />
+        <Text style={[
+          styles.statusText,
+          jobDetails.status === 'Mở' ? styles.statusOpen :
+          jobDetails.status === 'Tạm dừng' ? styles.statusPaused :
+          styles.statusClosed
+        ]}>
+          Trạng thái: {jobDetails.status}
+        </Text>
       </View>
 
       {/* Job Details */}
@@ -109,6 +114,7 @@ const EmployerDetail = () => {
   );
 };
 
+export default EmployerDetail;
 const styles = StyleSheet.create({
   content: {
     flex: 1,
@@ -142,6 +148,27 @@ const styles = StyleSheet.create({
   location: {
     fontSize: 20,
     color: '#6D92D0',
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  statusText: {
+    fontSize: 18,
+    marginLeft: 8,
+  },
+  statusOpen: {
+    color: 'green',
+    fontWeight: 'bold',
+  },
+  statusPaused: {
+    color: 'orange',
+    fontWeight: 'bold',
+  },
+  statusClosed: {
+    color: 'red',
+    fontWeight: 'bold',
   },
   section: {
     marginBottom: 24,
@@ -179,5 +206,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export default EmployerDetail;
