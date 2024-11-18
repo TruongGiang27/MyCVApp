@@ -5,24 +5,28 @@ export type RootStackParamList = {
     Login: undefined;
     Home: undefined;
     //User
-    CVCreate: undefined;
     CVManagerment: undefined;
-    JobDetail: undefined;
+    JobDetail: { jobId: string };
+    CVCreate: { startStep: number; jobId: string };
     JobList: undefined;
     Message: undefined;
+    Notification: undefined;
     //Profile
     Profile: undefined;
     //Employer
     CreateEmployer: undefined;
-    ApplyManager: {jobId: string};
+    ApplyManager: { jobId: string };
     CVDetail: undefined;
-    EmployerDetail: {jobId: string};
+    EmployerDetail: { jobId: string };
     HomeEmployer: undefined;
     InforManager: undefined;
     JobPost: undefined;
     Service: undefined;
     //Admin
     InforEmloyer: undefined;
+
+    //Component
+    Navbar: undefined;
 };
 
 export type TPropsLoginScreen = NativeStackScreenProps<RootStackParamList, 'Login'>;

@@ -196,8 +196,12 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                         <Text style={styles.submitButton}>Đăng bài</Text>
                     </TouchableOpacity>
                 </ScrollView>
+                <Navbar 
+                    onProfilePress={() => navigation.navigate('Profile')}
+                    onMessagesPress={() => navigation.navigate('Message')}
+                    onHomePress={() => navigation.navigate('Home')}
+                />
             </View>
-            <Navbar />
         </GestureHandlerRootView >
 
     );
