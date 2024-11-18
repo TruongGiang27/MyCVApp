@@ -279,6 +279,9 @@ const CVCreate = () => {
   };
 
   const renderEditableField = (label: string, key: string, value: string, isDate?: boolean) => {
+    const isFullNameField = key === "fullName";
+    const isInvalidFullName = isFullNameField && !validateString(value);
+  
     return (
       <View style={styles.editableFieldContainer}>
         <Text style={styles.content}>{label}: </Text>
@@ -298,9 +301,10 @@ const CVCreate = () => {
         ) : (
           <Text style={styles.content}>{value}</Text>
         )}
-        <TouchableOpacity onPress={() => toggleEditing(key)}>
-          <Icon name={editingFields[key] ? 'checkmark-outline' : 'pencil-outline'} size={20} color="#011F82" />
+        <TouchableOpacity onPress={() => toggleEditing(key)} disabled={isInvalidFullName}>
+          <Icon name={editingFields[key] ? 'checkmark-outline' : 'pencil-outline'} size={20} color={isInvalidFullName ? "#ccc" : "#011F82"} />
         </TouchableOpacity>
+        {isInvalidFullName && <Text style={styles.errorText}>*Vui lòng nhập đúng định dạng</Text>}
       </View>
     );
   };
@@ -374,23 +378,6 @@ const CVCreate = () => {
                     updateFormData("fullName", text);
                   }}
                   value={formData.fullName}
-                />
-              )}
-            />
-            <Text style={styles.content}>Email</Text>
-            <Controller
-              control={control}
-              name="email"
-              defaultValue={formData.email}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  style={styles.input}
-                  placeholder="Email"
-                  onChangeText={(text) => {
-                    onChange(text);
-                    updateFormData("email", text);
-                  }}
-                  value={formData.email}
                 />
               )}
             />
@@ -988,6 +975,7 @@ const CVCreate = () => {
         );
 
       case 10:
+        const isFullNameValid = validateString(formData.fullName) === true;
         return (
           <View>
             <Text style={styles.title}>CV của bạn đã sẵn sàng chưa?</Text>
@@ -996,7 +984,6 @@ const CVCreate = () => {
             {/* Display Personal Information */}
             <Text style={styles.subtitle}>Thông tin cá nhân</Text>
             {renderEditableField("Họ và tên", "fullName", formData.fullName)}
-            {renderEditableField("Email", "email", formData.email)}
             {renderEditableField("Số điện thoại", "phone", formData.phone)}
             {renderEditableField("Quốc gia", "address.country", formData.country)}
             {renderEditableField("Địa chỉ", "address.address", formData.address)}
@@ -1049,6 +1036,14 @@ const CVCreate = () => {
             {renderEditableField("Chức danh mong muốn", "desiredJobTitle", formData.desiredJobTitle)}
             {renderEditableField("Loại công việc", "jobType", formData.jobType)}
             {renderEditableField("Mức lương tối thiểu", "minimumSalary", formData.minimumSalary)}
+
+            <TouchableOpacity
+              onPress={handleSubmit(onSubmit)}
+              style={[styles.button, !isFullNameValid && styles.disabledButton]}
+              disabled={!isFullNameValid}
+            >
+              <Text style={styles.buttonText}>Hoàn tất</Text>
+            </TouchableOpacity>
           </View>
         );
       default:
@@ -1292,5 +1287,4 @@ const pickerSelectStyles = StyleSheet.create({
 
 });
 
-export default CVCreate;
-
+export default CVCreate; 

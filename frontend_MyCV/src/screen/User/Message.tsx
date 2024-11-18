@@ -25,7 +25,7 @@ const MessageScreen = () => {
 
             {/* Các nút */}
             <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={styles.buttonPrimary}>
+                <TouchableOpacity style={styles.buttonPrimary} onPress={() => navigation.navigate('Home')}>
                     <Text style={styles.buttonText}>Tìm việc làm</Text>
                 </TouchableOpacity>
                 <View style={styles.spacer} />
@@ -36,7 +36,7 @@ const MessageScreen = () => {
 
             {/* Navigation Bar */}
             <View style={styles.navBar}>
-                <TouchableOpacity style={styles.navItem}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                     <Icon name="home-outline" size={25} color="#000" />
                     <Text style={styles.navText}>Trang chủ</Text>
                 </TouchableOpacity>
