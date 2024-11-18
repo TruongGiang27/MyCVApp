@@ -5,7 +5,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { Button, Card, TextInput, Title, Text } from 'react-native-paper';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 
 type RootStackParamList = {
     Login: undefined;
@@ -35,11 +35,11 @@ const ApplyManager: React.FC<Props> = ({ navigation }) => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [describe, setDescribe] = useState('');
     const [error, setError] = useState('');
-    
+
     const [selectedLocation, setSelectedLocation] = useState('');
 
-    
-  
+
+
 
     const handlePickerFocus = () => {
         Keyboard.dismiss();

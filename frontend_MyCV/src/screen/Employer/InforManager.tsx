@@ -2,7 +2,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 interface Employer {
     id: string;
     selectedCompany: string;

@@ -7,7 +7,7 @@ import { Icon } from '@rneui/themed';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 
 const { width } = Dimensions.get('window');
 
@@ -101,8 +101,8 @@ const HomeEmployer = () => {
         <Icon style={styles.accountIcon} name="account-circle" size={40} color="#011F82" onPress={openAccountMenu} />
       </View>
 
-        {/* Menu trượt */}
-        {showMenu && (
+      {/* Menu trượt */}
+      {showMenu && (
         <TouchableNativeFeedback onPress={closeMenu}>
           <View style={styles.overlay}>
             <Animated.View

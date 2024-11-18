@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Navbar from '../../components/Navbar';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import axios from 'axios';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 import { RootStackParamList } from '../User/types'
 // Khai báo kiểu cho props 'navigation'
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
@@ -20,7 +20,7 @@ type Props = {
     // name: string;
 };
 
-const CvDetail: React.FC<Props> = ({ navigation}) => {
+const CvDetail: React.FC<Props> = ({ navigation }) => {
     const [cv, setCv] = useState<any>();
     const [name, setName] = useState<string>();
     const BackHandler = () => {
@@ -73,7 +73,7 @@ const CvDetail: React.FC<Props> = ({ navigation}) => {
                         </View>
                     </View>
                     <View style={styles.edit}>
-                        <Icon name='chevron-forward-outline' size={24} color="#011F82" onPress={handleEdit}/>
+                        <Icon name='chevron-forward-outline' size={24} color="#011F82" onPress={handleEdit} />
                     </View>
                 </View>
 
@@ -92,7 +92,7 @@ const CvDetail: React.FC<Props> = ({ navigation}) => {
                         <Text style={styles.headerText}>{cv?.objective}</Text>
                     </View>
                     <View style={styles.edit}>
-                        <Icon name='chevron-forward-outline' size={24} color="#011F82" onPress={handleEdit}/>
+                        <Icon name='chevron-forward-outline' size={24} color="#011F82" onPress={handleEdit} />
                     </View>
                 </View>
             </View>

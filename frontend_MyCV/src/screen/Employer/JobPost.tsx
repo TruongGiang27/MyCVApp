@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Navbar from '../../components/Navbar';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import axios from 'axios';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 import { RootStackParamList } from '../User/types'
 
 // Khai báo kiểu cho props 'navigation'
@@ -85,7 +85,7 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                             {/* <Icon name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" /> */}
                             <Text style={styles.title} onPress={BackHandler}>Tạo bài đăng tuyển dụng</Text>
                             <Image style={styles.imgPost}
-                                source={require('../../../assets/images/jobpostImg.jpg') }
+                                source={require('../../../assets/images/jobpostImg.jpg')}
                             />
                         </View>
                         <View style={styles.inputinfor}>

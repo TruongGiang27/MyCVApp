@@ -1,16 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { NativeStackScreenProps} from '@react-navigation/native-stack'
-import { RootStackParamList } from './navigator/RootStackParamList ';
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../navigator/RootStackParamList';
 import ScreenName from '../constant/ScreenName';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
-const Navbar = ({ navigation}:Props) => {
+const Navbar = ({ route, navigation }: Props) => {
   return (
     <View style={styles.navbar}>
       <View style={styles.group}>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
           <Icon name="home" size={25} color="#011F82" />
           <Text style={styles.navText}>Trang chủ</Text>
         </TouchableOpacity>
