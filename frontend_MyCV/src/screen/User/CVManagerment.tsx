@@ -53,6 +53,10 @@ const CVManagerment = () => {
         navigation.navigate('Message' as never);
     };
 
+    const handleNavigateToNotifications = () => {
+        navigation.navigate('NotificationScreen' as never);
+    };
+
     if (!profileData) {
         return (
             <View style={styles.container}>
@@ -69,7 +73,7 @@ const CVManagerment = () => {
                     <Text style={styles.headerText}>My CV</Text>
                 </View>
                 <View style={styles.headerIcons}>
-                    <Icon name="notifications-none" size={24} color="#011F82" style={styles.icon} />
+                    <Icon name="notifications-none" size={24} color="#011F82" style={styles.icon} onPress={handleNavigateToNotifications} />
                 </View>
             </View>
 
