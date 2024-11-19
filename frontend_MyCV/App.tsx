@@ -25,7 +25,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const App = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="JobList" screenOptions={{ headerShown: false }}>
+            <Stack.Navigator initialRouteName="HomeEmployer" screenOptions={{ headerShown: false }}>
                 {/* Page Home */}
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Home" component={Home} />
