@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import { Picker } from '@react-native-picker/picker';
-import { BASE_URL } from '../utils/url';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
-const EmployerDetail = () => {
+import React, { useState, useEffect } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { BASE_URL } from '../utils/url';
+import { RootStackParamList } from '../User/types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'CreateEmployer'
+>;
+
+type Props = {
+  navigation: CreateEmployerScreenNavigationProp;
+};
+const EmployerDetail: React.FC<Props> = ({ navigation }) => {
+  const [applicants, setApplicants] = useState([]); // State to store applicants
   const route = useRoute();
   const { jobDetails } = route.params as { jobDetails: any };
-  const navigation = useNavigation();
   // State to manage job status selection
   const [jobStatus, setJobStatus] = useState(jobDetails.status);
+  const [loading, setLoading] = useState(false);
+
   const handleStatusChange = async (newStatus: string) => {
     setJobStatus(newStatus); // Cập nhật trạng thái trong giao diện
 
@@ -30,6 +43,36 @@ const EmployerDetail = () => {
       Alert.alert("Lỗi", "Không thể kết nối với server.");
     }
   };
+
+  // Get current job ID
+  const fetchApplicants = async () => {
+    setLoading(true);
+    // Xóa danh sách ứng viên cũ
+    setApplicants([]);
+
+    try {
+      const response = await axios.get(`${BASE_URL}/applications/job/${jobDetails._id}`);
+
+      // Kiểm tra dữ liệu trả về từ API
+      console.log("Dữ liệu trả về từ API:", response.data);
+
+      // Cập nhật state nếu có dữ liệu
+      if (response.data && response.data.length > 0) {
+        setApplicants(response.data);
+        navigation.navigate('ApplyManager', { jobId: jobDetails._id });
+      } else {
+        console.log("Không có ứng viên nào cho công việc này.");
+        Alert.alert("Thông báo", "Không có ứng viên nào cho công việc này.");
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách ứng viên:", error);
+      Alert.alert("Lỗi", "Không thể lấy danh sách ứng viên.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
       {/* Header */}
@@ -124,9 +167,16 @@ const EmployerDetail = () => {
       )}
 
       {/* Apply Button */}
-      <TouchableOpacity style={styles.applyButton} onPress={() => navigation.navigate('JobPost' as never)}>
-        <Text style={styles.applyButtonText}>Tạo đơn tuyển dụng mới</Text>
-      </TouchableOpacity>
+      <View style={styles.btn}>
+        <TouchableOpacity style={styles.applyButton} onPress={() => navigation.navigate('JobPost' as never)}>
+          <Text style={styles.applyButtonText}>Tạo đơn tuyển dụng mới</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.viewcv} onPress={fetchApplicants}>
+          <Text style={styles.applyButtonText}>Xem thông tin ứng viên</Text>
+        </TouchableOpacity>
+      </View>
+
     </ScrollView>
   );
 };
@@ -224,6 +274,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   applyButton: {
+    width: '48%',
     backgroundColor: '#011F82',
     paddingVertical: 15,
     borderRadius: 8,
@@ -233,5 +284,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  btn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  viewcv: {
+    width: '48%',
+    backgroundColor: '#10B981',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
   },
 });

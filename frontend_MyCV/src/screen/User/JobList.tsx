@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
-import { BASE_URL } from '../utils/url';
-import { RouteProp } from '@react-navigation/native';
+import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Navbar from '../../components/Navbar';
+import { BASE_URL } from '../utils/url';
 type RootStackParamList = {
   JobDetail: { jobId: string };
 };
@@ -172,7 +170,7 @@ const JobList = () => {
       const response = await axios.get(`${BASE_URL}/cv_form`);
       const hasCV = response.data.length > 0;
       console.log('Has CV:', hasCV);
-  
+
       if (hasCV) {
         navigation.navigate('CVCreate', { startStep: 10 });
       } else {
@@ -261,27 +259,11 @@ const JobList = () => {
         ListEmptyComponent={<Text style={styles.noJobsText}>Không có công việc nào phù hợp</Text>}
         contentContainerStyle={styles.jobList}
       />
-
-      {/* Navigation Bar */}
-      <View style={styles.navBar}>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="home-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Trang chủ</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="bookmark-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Việc làm của tôi</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Message')}>
-                    <Icon name="chatbubble-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Tin nhắn</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="person-outline" size={25} color="#007AFF" />
-                    <Text style={[styles.navText, { color: '#007AFF' }]}>Hồ sơ</Text>
-                </TouchableOpacity>
-            </View>
-
+      <Navbar
+        onProfilePress={() => navigation.navigate('Profile')}
+        onMessagesPress={() => navigation.navigate('Message')}
+        onHomePress={() => navigation.navigate('Home')}
+      />
     </View>
   );
 };
@@ -305,7 +287,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#011F82',
-    
+
   },
   searchSection: {
     padding: 16,
@@ -425,16 +407,16 @@ const styles = StyleSheet.create({
     position: 'absolute', // Đưa thanh navbar xuống dưới
     bottom: 0, // Căn dưới cùng màn hình
     width: '100%',
-},
-navItem: {
+  },
+  navItem: {
     alignItems: 'center',
     paddingVertical: 8, // Tăng padding dọc cho icon và text
-},
-navText: {
+  },
+  navText: {
     fontSize: 12,
     color: '#000', // Màu đen cho text các tab khác
     marginTop: 5,
-},
+  },
 });
 
 

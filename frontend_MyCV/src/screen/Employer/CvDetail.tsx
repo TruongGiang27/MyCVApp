@@ -30,7 +30,7 @@ const CVDetail: React.FC<Props> = ({ navigation}) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/cvuser`);
+                const response = await axios.get(`${BASE_URL}/cv_form`);
                 setCv(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -39,64 +39,26 @@ const CVDetail: React.FC<Props> = ({ navigation}) => {
         fetchData();
     }, []);
 
-    const handleEdit = () => {
-        navigation.navigate('CVCreate');
-    }
 
     return (
         <ScrollView>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Icon name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" />
-                    <Text style={styles.headerText}>CV của ứng viên</Text>
+                    <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={BackHandler} />
+                    <Text style={styles.headerText}>CV chi tiết</Text>
                 </View>
                 <View style={styles.avatar}>
                     <Text style={styles.initials}>{initials}</Text>
                 </View>
                 <Text style={styles.name}>{name}</Text>
-
                 <View style={styles.info}>
                     <View style={styles.infoCv}>
-                        <View style={styles.email}>
-                            <Icon name="mail-outline" size={24} color="#011F82" />
-                            <Text style={styles.headerText}>Họ và tên: {cv?.email}</Text>
-                        </View>
-                        <View style={styles.email}>
-                            <Icon name="call-outline" size={24} color="#011F82" />
-                            <Text style={styles.headerText}>Ngày sinh: {cv?.phone}</Text>
-                        </View>
-                        <View style={styles.email}>
-                            <Icon name="location-outline" size={24} color="#011F82" />
-                            <Text style={styles.headerText}>Vị trí: {cv?.location}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.edit}>
-                        <Icon name='chevron-forward-outline' size={24} color="#011F82" onPress={handleEdit}/>
-                    </View>
+                        <Text style={styles.email}>Email: {cv?.email}</Text>
+                        <Text>Ngày sinh: {cv?.dob}</Text>
                 </View>
-
-                <View style={styles.info}>
-                    <View>
-                        <Text style={styles.headerText}>Kỹ năng</Text>
-                        <Text style={styles.headerText}>{cv?.skills}</Text>
-
-                        <Text style={styles.headerText}>Kinh nghiệm làm việc</Text>
-                        <Text style={styles.headerText}>{cv?.experience}</Text>
-
-                        <Text style={styles.headerText}>Học vấn</Text>
-                        <Text style={styles.headerText}>{cv?.education}</Text>
-
-                        <Text style={styles.headerText}>Mục tiêu</Text>
-                        <Text style={styles.headerText}>{cv?.objective}</Text>
-                    </View>
-                    <View style={styles.edit}>
-                        <Icon name='chevron-forward-outline' size={24} color="#011F82" onPress={handleEdit}/>
-                    </View>
                 </View>
-                :
                 <View style={styles.detail}>
-                    <Text style={styles.headerText}>Chi tiết CV</Text>
-                    <Text style={styles.headerText}>{cv?.detail}</Text>
+                    <Text>{cv?.description}</Text>
                 </View>
             </View>
         </ScrollView>
