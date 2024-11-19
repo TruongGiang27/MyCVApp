@@ -161,7 +161,9 @@ const CVCreate = () => {
   }, [formData, selectedSkills]);
 
   const onSubmit = async (data: any) => {
+    const userId = await AsyncStorage.getItem('userId'); // Assuming userId is stored in AsyncStorage
     const formattedData = {
+      userId, // Include userId in the CV data
       fullName: formData.fullName,
       email: formData.email,
       phone: formData.phone,
@@ -1037,13 +1039,13 @@ const CVCreate = () => {
             {renderEditableField("Loại công việc", "jobType", formData.jobType)}
             {renderEditableField("Mức lương tối thiểu", "minimumSalary", formData.minimumSalary)}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={handleSubmit(onSubmit)}
               style={[styles.button, !isFullNameValid && styles.disabledButton]}
               disabled={!isFullNameValid}
             >
               <Text style={styles.buttonText}>Hoàn tất</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         );
       default:
@@ -1287,4 +1289,4 @@ const pickerSelectStyles = StyleSheet.create({
 
 });
 
-export default CVCreate; 
+export default CVCreate;

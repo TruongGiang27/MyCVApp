@@ -50,7 +50,7 @@ const JobPreferencesSchema = SchemaFactory.createForClass(JobPreferences);
 @Schema({ collection: 'cv_form' })
 export class Cv extends Document {
   @Prop() fullName?: string;
-  @Prop({ required: true }) email: string;
+  @Prop({}) email: string;
   @Prop({ required: true }) phone: string;
   @Prop({ type: AddressSchema, required: true }) address: Address;
   @Prop({ type: EducationSchema, required: true }) education: Education;

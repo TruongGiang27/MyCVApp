@@ -17,7 +17,7 @@ export class Application extends Document {
   @Prop({ required: true })
   CVfullNameUser: string;
 
-  @Prop({ required: true })
+  @Prop({})
   CVEmailUser: string;
 
   @Prop({ required: true })

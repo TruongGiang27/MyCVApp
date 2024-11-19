@@ -69,8 +69,9 @@ const JobDetail = () => {
 
         // Check if the application already exists with both cvId and jobId
         const existingApplicationResponse = await axios.get(`${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}`);
-        if (existingApplicationResponse.data.some((application: any) => application.cvId === cvId && application.jobId === jobId)) {
+        if (existingApplicationResponse.data.some((application: any) => application.cvId === cvId && application.jobId === jobId )) {
           Alert.alert('Thông báo', 'Bạn đã ứng tuyển vào công việc này rồi!');
+          console.log('data', existingApplicationResponse.data);
         } else {
           await axios.post(`${BASE_URL}/applications`, { cvId, jobId, jobName, CVfullNameUser, CVEmailUser, status });
           console.log('Application submitted successfully');
