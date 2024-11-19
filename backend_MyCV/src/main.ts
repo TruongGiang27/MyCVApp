@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: 'http://localhost:3000/users', // hoặc địa chỉ React Native của bạn
+    origin: 'http://localhost:3000', // hoặc địa chỉ React Native của bạn
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

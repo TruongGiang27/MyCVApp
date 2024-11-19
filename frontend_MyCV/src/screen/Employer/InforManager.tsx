@@ -3,7 +3,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {

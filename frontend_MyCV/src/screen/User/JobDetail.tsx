@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator
 import { useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 type RootStackParamList = {
@@ -100,7 +100,7 @@ const JobDetail = () => {
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
       {/* Header */}
       <View style={styles.header}>
-        <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.navigate("JobList" as never)}/>
+        <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.navigate("JobList" as never)} />
         <Text style={styles.headerText}>{jobDetail.title}</Text>
         <Icon name="share-social-outline" size={28} color="#011F82" />
       </View>

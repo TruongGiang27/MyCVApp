@@ -1,5 +1,3 @@
 {
-    // "cmake.sourceDirectory": "C:/MyCVApp/frontend_MyCV/android/app",
-    "C_Cpp.errorSquiggles": "disabled",
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
