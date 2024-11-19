@@ -24,7 +24,7 @@ const UploadCVScreen = ({ navigation, route }: Props) => {
                     <Text style={styles.buttonText}>Tải lên CV</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>Xây dựng Indeed CV</Text>
+                    <Text style={styles.buttonText} >Xây dựng Indeed CV</Text>
                 </TouchableOpacity>
                 <Text style={styles.agreementText}>
                     Bằng cách tiếp tục, bạn đồng ý nhận các cơ hội việc làm từ Indeed.
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#007AFF',
     },
-   
+
 });
 
 export default UploadCVScreen;

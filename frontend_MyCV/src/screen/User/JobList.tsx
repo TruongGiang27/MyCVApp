@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
-import { BASE_URL } from '../../utils/url';
-import { RouteProp } from '@react-navigation/native';
+import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-
-
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Navbar from '../../components/Navbar';
+import { BASE_URL } from '../../utils/url';
 type RootStackParamList = {
   JobDetail: { jobId: string };
 };
@@ -153,6 +150,8 @@ const JobList = () => {
     handleSearch();
   };
 
+  const navigation = useNavigation<NavigationProp<any>>();
+
   const renderSearchHistory = () => (
     <FlatList
       data={searchHistory}
@@ -166,6 +165,22 @@ const JobList = () => {
     />
   );
 
+  const handleApply = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/cv_form`);
+      const hasCV = response.data.length > 0;
+      console.log('Has CV:', hasCV);
+
+      if (hasCV) {
+        navigation.navigate('CVCreate', { startStep: 10 });
+      } else {
+        navigation.navigate('CVCreate', { startStep: 1 });
+      }
+    } catch (error) {
+      console.error('Error checking CV:', error);
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -177,9 +192,7 @@ const JobList = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icon name="menu-outline" size={28} />
         <Text style={styles.headerText}>MyCVApp</Text>
-        <Icon name="person-circle-outline" size={28} />
       </View>
 
       <View style={styles.searchSection}>
@@ -246,6 +259,7 @@ const JobList = () => {
         ListEmptyComponent={<Text style={styles.noJobsText}>Không có công việc nào phù hợp</Text>}
         contentContainerStyle={styles.jobList}
       />
+
     </View>
   );
 };
@@ -258,7 +272,8 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    display: 'flex',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -268,6 +283,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#011F82',
+
   },
   searchSection: {
     padding: 16,
@@ -376,6 +392,26 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: '#011F82',
+  },
+  navBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    backgroundColor: '#FFF', // Nền trắng giống như trên hình
+    position: 'absolute', // Đưa thanh navbar xuống dưới
+    bottom: 0, // Căn dưới cùng màn hình
+    width: '100%',
+  },
+  navItem: {
+    alignItems: 'center',
+    paddingVertical: 8, // Tăng padding dọc cho icon và text
+  },
+  navText: {
+    fontSize: 12,
+    color: '#000', // Màu đen cho text các tab khác
+    marginTop: 5,
   },
 });
 

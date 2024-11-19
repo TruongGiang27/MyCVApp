@@ -9,6 +9,7 @@ import ScreenName from '../../constant/ScreenName';
 import { BASE_URL } from '../../utils/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
@@ -198,7 +199,7 @@ const Home = ({ navigation, route }: Props) => {
                     });
                 }
             } catch (error) {
-                console.error(error);
+                console.error("eaea",error);
             }
         };
 

@@ -1,18 +1,32 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
+    //Home
     Login: undefined;
     Home: undefined;
-    CreateEmployer: undefined;
-    InforEmployer: undefined;
-    HomeEmployer: undefined;
-    JobPost: undefined;
+    //User
+    CVManagerment: undefined;
+    JobDetail: { jobId: string };
+    CVCreate: { startStep: number; jobId: string };
     JobList: undefined;
-    CvDetail: undefined;
-    ApplyManager: undefined;
-    JobDetail: undefined;
+    Message: undefined;
+    Notification: undefined;
+    //Profile
+    Profile: undefined;
+    //Employer
+    CreateEmployer: undefined;
+    ApplyManager: { jobId: string };
+    CVDetail: undefined;
+    EmployerDetail: { jobId: string };
+    HomeEmployer: undefined;
+    InforManager: undefined;
+    JobPost: undefined;
     Service: undefined;
-    EditCv: undefined;
+    //Admin
+    InforEmloyer: undefined;
+
+    //Component
+    Navbar: undefined;
 };
 
 export type TPropsLoginScreen = NativeStackScreenProps<RootStackParamList, 'Login'>;
