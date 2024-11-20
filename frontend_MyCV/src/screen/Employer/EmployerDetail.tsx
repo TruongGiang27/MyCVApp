@@ -45,32 +45,7 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
   };
 
   // Get current job ID
-  const fetchApplicants = async () => {
-    setLoading(true);
-    // Xóa danh sách ứng viên cũ
-    setApplicants([]);
-
-    try {
-      const response = await axios.get(`${BASE_URL}/applications/job/${jobDetails._id}`);
-
-      // Kiểm tra dữ liệu trả về từ API
-      console.log("Dữ liệu trả về từ API:", response.data);
-
-      // Cập nhật state nếu có dữ liệu
-      if (response.data && response.data.length > 0) {
-        setApplicants(response.data);
-        navigation.navigate('ApplyManager', { jobId: jobDetails._id });
-      } else {
-        console.log("Không có ứng viên nào cho công việc này.");
-        Alert.alert("Thông báo", "Không có ứng viên nào cho công việc này.");
-      }
-    } catch (error) {
-      console.error("Lỗi khi lấy danh sách ứng viên:", error);
-      Alert.alert("Lỗi", "Không thể lấy danh sách ứng viên.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  
 
 
   return (
@@ -172,7 +147,7 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.applyButtonText}>Tạo đơn tuyển dụng mới</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.viewcv} onPress={fetchApplicants}>
+        <TouchableOpacity style={styles.viewcv} onPress={()=>navigation.navigate('ApplyManager', { jobId: jobDetails._id })}>
           <Text style={styles.applyButtonText}>Xem thông tin ứng viên</Text>
         </TouchableOpacity>
       </View>

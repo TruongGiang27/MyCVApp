@@ -6,7 +6,7 @@ import { Application } from './entities/application.entity';
 
 @Injectable()
 export class ApplicationService {
-  constructor(@InjectModel(Application.name) private applicationModel: Model<Application>) {}
+  constructor(@InjectModel(Application.name) private applicationModel: Model<Application>) { }
 
   async createApplication(applicationData: Partial<Application>): Promise<Application> {
     const newApplication = new this.applicationModel(applicationData);
@@ -24,13 +24,13 @@ export class ApplicationService {
   }
 
   async getApplicationsByJobId(jobId: string): Promise<Application[]> {
-    const applications = await this.applicationModel.find({
-      where: { jobId },
-    });
+    const applications = await this.applicationModel.find({jobId: jobId}).exec();
 
-    if (applications.length === 0) {
-      throw new NotFoundException(`No applications found for jobId ${jobId}`);
-    }
+
+    console.log(applications)
+    // if (applications.length === 0) {
+    //   throw new NotFoundException(`No applications found for jobId ${jobId}`);
+    // }
 
     return applications;
   }

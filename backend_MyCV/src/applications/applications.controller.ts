@@ -26,6 +26,7 @@ export class ApplicationController {
   @Get('/job/:jobId')
   async getApplicationsByJobId(@Param('jobId') jobId: string): Promise<Application[]> {
     if (!jobId) throw new NotFoundException('Job ID is required');
+    console.log('jobId', jobId);
     return await this.applicationService.getApplicationsByJobId(jobId);
   }
 
