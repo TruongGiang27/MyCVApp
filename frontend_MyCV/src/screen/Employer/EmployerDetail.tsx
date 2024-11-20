@@ -94,11 +94,13 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
         <Picker
           selectedValue={jobStatus}
           style={styles.statusPicker}
+          mode="dropdown"
           onValueChange={(itemValue) => handleStatusChange(itemValue)}
+           dropdownIconColor="#1976D2"
         >
-          <Picker.Item label="Mở" value="Mở" />
-          <Picker.Item label="Tạm dừng" value="Tạm dừng" />
-          <Picker.Item label="Đã đóng" value="Đã đóng" />
+          <Picker.Item label="Mở" value="Mở" style={{ color: '#011F82' }}/>
+          <Picker.Item label="Tạm dừng" value="Tạm dừng" style={{ color: '#011F82' }}/>
+          <Picker.Item label="Đã đóng" value="Đã đóng" style={{ color: '#011F82' }}/>
         </Picker>
       </View>
 
@@ -225,8 +227,10 @@ const styles = StyleSheet.create({
     color: '#011F82',
   },
   statusPicker: {
-    flex: 1,
+    // flex: 1,
+    width: 140, // Đặt chiều rộng cố định cho Picker
     marginLeft: 8,
+    paddingHorizontal: 0, // Giảm padding ngang
     color: '#011F82',
   },
   statusText: {
