@@ -65,14 +65,17 @@ const JobDetail = () => {
         const CVfullNameUser = cv.fullName;
         const CVEmailUser = cv.email;
         const status = 'applied';
-        const jobName = jobDetail.title; // Add jobName from jobDetail
+        const jobName = jobDetail.title;
+        const googleId = cv.googleId;
 
         // Check if the application already exists with both cvId and jobId
-        const existingApplicationResponse = await axios.get(`${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}`);
-        if (existingApplicationResponse.data.some((application: any) => application.cvId === cvId && application.jobId === jobId)) {
+        const existingApplicationResponse = await axios.get(`${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}&googleId=${googleId}`);
+        console.log('Google ID Job Detail:', googleId);
+        if (existingApplicationResponse.data.some((application: any) => application.cvId === cvId && application.jobId === jobId && application.googleId === googleId )) {
           Alert.alert('Thông báo', 'Bạn đã ứng tuyển vào công việc này rồi!');
+          console.log('data', existingApplicationResponse.data);
         } else {
-          await axios.post(`${BASE_URL}/applications`, { cvId, jobId, jobName, CVfullNameUser, CVEmailUser, status });
+          await axios.post(`${BASE_URL}/applications`, { cvId, jobId, jobName, CVfullNameUser, CVEmailUser, status, googleId });
           console.log('Application submitted successfully');
           Alert.alert('Thành công', 'Bạn đã ứng tuyển thành công!');
         }

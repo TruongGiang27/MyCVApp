@@ -9,6 +9,7 @@ export class ApplicationController {
 
   @Post()
   async create(@Body() applicationData: Partial<Application>): Promise<Application> {
+    console.log('applicationData', applicationData);
     return await this.applicationService.createApplication(applicationData);
   }
 

@@ -6,7 +6,6 @@ import { BASE_URL } from '../../utils/url';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import Iconicon from 'react-native-vector-icons/Ionicons';
 
-// Define the type for the navigation parameters
 type RootStackParamList = {
     CVCreate: { startStep: number };
 };
@@ -32,8 +31,8 @@ const CVManagerment = () => {
         const fetchProfileData = async () => {
             try {
                 const response = await axios.get(`${BASE_URL}/cv_form`);
-                console.log('Response data:', response.data); // Log the entire response data
-                const profile = response.data[0]; // Assuming the response is an array and we need the first item
+                console.log('Response data:', response.data); 
+                const profile = response.data[0]; 
                 const { fullName, email, phone, address } = profile;
                 console.log('Profile data:', { fullName, email, phone, address });
                 if (fullName && email && phone && address) {
