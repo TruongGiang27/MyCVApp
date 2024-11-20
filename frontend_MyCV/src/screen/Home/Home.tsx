@@ -3,12 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions } from 'react-native';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { BASE_URL } from '../utils/url';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
+import ScreenName from '../../constant/ScreenName';
+import { BASE_URL } from '../../utils/url';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
-
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void, onMapSearchFocus: () => void }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -20,7 +24,7 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
                     style={styles.searchInput}
                     placeholder="Tìm kiếm"
                     onChangeText={setSearchTerm}
-                    onFocus={onSearchFocus}  // Trigger search view when focused
+                    onFocus={onSearchFocus}
                 />
                 <View style={styles.divider} />
                 <Icon name="map-marker" type="font-awesome" color="#373737" size={18} />
@@ -28,7 +32,7 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
                     style={styles.searchInput}
                     placeholder="Vị trí"
                     onChangeText={setSearchTerm}
-                    onFocus={onMapSearchFocus}  // Trigger map search view when focused
+                    onFocus={onMapSearchFocus}
                 />
             </View>
         </View>
@@ -71,14 +75,7 @@ const SearchMap = ({ onCancel }: { onCancel: () => void }) => (
 
 // Mid section (Content)
 // Job item component
-interface JobItemProps {
-    title: string;
-    company: string;
-    salary: string;
-    location: string;
-}
-
-const JobItem: React.FC<JobItemProps> = ({ title, company, salary, location }) => {
+const JobItem = ({ title, company, salary, location }: { title: string, company: string, salary: string, location: string }) => {
 
     return (
         <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>
@@ -135,7 +132,6 @@ const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => voi
                 }
                 const responseJson = await response.json();
                 setDataJobs(responseJson);
-                console.log(JSON.stringify(responseJson, null, 2));
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             } finally {
@@ -175,12 +171,40 @@ const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => voi
 };
 
 
+// Home component
 
-// Main component
-const Home = () => {
+const Home = ({ navigation, route }: Props) => {
     const [isSearching, setIsSearching] = useState(false);
     const [isMapSearching, setIsMapSearching] = useState(false);
-    const navigation = useNavigation<NavigationProp<any>>();
+    interface user {
+        _id: string;
+        googleId: string;
+        name: string;
+        email: string;
+        role: string;
+
+    }
+    useEffect(() => {
+        const pushUserData = async () => {
+            try {
+                const userInfoString = await AsyncStorage.getItem('userInfo');
+                if (userInfoString) {
+                    const userInfo = await JSON.parse(userInfoString);
+                    console.log('User info:', userInfo);
+                    await axios.post(`${BASE_URL}/user/create-or-update`, {
+                        googleId: userInfo.data.user.id,
+                        name: userInfo.data.user.name,
+                        email: userInfo.data.user.email,
+                        avatar: userInfo.data.user.photo,
+                    });
+                }
+            } catch (error) {
+                console.error("eaea",error);
+            }
+        };
+
+        pushUserData();
+    }, []);
 
     const handleSearchFocus = () => {
         setIsSearching(true);
@@ -195,33 +219,11 @@ const Home = () => {
     const handleCancelSearch = () => {
         setIsSearching(false);
         setIsMapSearching(false);
-        Keyboard.dismiss(); // Dismiss keyboard when search is canceled
+        Keyboard.dismiss();
     };
-
-    const handleProfilePress = async () => {
-        try {
-            const response = await axios.get(`${BASE_URL}/cv_form`);
-            if (response.data.length > 0) {
-                navigation.navigate('CVManagerment');
-            } else {
-                navigation.navigate('Profile');
-            }
-        } catch (error) {
-            console.error('Failed to check CV:', error);
-        }
-    };
-
-    const handleMessagesPress = () => {
-        navigation.navigate('Message');
-    };
-
-    const handleHomePress = () => {
-        navigation.navigate('Home');
-    };
-
-    const { width } = useWindowDimensions();  // Get the current screen width
+    // responsive window width
+    const { width } = useWindowDimensions();
     const logoWidth = width * 0.5;
-
     return (
         <View style={styles.container}>
             <View style={styles.logo}>
@@ -238,8 +240,8 @@ const Home = () => {
                     </>
                 )}
             </View>
-            <View style={styles.navbar}>
-                <Navbar onProfilePress={handleProfilePress} onMessagesPress={handleMessagesPress} onHomePress={handleHomePress} />
+            <View>
+                <Navbar navigation={navigation} route={route} />
             </View>
         </View>
 
@@ -322,11 +324,11 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         width: '100%',
         alignSelf: 'center',
-        shadowColor: '#000',            // Darker shadow color
-        shadowOffset: { width: 0, height: 4 },  // Adjust shadow offset
-        shadowOpacity: 0.2,             // Increase opacity for a stronger effect
-        shadowRadius: 6,                // Smaller radius for sharper edges
-        elevation: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 6,
+        elevation: 3,
     },
     premiumTag: {
         backgroundColor: '#fdecef',
@@ -385,12 +387,5 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 0,
         top: 0,
-    },
-    navbar: {
-        width: '100%',
-        position: 'relative',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#000000',
     },
 });

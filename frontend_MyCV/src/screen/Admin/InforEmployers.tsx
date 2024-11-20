@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 interface Employer {
     id: string;
     selectedCompany: string;
@@ -127,7 +127,7 @@ const InforEmployer = () => {
                     </View>
                 ) : (
                     // Hiển thị danh sách employers
-                    employers.slice(0,5).map((employer, index) => (
+                    employers.slice(0, 5).map((employer, index) => (
                         <View key={index} style={styles.employerContainer}>
                             <Text style={styles.text}>Selected Company: {employer.selectedCompany}</Text>
                             <Text style={styles.text}>Company Name: {employer.companyName}</Text>

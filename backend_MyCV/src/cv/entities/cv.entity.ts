@@ -3,63 +3,61 @@ import { Document } from 'mongoose';
 
 @Schema()
 class Address {
-  @Prop({ required: true }) country: string;
-  @Prop({ required: true }) address: string;
-  @Prop({ required: true }) city: string;
-  @Prop({ required: true }) zipCode: string;
+  @Prop({ type: String, required: true }) country: string;
+  @Prop({ type: String, required: true }) address: string;
+  @Prop({ type: String, required: true }) city: string;
+  @Prop({ type: String, required: true }) zipCode: string;
 }
 const AddressSchema = SchemaFactory.createForClass(Address);
 
 @Schema()
 class Education {
-  @Prop({ required: true }) educationLevel: string;
-  @Prop({ required: true }) fieldOfStudy: string;
-  @Prop({ required: true }) schoolName: string;
-  @Prop({ required: true }) educationCountry: string;
-  @Prop({ required: true }) educationCity: string;
-  @Prop({ required: true }) educationStartDate: Date;
-  @Prop({ required: true }) educationEndDate: Date;
-  @Prop() educationDescription?: string;
-  @Prop() highestEducationLevel?: string;
+  @Prop({ type: String, required: true }) educationLevel: string;
+  @Prop({ type: String, required: true }) fieldOfStudy: string;
+  @Prop({ type: String, required: true }) schoolName: string;
+  @Prop({ type: String, required: true }) educationCountry: string;
+  @Prop({ type: String, required: true }) educationCity: string;
+  @Prop({ type: Date, required: true }) educationStartDate: Date;
+  @Prop({ type: Date, required: true }) educationEndDate: Date;
+  @Prop({ type: String }) educationDescription?: string;
+  @Prop({ type: String }) highestEducationLevel?: string;
 }
-
 const EducationSchema = SchemaFactory.createForClass(Education);
 
 @Schema()
 class Experience {
-  @Prop({ required: true }) jobTitle: string;
-  @Prop({ required: true }) companyName: string;
-  @Prop({ required: true }) workCountry: string;
-  @Prop({ required: true }) workCity: string;
-  @Prop({ required: true }) workStartDate: Date;
-  @Prop({ required: true }) workEndDate: Date;
-  @Prop() workExperience?: string;
-  @Prop() highestJobLevel?: string;
+  @Prop({ type: String, required: true }) jobTitle: string;
+  @Prop({ type: String, required: true }) companyName: string;
+  @Prop({ type: String, required: true }) workCountry: string;
+  @Prop({ type: String, required: true }) workCity: string;
+  @Prop({ type: Date, required: true }) workStartDate: Date;
+  @Prop({ type: Date, required: true }) workEndDate: Date;
+  @Prop({ type: String }) workExperience?: string;
+  @Prop({ type: String }) highestJobLevel?: string;
 }
 const ExperienceSchema = SchemaFactory.createForClass(Experience);
 
 @Schema()
 class JobPreferences {
-  @Prop({ required: true }) desiredJobTitle: string;
-  @Prop({ required: true }) jobType: string;
-  @Prop({ required: true }) minimumSalary: number;
+  @Prop({ type: String, required: true }) desiredJobTitle: string;
+  @Prop({ type: String, required: true }) jobType: string;
+  @Prop({ type: Number, required: true }) minimumSalary: number;
 }
-
 const JobPreferencesSchema = SchemaFactory.createForClass(JobPreferences);
 
 @Schema({ collection: 'cv_form' })
 export class Cv extends Document {
-  @Prop() fullName?: string;
-  @Prop({}) email: string;
-  @Prop({ required: true }) phone: string;
+  @Prop({ type: String, required: true }) googleId: string;
+  @Prop({ type: String }) fullName?: string;
+  @Prop({ type: String, required: true }) email: string;
+  @Prop({ type: String, required: true }) phone: string;
   @Prop({ type: AddressSchema, required: true }) address: Address;
   @Prop({ type: EducationSchema, required: true }) education: Education;
   @Prop({ type: ExperienceSchema, required: true }) experience: Experience;
   @Prop({ type: [String], required: true }) skills: string[];
-  @Prop({ required: true }) certifications: string;
-  @Prop() birthDate: string;
-  @Prop() summary?: string;
+  @Prop({ type: String, required: true }) certifications: string;
+  @Prop({ type: String }) birthDate?: string;
+  @Prop({ type: String }) summary?: string;
   @Prop({ type: JobPreferencesSchema, required: true }) jobPreferences: JobPreferences;
 }
-
 export const CvSchema = SchemaFactory.createForClass(Cv);

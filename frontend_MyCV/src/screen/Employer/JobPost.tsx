@@ -8,9 +8,9 @@ import { Alert, Image, Keyboard, Platform, StyleSheet, Text, View } from 'react-
 import { GestureHandlerRootView, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Navbar from '../../components/Navbar';
+
 import { RootStackParamList } from '../User/types';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 
 // Khai báo kiểu cho props 'navigation'
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
@@ -197,7 +197,6 @@ const JobPost: React.FC<Props> = ({ navigation }) => {
                     </TouchableOpacity>
                 </ScrollView>
             </View>
-            <Navbar />
         </GestureHandlerRootView >
 
     );

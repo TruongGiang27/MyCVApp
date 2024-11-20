@@ -11,7 +11,7 @@ import {
   StatusBar,
   StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View
 } from 'react-native';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 
 const { width } = Dimensions.get('window');
 // types.ts

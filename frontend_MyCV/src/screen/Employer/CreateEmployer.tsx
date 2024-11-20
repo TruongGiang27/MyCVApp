@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { Button, Card, TextInput, Title, Text } from 'react-native-paper';
 import { RootStackParamList } from '../User/types';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 // Khai báo kiểu cho props 'navigation'
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     color: '#6D92D0',
     textAlign: 'left',
   },
-  text:{
+  text: {
     fontSize: 14,
     marginBottom: 5,
     paddingBottom: 5,
