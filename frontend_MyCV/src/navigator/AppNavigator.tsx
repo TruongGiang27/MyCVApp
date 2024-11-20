@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import 'react-native-get-random-values';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ScreenName from '../constant/ScreenName';
+import ScreenName from '../constants/ScreenName';
 import { RootStackParamList } from './RootStackParamList';
 
 import Home from '../screen/home/Home';

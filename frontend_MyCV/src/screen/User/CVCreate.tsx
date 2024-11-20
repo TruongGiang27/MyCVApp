@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -24,8 +24,8 @@ interface Props {
 
 // Define the type for the route parameters
 type RouteParams = {
-    startStep: number;
-    jobId: string;
+  startStep: number;
+  jobId: string;
 };
 
 const CVCreate = () => {
@@ -281,7 +281,7 @@ const CVCreate = () => {
   const renderEditableField = (label: string, key: string, value: string, isDate?: boolean) => {
     const isFullNameField = key === "fullName";
     const isInvalidFullName = isFullNameField && !validateString(value);
-  
+
     return (
       <View style={styles.editableFieldContainer}>
         <Text style={styles.content}>{label}: </Text>
@@ -970,7 +970,7 @@ const CVCreate = () => {
                   value={formData.minimumSalary}
                 />
               )}
-            />           
+            />
           </>
         );
 
@@ -1113,7 +1113,7 @@ const CVCreate = () => {
             styles.button,
             (currentStep === 1 || currentStep === 2 || currentStep === 3 || currentStep === 4 || currentStep === 5 || currentStep === 9) && !isValid && styles.disabledButton,
           ]}
-          disabled={(currentStep === 1 || currentStep === 2 || currentStep === 3 || currentStep === 4 || currentStep === 5|| currentStep === 9) && !isValid}
+          disabled={(currentStep === 1 || currentStep === 2 || currentStep === 3 || currentStep === 4 || currentStep === 5 || currentStep === 9) && !isValid}
         >
           <Text style={styles.buttonText}>{currentStep < 10 ? 'Tiếp theo' : 'Hoàn tất'}</Text>
         </TouchableOpacity>
