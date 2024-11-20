@@ -38,6 +38,7 @@ const CVCreate = () => {
 
   type FormData = {
     [key: string]: any;
+    googleId: string;
     fullName: string;
     email: string;
     phone: string;
@@ -72,6 +73,7 @@ const CVCreate = () => {
   };
 
   const [formData, setFormData] = useState<FormData>({
+    googleId: '',
     fullName: '',
     email: '',
     phone: '',
@@ -119,7 +121,19 @@ const CVCreate = () => {
     const loadFormData = async () => {
       try {
         const savedFormData = await AsyncStorage.getItem('formData');
-        console.log('formData.fullName:', formData.fullName)
+        const userInfoString = await AsyncStorage.getItem('userInfo');
+        let googleId = '';
+        let email = '';
+        let name = '';
+        if (userInfoString) {
+          const userInfo = JSON.parse(userInfoString);
+          googleId = userInfo.data.user.id;
+          email = userInfo.data.user.email;
+          name = userInfo.data.user.name;
+        }
+        console.log('Google ID:', googleId);
+        console.log('Email:', email);
+        console.log('Name:', name);  
         if (savedFormData) {
           const parsedFormData = JSON.parse(savedFormData);
           // Convert date strings back to Date objects
@@ -128,7 +142,12 @@ const CVCreate = () => {
           parsedFormData.workStartDate = new Date(parsedFormData.workStartDate);
           parsedFormData.workEndDate = new Date(parsedFormData.workEndDate);
           parsedFormData.birthDate = new Date(parsedFormData.birthDate);
-          setFormData(parsedFormData);
+          setFormData({
+            ...parsedFormData,
+            googleId: googleId || '',
+            email: email || '',
+            fullName: name || parsedFormData.fullName,
+          });
           setSelectedSkills(parsedFormData.skills || []);
 
           // Set initial values for form fields
@@ -138,6 +157,13 @@ const CVCreate = () => {
 
           // Trigger validation for the first screen
           trigger(['fullName', 'email']);
+        } else {
+          setFormData((prevData) => ({
+            ...prevData,
+            googleId: googleId || '',
+            email: email || '',
+            fullName: name || '',
+          }));
         }
       } catch (error) {
         console.error('Failed to load form data:', error);
@@ -161,7 +187,16 @@ const CVCreate = () => {
   }, [formData, selectedSkills]);
 
   const onSubmit = async (data: any) => {
+    const userInfoString = await AsyncStorage.getItem('userInfo');
+    let googleId = '';
+    if (userInfoString) {
+      const userInfo = JSON.parse(userInfoString);
+      googleId = userInfo.data.user.id;
+    }
+    console.log('Retrieved Google ID:', googleId); // Add this line to log the retrieved Google ID
+
     const formattedData = {
+      googleId: formData.googleId,
       fullName: formData.fullName,
       email: formData.email,
       phone: formData.phone,
@@ -203,10 +238,13 @@ const CVCreate = () => {
       skills: selectedSkills,
     };
 
+    console.log('Submitting data:', formattedData); 
+
     try {
       const response = await axios.post(`${BASE_URL}/cv_form`, formattedData);
       console.log('Data successfully posted to MongoDB:', response.data);
       console.log('Response data structure:', response.data); // Add this line to log the response data structure
+      console.log('Google ID:', googleId);
       // Handle successful post, e.g., navigate to another screen or show a success message
       navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
 
@@ -226,6 +264,7 @@ const CVCreate = () => {
         console.log('Unexpected error:', error);
       }
       console.log('Data that failed to post:', formattedData);
+      console.log('userInfoString:', await AsyncStorage.getItem('userInfo'));
       // Handle error, e.g., show an error message
     }
   };
@@ -269,7 +308,7 @@ const CVCreate = () => {
   };
 
   const validateString = (value: string) => {
-    const regex = /^[a-zA-Z\s]+$/;
+    const regex = /^[a-zA-ZÀ-ỹ\s]+$/u;
     return regex.test(value) || '*Vui lòng nhập đúng định dạng';
   };
 
@@ -1037,13 +1076,13 @@ const CVCreate = () => {
             {renderEditableField("Loại công việc", "jobType", formData.jobType)}
             {renderEditableField("Mức lương tối thiểu", "minimumSalary", formData.minimumSalary)}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={handleSubmit(onSubmit)}
               style={[styles.button, !isFullNameValid && styles.disabledButton]}
               disabled={!isFullNameValid}
             >
               <Text style={styles.buttonText}>Hoàn tất</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         );
       default:
@@ -1288,3 +1327,4 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 export default CVCreate; 
+

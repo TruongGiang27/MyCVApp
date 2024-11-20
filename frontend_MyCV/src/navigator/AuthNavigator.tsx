@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import Login from '../screen/login/Login';
-import Home from '../screen/home/Home';
+import Home from '../screen/Home/Home';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './RootStackParamList';
 import ScreenName from '../constants/ScreenName';
