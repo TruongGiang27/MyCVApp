@@ -8,8 +8,12 @@ export type RootStackParamList = {
     JobPost: undefined;
     JobList: undefined;
     JobDetail: undefined;
-    CvDetail: undefined;
-    ApplyManager: undefined;
+    CVCreate: undefined;
     InforEmployers: undefined;
+    MessageScreen: undefined;
+    CvDetail: undefined;
+    ApplyManager: {jobId: string};
+    InforManager: undefined;
+    EmployerDetail: { jobId: string };
 };
 export default RootStackParamList;

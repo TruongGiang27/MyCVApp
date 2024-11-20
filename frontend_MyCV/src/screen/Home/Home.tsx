@@ -5,11 +5,11 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
-import ScreenName from '../../constant/ScreenName';
+import ScreenName from '../../constants/ScreenName';
 import { BASE_URL } from '../../utils/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
@@ -132,6 +132,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => voi
                 }
                 const responseJson = await response.json();
                 setDataJobs(responseJson);
+                console.log("Data fetched successfully:", responseJson);
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             } finally {
@@ -176,6 +177,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => voi
 const Home = ({ navigation, route }: Props) => {
     const [isSearching, setIsSearching] = useState(false);
     const [isMapSearching, setIsMapSearching] = useState(false);
+    const [userEmail, setUserEmail] = useState('');
     interface user {
         _id: string;
         googleId: string;
@@ -190,7 +192,7 @@ const Home = ({ navigation, route }: Props) => {
                 const userInfoString = await AsyncStorage.getItem('userInfo');
                 if (userInfoString) {
                     const userInfo = await JSON.parse(userInfoString);
-                    console.log('User info:', userInfo);
+                    
                     await axios.post(`${BASE_URL}/user/create-or-update`, {
                         googleId: userInfo.data.user.id,
                         name: userInfo.data.user.name,
@@ -199,7 +201,7 @@ const Home = ({ navigation, route }: Props) => {
                     });
                 }
             } catch (error) {
-                console.error("eaea",error);
+                console.error("eaea", error);
             }
         };
 

@@ -4,10 +4,11 @@ import { Cv } from './entities/cv.entity';
 
 @Controller('cv_form')
 export class CvController {
-  constructor(private readonly cvService: CvService) {}
+  constructor(private readonly cvService: CvService) { }
 
   @Post()
   async createCv(@Body() createCvDto: any): Promise<Cv> {
+    console.log('Received Data:', createCvDto);
     return this.cvService.createCv(createCvDto);
   }
 

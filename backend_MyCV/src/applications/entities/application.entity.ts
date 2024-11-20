@@ -6,6 +6,9 @@ import { Document } from 'mongoose';
 export class Application extends Document {
 
   @Prop({ required: true })
+  googleId: string;
+
+  @Prop({ required: true })
   jobId: string;
 
   @Prop({ required: true })
@@ -17,7 +20,7 @@ export class Application extends Document {
   @Prop({ required: true })
   CVfullNameUser: string;
 
-  @Prop({ required: true })
+  @Prop({})
   CVEmailUser: string;
 
   @Prop({ required: true })
