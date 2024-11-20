@@ -44,18 +44,11 @@ const ApplyManager: React.FC<Props> = ({ navigation })=> {
         setApplicants([]);
         // get params from route
         const { jobId } = route.params as { jobId: string };
-        console.log('---------------------')
-
-        console.log(jobDetails)
         setJobDetails(jobDetails);
         try {
-            console.log('---------------------')
-            console.log(jobDetails)
             const response = await axios.get(`${BASE_URL}/applications/job/${jobId}`);
-
             // Kiểm tra dữ liệu trả về từ API
             console.log(response.data);
-
             // Cập nhật state nếu có dữ liệu
             if (response.data && response.data.length > 0) {
                 setApplicants(response.data);
@@ -73,15 +66,15 @@ const ApplyManager: React.FC<Props> = ({ navigation })=> {
     useEffect(() => {
         fetchApplicants();
     }, []);
-    // const handleSearch = () => {
-    //     const results = employers
-    //         .filter(emp =>
-    //             emp.CVfullNameUser.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //             emp.CVEmailUser.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //             emp.status.toLowerCase().includes(searchQuery.toLowerCase())
-    //         )
-    //     setFilteredEmployers(results);
-    // };
+    const handleSearch = () => {
+        const results = employers
+            .filter(emp =>
+                emp.CVfullNameUser.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                emp.CVEmailUser.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                emp.status.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+        setFilteredEmployers(results);
+    };
 
     const handleViewDetails = (employer: Employer) => {
         setViewingEmployer(employer);

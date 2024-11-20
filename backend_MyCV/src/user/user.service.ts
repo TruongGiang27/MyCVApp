@@ -12,7 +12,7 @@ export class UserService {
     console.log("Create User DTO:", createUserDto); // Log dữ liệu DTO để kiểm tra
 
     const updatedUser = await this.userModel.findOneAndUpdate(
-      { googleId: createUserDto.googleId },
+      { userId: createUserDto.userId },
       createUserDto,
       { new: true, upsert: true }
     );
