@@ -15,16 +15,20 @@ import JobPost from '../screen/Employer/JobPost';
 import JobList from '../screen/User/JobList';
 import JobDetail from '../screen/User/JobDetail';
 import Profile from '../screen/profile/Profile';
-
+import InforManager from '../screen/Employer/InforManager';
+import EmployerDetail from '../screen/Employer/EmployerDetail';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
     return (
 
-        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, animation: 'none' }}>
+        <Stack.Navigator initialRouteName="HomeEmployer" screenOptions={{ headerShown: false, animation: 'none' }}>
             <Stack.Screen name={ScreenName.Home} component={Home} />
             <Stack.Screen name={ScreenName.CreateEmployer} component={CreateEmployer} />
             <Stack.Screen name={ScreenName.InforEmployers} component={InforEmployers} />
+            <Stack.Screen name={ScreenName.InforManager} component={InforManager} />
+            <Stack.Screen name={ScreenName.EmployerDetail} component={EmployerDetail} />
+
             <Stack.Screen name={ScreenName.JobPost} component={JobPost} />
             <Stack.Screen name={ScreenName.HomeEmployer} component={HomeEmployer} />
             <Stack.Screen name={ScreenName.JobList} component={JobList} />

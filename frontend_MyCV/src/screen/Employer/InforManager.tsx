@@ -4,7 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../../utils/url';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import ScreenName from '../../constant/ScreenName';
 
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
     _id: string;
@@ -134,6 +138,14 @@ const InforManager = () => {
             const updatedEmployers = employers.map(emp => emp._id === employerId ? { ...emp, status } : emp);
             setEmployers(updatedEmployers);
             countStatuses(updatedEmployers);
+            // Đồng bộ viewingEmployer nếu nó thuộc employerId
+            const updatedViewingEmployer = updatedEmployers.find(emp => emp._id === viewingEmployer?._id);
+            if (updatedViewingEmployer) {
+                setViewingEmployer(updatedViewingEmployer);
+            }
+            if (viewingEmployer && viewingEmployer._id === employerId) {
+                setViewingEmployer({ ...viewingEmployer, status }); // Đồng bộ trạng thái
+            }
             Alert.alert('Cập nhật trạng thái', `Trạng thái đã thay đổi thành: ${status}`);
         } catch (error) {
             Alert.alert('Lỗi', 'Có lỗi khi cập nhật trạng thái');
@@ -155,7 +167,7 @@ const InforManager = () => {
         if (status === null) return true; // Hiển thị tất cả nếu status là null
         return emp.status === status; // Lọc theo status
     }).slice(0, visibleCount);
-    
+
     const handleViewMore = () => {
         setVisibleCount(prev => prev + 4); // Increase the visible count by 4
     };
@@ -180,12 +192,6 @@ const InforManager = () => {
                     <Text style={styles.searchButtonText}>Tìm kiếm</Text>
                 </TouchableOpacity>
             </View>
-            {/* 
-            <View style={styles.statusSummary}>
-                <Text style={styles.statusSummaryText}>Mở: {statusCounts.open}</Text>
-                <Text style={styles.statusSummaryText}>Tạm dừng: {statusCounts.paused}</Text>
-                <Text style={styles.statusSummaryText}>Đã đóng: {statusCounts.closed}</Text>
-            </View> */}
             {/* Các nút lọc theo trạng thái */}
             <View style={styles.filterButtons}>
                 <TouchableOpacity onPress={() => setStatus(null)} style={styles.filterButton}>
@@ -193,11 +199,12 @@ const InforManager = () => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setStatus('Mở')} style={styles.filterButton}>
                     <Text style={styles.filterButtonText}>Mở ( {statusCounts.open} )</Text>
+
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setStatus('Tạm dừng')} style={styles.filterButton}>
+                <TouchableOpacity onPress={() => setStatus('Tạm dừng')} style={[styles.filterButton, { backgroundColor: '#FFC107' }]}>
                     <Text style={styles.filterButtonText}>Tạm dừng ( {statusCounts.paused} )</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setStatus('Đã đóng')} style={styles.filterButton}>
+                <TouchableOpacity onPress={() => setStatus('Đã đóng')} style={[styles.filterButton, { backgroundColor: '#FF5722' }]}>
                     <Text style={styles.filterButtonText}>Đã đóng ( {statusCounts.closed} )</Text>
                 </TouchableOpacity>
             </View>

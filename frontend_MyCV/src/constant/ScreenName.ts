@@ -10,6 +10,8 @@ export enum ScreenName {
     JobDetail = 'JobDetail',
     CvDetail = 'CvDetail',
     ApplyManager = 'ApplyManager',
-    InforEmployers = 'InforEmployers',
+    InforEmployers = 'InforEmployer',
+    InforManager = 'InforManager',
+    EmployerDetail = "EmployerDetail",
 }
 export default ScreenName;
