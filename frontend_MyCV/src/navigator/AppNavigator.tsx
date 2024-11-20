@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ScreenName from '../constant/ScreenName';
 import { RootStackParamList } from './RootStackParamList';
 
-import Home from '../screen/Home/Home';
+import Home from '../screen/home/Home';
 import CreateEmployer from '../screen/Employer/CreateEmployer';
 import InforEmployers from '../screen/Admin/InforEmployers';
 import ApplyManager from '../screen/Employer/ApplyManager';
