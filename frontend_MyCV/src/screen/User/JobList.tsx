@@ -4,7 +4,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Navbar from '../../components/Navbar';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 type RootStackParamList = {
   JobDetail: { jobId: string };
 };
@@ -259,11 +259,7 @@ const JobList = () => {
         ListEmptyComponent={<Text style={styles.noJobsText}>Không có công việc nào phù hợp</Text>}
         contentContainerStyle={styles.jobList}
       />
-      <Navbar
-        onProfilePress={() => navigation.navigate('Profile')}
-        onMessagesPress={() => navigation.navigate('Message')}
-        onHomePress={() => navigation.navigate('Home')}
-      />
+
     </View>
   );
 };

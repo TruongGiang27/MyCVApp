@@ -11,7 +11,7 @@ import {
   StatusBar,
   StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View
 } from 'react-native';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 
 const { width } = Dimensions.get('window');
 // types.ts
@@ -201,6 +201,7 @@ const HomeEmployer = () => {
               <ScrollView style={styles.menu}>
                 {menuItems.map((item, index) => (
                   <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
+                    closeMenu();
                     if (item.title === 'Tạo mới') {
                       navigation.navigate('JobPost' as never); // Navigate to JobPost
                     }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import Iconicon from 'react-native-vector-icons/Ionicons';
 

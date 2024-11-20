@@ -4,7 +4,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 import { RootStackParamList } from '../User/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 

@@ -1,30 +1,30 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';  // Dùng Icon Ionicons, có thể đổi theo ý bạn.
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-
+import Navbar from '../../components/Navbar';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
+import ScreenName from '../../constant/ScreenName';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
-const UploadCVScreen = () => {
-    const navigation = useNavigation<NavigationProp<any>>();
+const UploadCVScreen = ({ navigation, route }: Props) => {
     return (
         <View style={styles.container}>
-
-            {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity style={styles.backButton}>
                     <Icon name="arrow-back" size={25} color="#000" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Thêm CV vào Indeed</Text>
+                <TouchableOpacity>
+                    <Icon name="menu" size={25} color="#000" />
+                </TouchableOpacity>
             </View>
-
-            {/* Content */}
             <View style={styles.content}>
                 <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Tải lên CV</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText} onPress={() => navigation.navigate('CVCreate')} >Xây dựng Indeed CV</Text>
+                    <Text style={styles.buttonText} >Xây dựng Indeed CV</Text>
                 </TouchableOpacity>
                 <Text style={styles.agreementText}>
                     Bằng cách tiếp tục, bạn đồng ý nhận các cơ hội việc làm từ Indeed.
@@ -38,23 +38,8 @@ const UploadCVScreen = () => {
             </View>
 
             {/* Navigation Bar */}
-            <View style={styles.navBar}>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="home-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Trang chủ</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="bookmark-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Việc làm của tôi</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Message')}>
-                    <Icon name="chatbubble-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Tin nhắn</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="person-outline" size={25} color="#007AFF" />
-                    <Text style={[styles.navText, { color: '#007AFF' }]}>Hồ sơ</Text>
-                </TouchableOpacity>
+            <View >
+                <Navbar navigation={navigation} route={route} />
             </View>
         </View>
     );
@@ -69,8 +54,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
     },
     backButton: {
         marginRight: 10,
@@ -117,21 +100,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#007AFF',
     },
-    navBar: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        paddingVertical: 10,
-        borderTopWidth: 1,
-        borderTopColor: '#ddd',
-    },
-    navItem: {
-        alignItems: 'center',
-    },
-    navText: {
-        fontSize: 12,
-        color: '#000',
-        marginTop: 5,
-    },
+
 });
 
 export default UploadCVScreen;
