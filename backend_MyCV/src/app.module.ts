@@ -11,8 +11,8 @@ import { JobsModule } from './jobs/jobs.module';
 import { SearchHistoryModule } from './search_history/search_history.module';
 import { CvuserModule } from './cvuser/cvuser.module';
 import { UserModule } from './user/user.module';
-import { ApplicationsModule } from './applications/applications.module';
 import { CvModule } from './cv/cv.module';
+import { ApplicationsModule } from './applications/applications.module';
 const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryWrites=true&w=majority&appName=Admin';
 
 @Module({
