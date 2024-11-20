@@ -24,10 +24,16 @@ export class ApplicationService {
   }
 
   async getApplicationsByJobId(jobId: string): Promise<Application[]> {
-    const applications = await this.applicationModel.find({ jobId }).exec();
+    const applications = await this.applicationModel.find({
+      where: { jobId },
+    });
+
+    if (applications.length === 0) {
+      throw new NotFoundException(`No applications found for jobId ${jobId}`);
+    }
+
     return applications;
   }
-
   async updateApplication(id: string, applicationData: Partial<Application>): Promise<Application> {
     const updatedApplication = await this.applicationModel.findByIdAndUpdate(id, applicationData, { new: true }).exec();
     if (!updatedApplication) throw new NotFoundException(`Application with ID ${id} not found`);
