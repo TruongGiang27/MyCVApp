@@ -12,5 +12,6 @@ export type RootStackParamList = {
     ApplyManager: undefined;
     InforEmployers: undefined;
     MessageScreen: undefined;
+    CVManagerment: undefined;
 };
 export default RootStackParamList;

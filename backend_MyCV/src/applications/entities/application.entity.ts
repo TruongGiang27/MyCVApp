@@ -6,7 +6,7 @@ import { Document } from 'mongoose';
 export class Application extends Document {
 
   @Prop({ required: true })
-  googleId: string;
+  userId: string;
 
   @Prop({ required: true })
   jobId: string;

@@ -66,16 +66,16 @@ const JobDetail = () => {
         const CVEmailUser = cv.email;
         const status = 'applied';
         const jobName = jobDetail.title;
-        const googleId = cv.googleId;
+        const userId = cv.userId;
 
         // Check if the application already exists with both cvId and jobId
-        const existingApplicationResponse = await axios.get(`${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}&googleId=${googleId}`);
-        console.log('Google ID Job Detail:', googleId);
-        if (existingApplicationResponse.data.some((application: any) => application.cvId === cvId && application.jobId === jobId && application.googleId === googleId )) {
+        const existingApplicationResponse = await axios.get(`${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}&userId=${userId}`);
+        console.log('Google ID Job Detail:', userId);
+        if (existingApplicationResponse.data.some((application: any) => application.cvId === cvId && application.jobId === jobId && application.userId === userId )) {
           Alert.alert('Thông báo', 'Bạn đã ứng tuyển vào công việc này rồi!');
           console.log('data', existingApplicationResponse.data);
         } else {
-          await axios.post(`${BASE_URL}/applications`, { cvId, jobId, jobName, CVfullNameUser, CVEmailUser, status, googleId });
+          await axios.post(`${BASE_URL}/applications`, { cvId, jobId, jobName, CVfullNameUser, CVEmailUser, status, userId });
           console.log('Application submitted successfully');
           Alert.alert('Thành công', 'Bạn đã ứng tuyển thành công!');
         }
@@ -103,9 +103,8 @@ const JobDetail = () => {
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
       {/* Header */}
       <View style={styles.header}>
-        <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.navigate("JobList" as never)} />
+        <Icon style={styles.arrow} name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.navigate("JobList" as never)} />
         <Text style={styles.headerText}>{jobDetail.title}</Text>
-        <Icon name="share-social-outline" size={28} color="#011F82" />
       </View>
 
       {/* Company and Location */}
@@ -217,14 +216,20 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     alignItems: 'center',
     marginBottom: 20,
+    display: 'flex',
   },
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#011F82',
+    
+  },
+  arrow: {
+    position: 'absolute',
+    left: 0,
   },
   companyInfo: {
     marginBottom: 16,
