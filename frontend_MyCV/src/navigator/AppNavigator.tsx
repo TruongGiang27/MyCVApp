@@ -18,6 +18,7 @@ import Profile from '../screen/profile/Profile';
 import MessageScreen from '../screen/User/Message';
 import InforManager from '../screen/Employer/InforManager';
 import EmployerDetail from '../screen/Employer/EmployerDetail';
+import CVManagerment from '../screen/User/CVManagerment';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -39,6 +40,8 @@ const App = () => {
             <Stack.Screen name={ScreenName.CVCreate} component={CVCreate} />
             <Stack.Screen name={ScreenName.ApplyManager} component={ApplyManager} />
             <Stack.Screen name={ScreenName.MessageScreen} component={MessageScreen} />
+            <Stack.Screen name={ScreenName.CVManagerment} component={CVManagerment} />
+
 
         </Stack.Navigator>
     );

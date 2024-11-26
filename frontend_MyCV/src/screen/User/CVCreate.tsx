@@ -38,7 +38,7 @@ const CVCreate = () => {
 
   type FormData = {
     [key: string]: any;
-    googleId: string;
+    userId: string;
     fullName: string;
     email: string;
     phone: string;
@@ -73,7 +73,7 @@ const CVCreate = () => {
   };
 
   const [formData, setFormData] = useState<FormData>({
-    googleId: '',
+    userId: '',
     fullName: '',
     email: '',
     phone: '',
@@ -122,16 +122,16 @@ const CVCreate = () => {
       try {
         const savedFormData = await AsyncStorage.getItem('formData');
         const userInfoString = await AsyncStorage.getItem('userInfo');
-        let googleId = '';
+        let userId = '';
         let email = '';
         let name = '';
         if (userInfoString) {
           const userInfo = JSON.parse(userInfoString);
-          googleId = userInfo.data.user.id;
+          userId = userInfo.data.user.id;
           email = userInfo.data.user.email;
           name = userInfo.data.user.name;
         }
-        console.log('Google ID:', googleId);
+        console.log('Google ID:', userId);
         console.log('Email:', email);
         console.log('Name:', name);  
         if (savedFormData) {
@@ -144,7 +144,7 @@ const CVCreate = () => {
           parsedFormData.birthDate = new Date(parsedFormData.birthDate);
           setFormData({
             ...parsedFormData,
-            googleId: googleId || '',
+            userId: userId || '',
             email: email || '',
             fullName: name || parsedFormData.fullName,
           });
@@ -160,7 +160,7 @@ const CVCreate = () => {
         } else {
           setFormData((prevData) => ({
             ...prevData,
-            googleId: googleId || '',
+            userId: userId || '',
             email: email || '',
             fullName: name || '',
           }));
@@ -188,15 +188,15 @@ const CVCreate = () => {
 
   const onSubmit = async (data: any) => {
     const userInfoString = await AsyncStorage.getItem('userInfo');
-    let googleId = '';
+    let userId = '';
     if (userInfoString) {
       const userInfo = JSON.parse(userInfoString);
-      googleId = userInfo.data.user.id;
+      userId = userInfo.data.user.id;
     }
-    console.log('Retrieved Google ID:', googleId); // Add this line to log the retrieved Google ID
+    console.log('Retrieved User ID:', userId); // Add this line to log the retrieved Google ID
 
     const formattedData = {
-      googleId: formData.googleId,
+      userId: formData.userId,
       fullName: formData.fullName,
       email: formData.email,
       phone: formData.phone,
@@ -244,7 +244,7 @@ const CVCreate = () => {
       const response = await axios.post(`${BASE_URL}/cv_form`, formattedData);
       console.log('Data successfully posted to MongoDB:', response.data);
       console.log('Response data structure:', response.data); // Add this line to log the response data structure
-      console.log('Google ID:', googleId);
+      console.log('User ID:', userId);
       // Handle successful post, e.g., navigate to another screen or show a success message
       navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
 

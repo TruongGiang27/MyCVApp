@@ -7,7 +7,7 @@ import { login, logout } from '../redux/reducers/authReducer';
 import AppNavigator from './AppNavigator';
 import AuthNavigator from './AuthNavigator';
 import { NavigationContainer } from '@react-navigation/native';
-import React from 'react'
+import React from 'react';
 
 const AppRouter = () => {
   const dispatch = useDispatch();
