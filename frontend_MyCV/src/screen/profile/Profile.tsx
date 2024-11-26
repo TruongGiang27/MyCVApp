@@ -1,61 +1,81 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';  // Dùng Icon Ionicons, có thể đổi theo ý bạn.
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Navbar from '../../components/Navbar';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
+import ScreenName from '../../constants/ScreenName';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { appColors } from '../../constants/appColors';
+import { signOut } from '../../utils/auth';
+import { useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
-const UploadCVScreen = () => {
-    const navigation = useNavigation<NavigationProp<any>>();
+const Profile = ({ navigation, route }: Props) => {
+    const [menuVisible, setMenuVisible] = useState(false);
+    const dispatch = useDispatch();
+    const toggleMenu = () => {
+        setMenuVisible(!menuVisible);
+    };
+    const handleLogout = async () => {
+        try {
+            
+        } catch (error) {
+            console.error('Failed to log out:', error);
+        }
+    };
+
     return (
         <View style={styles.container}>
 
-            {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton}>
+                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                     <Icon name="arrow-back" size={25} color="#000" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Thêm CV vào Indeed</Text>
+                <TouchableOpacity onPress={toggleMenu}>
+                    <Icon name="menu" size={25} color="#000" />
+                </TouchableOpacity>
             </View>
+            <Modal
+                transparent={false}
+                visible={menuVisible}
+                animationType='slide'
+                onRequestClose={toggleMenu}
+            >
+                <View style={styles.fullMenu}>
 
-            {/* Content */}
+                    <TouchableOpacity style={styles.closeButton} onPress={toggleMenu}>
+                        <Icon name="close" size={30} color="#000" />
+                    </TouchableOpacity>
+                    <View style={styles.menuContent}>
+                        <TouchableOpacity style={styles.menuItem}>
+                            <Text style={styles.menuItemText}>Đánh giá của tôi</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.menuItem}>
+                            <Text style={styles.menuItemText}>Cài đặt</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.menuItem} onPress={()=>signOut(dispatch)}>
+                            <Text style={styles.menuItemText}>Đăng xuất</Text>
+                            <Text style={styles.menuItemText}></Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
             <View style={styles.content}>
                 <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Tải lên CV</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText} onPress={() => navigation.navigate('CVCreate')} >Xây dựng Indeed CV</Text>
+                    <Text style={styles.buttonText}>Xây dựng Indeed CV</Text>
                 </TouchableOpacity>
                 <Text style={styles.agreementText}>
                     Bằng cách tiếp tục, bạn đồng ý nhận các cơ hội việc làm từ Indeed.
                 </Text>
             </View>
 
-            {/* Footer */}
-            <View style={styles.footer}>
-                <Text style={styles.copyright}>©2024 Indeed - </Text>
-                <Text style={styles.footerLink}>Cookie, Quyền riêng tư và Điều khoản</Text>
-            </View>
-
-            {/* Navigation Bar */}
-            <View style={styles.navBar}>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="home-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Trang chủ</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="bookmark-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Việc làm của tôi</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Message')}>
-                    <Icon name="chatbubble-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Tin nhắn</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="person-outline" size={25} color="#007AFF" />
-                    <Text style={[styles.navText, { color: '#007AFF' }]}>Hồ sơ</Text>
-                </TouchableOpacity>
-            </View>
+            <Navbar navigation={navigation} route={route} />
         </View>
     );
 };
@@ -67,18 +87,12 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
         padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
     },
     backButton: {
         marginRight: 10,
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#000',
     },
     content: {
         flex: 1,
@@ -117,21 +131,30 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#007AFF',
     },
-    navBar: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        paddingVertical: 10,
-        borderTopWidth: 1,
-        borderTopColor: '#ddd',
+    fullMenu: {
+        flex: 1,
+        backgroundColor: '#fff',
     },
-    navItem: {
+    closeButton: {
+        alignSelf: 'flex-end',
+        padding: 16,
+    },
+    menuContent: {
+        flex: 1,
         alignItems: 'center',
     },
-    navText: {
-        fontSize: 12,
+    menuItem: {
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: appColors.gray3,
+        width: '100%',
+    },
+    menuItemText: {
+        paddingHorizontal: 20,
+        fontSize: 18,
+        fontWeight: 'bold',
         color: '#000',
-        marginTop: 5,
     },
 });
 
-export default UploadCVScreen;
+export default Profile;

@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { RootStackParamList } from '../User/types';
-import { BASE_URL } from '../utils/url';
+import { BASE_URL } from '../../utils/url';
 // Khai báo kiểu cho props 'navigation'
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
