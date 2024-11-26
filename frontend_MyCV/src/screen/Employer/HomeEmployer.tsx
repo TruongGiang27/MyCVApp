@@ -201,6 +201,7 @@ const HomeEmployer = () => {
               <ScrollView style={styles.menu}>
                 {menuItems.map((item, index) => (
                   <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
+                    closeMenu();
                     if (item.title === 'Tạo mới') {
                       navigation.navigate('JobPost' as never); // Navigate to JobPost
                     }
