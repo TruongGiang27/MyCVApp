@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Navbar from '../../components/Navbar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
-import ScreenName from '../../constant/ScreenName';
+import ScreenName from '../../constants/ScreenName';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
 const MessageScreen = ({navigation, route} : Props) => {

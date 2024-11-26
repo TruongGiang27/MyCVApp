@@ -2,10 +2,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import 'react-native-get-random-values';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ScreenName from '../constant/ScreenName';
+import ScreenName from '../constants/ScreenName';
 import { RootStackParamList } from './RootStackParamList';
 
-import Home from '../screen/Home/Home';
+import Home from '../screen/home/Home';
 import CreateEmployer from '../screen/Employer/CreateEmployer';
 import InforEmployers from '../screen/Admin/InforEmployers';
 import ApplyManager from '../screen/Employer/ApplyManager';
@@ -25,7 +25,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const App = () => {
     return (
 
-        <Stack.Navigator initialRouteName="JobList" screenOptions={{ headerShown: false, animation: 'none' }}>
+        <Stack.Navigator initialRouteName="HomeEmployer" screenOptions={{ headerShown: false, animation: 'none' }}>
             <Stack.Screen name={ScreenName.Home} component={Home} />
             <Stack.Screen name={ScreenName.CreateEmployer} component={CreateEmployer} />
             <Stack.Screen name={ScreenName.InforEmployers} component={InforEmployers} />

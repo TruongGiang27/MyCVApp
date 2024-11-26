@@ -5,7 +5,7 @@ export type UserDocument = User & Document;
 @Schema()
 export class User {
     @Prop({ required: true })
-    googleId: string;
+    userId: string;
 
     @Prop({ required: true })
     name: string;

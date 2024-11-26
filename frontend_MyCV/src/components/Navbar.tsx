@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../navigator/RootStackParamList';
-import ScreenName from '../constant/ScreenName';
+import ScreenName from '../constants/ScreenName';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
 const Navbar = ({ route, navigation }: Props) => {
