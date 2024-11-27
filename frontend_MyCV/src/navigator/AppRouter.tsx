@@ -7,11 +7,11 @@ import { login, logout } from '../redux/reducers/authReducer';
 import AppNavigator from './AppNavigator';
 import AuthNavigator from './AuthNavigator';
 import { NavigationContainer } from '@react-navigation/native';
-import React from 'react'
+import React from 'react';
 
 const AppRouter = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state:RootState) => state.auth.user);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const checkUser = async () => {
@@ -37,7 +37,7 @@ const AppRouter = () => {
   }
   return (
     <NavigationContainer>
-      {user ? <AppNavigator /> : <AuthNavigator />}
+      {user && user.data ? <AppNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   )
 }

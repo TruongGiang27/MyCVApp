@@ -1,9 +1,11 @@
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { Dispatch } from 'redux';
-import { login,logout } from '../redux/reducers/authReducer';
+import { login, logout } from '../redux/reducers/authReducer';
 GoogleSignin.configure({
-    webClientId: '507193100422-jm7volrkn59vmg1aphh97noihkrna7ja.apps.googleusercontent.com',
+    webClientId: '29647774100-3d7b9j6m74v9bknvb9ic11lm5c7p2k04.apps.googleusercontent.com',
+    offlineAccess: true,
+    forceCodeForRefreshToken: true,
 });
 
 export const signIn = async (dispatch: Dispatch) => {
