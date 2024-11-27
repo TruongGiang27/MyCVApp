@@ -11,6 +11,7 @@ import EmployerDetail from '../screen/Employer/EmployerDetail';
 import HomeEmployer from '../screen/Employer/HomeEmployer';
 import InforManager from '../screen/Employer/InforManager';
 import JobPost from '../screen/Employer/JobPost';
+
 import Home from '../screen/home/Home';
 import Profile from '../screen/profile/Profile';
 import CVCreate from '../screen/User/CVCreate';

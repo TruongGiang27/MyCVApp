@@ -1,21 +1,21 @@
 import React from 'react';
-import { Button, StyleSheet, View } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { signIn } from '../../utils/auth';
 
 const Login = () => {
   const dispatch = useDispatch();
   return (
-    
+
     <View style={styles.container}>
-      <View>
-      <FastImage
-        source={require('../../../assets/images/login.gif')}
-        resizeMode={FastImage.resizeMode.contain}
-      />
+      <View style={styles.btnlogin}>
+        <Image source={require('../../../assets/images/google-icon.png')}
+          style={styles.logoGoogle}/>
+        {/* <Button title="Login with Google" onPress={() => signIn(dispatch)} /> */}
+          <TouchableOpacity onPress={() => signIn(dispatch)}>
+            <Text style={styles.text}>Login with Google</Text>
+          </TouchableOpacity>
       </View>
-      <Button title="Login with Google" onPress={() => signIn(dispatch)} />
     </View>
   );
 };
@@ -27,5 +27,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  logoGoogle: {
+    width: 25,
+    height: 25,
+    marginRight: 10,
+  },
+  btnlogin: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '65%',
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#80B3FF',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });

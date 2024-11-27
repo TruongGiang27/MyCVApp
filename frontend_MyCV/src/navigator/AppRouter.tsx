@@ -11,7 +11,7 @@ import React from 'react';
 
 const AppRouter = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state:RootState) => state.auth.user);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const checkUser = async () => {
@@ -37,7 +37,7 @@ const AppRouter = () => {
   }
   return (
     <NavigationContainer>
-      {user ? <AppNavigator /> : <AuthNavigator />}
+      {user && user.data ? <AppNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   )
 }
