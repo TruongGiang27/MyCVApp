@@ -1,8 +1,14 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import CreateEmployer from '../screen/Employer/CreateEmployer';
+import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 
+
+export type RootStackParamList = {
+    HomeEmployer: undefined;
+  };
 const Footer = () => {
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     return (
         <View style={styles.footer}>
             <TouchableOpacity style={styles.button}>
@@ -18,7 +24,7 @@ const Footer = () => {
             </View>
 
             <View style={styles.section}>
-                <Text style={styles.sectionTitle} onPress={()=> CreateEmployer}>Nhà tuyển dụng</Text>
+                <Text style={styles.sectionTitle} onPress={() => navigation.navigate('HomeEmployer' as never)}>Nhà tuyển dụng</Text>
             </View>
 
             <View style={styles.section}>
