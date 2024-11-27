@@ -75,40 +75,42 @@ const SearchMap = ({ onCancel }: { onCancel: () => void }) => (
 
 // Mid section (Content)
 // Job item component
-const JobItem = ({ title, company, salary, location }: { title: string, company: string, salary: string, location: string }) => {
+const JobItem = ({ title, company, salary, location, onPress }: { title: string, company: string, salary: string, location: string, onPress: () => void }) => {
 
     return (
-        <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>
-            <Card containerStyle={styles.cardContainer}>
+        <TouchableOpacity onPress={onPress}>
+            <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>
+                <Card containerStyle={styles.cardContainer}>
 
-                {/* {isPremium && (
+                    {/* {isPremium && (
                 <View style={styles.premiumTag}>
                     <Text style={styles.premiumText}>Tuyển dụng nhiều ứng viên</Text>
                 </View>
             )} */}
-                <TouchableOpacity style={styles.icon}>
-                    <Icon name="bookmark" type="font-awesome" color="#666" size={25} />
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.icon}>
+                        <Icon name="bookmark" type="font-awesome" color="#666" size={25} />
+                    </TouchableOpacity>
 
-                <Text style={styles.title}>{title}</Text>
-                <View style={{ marginVertical: width * 0.03 }}>
-                    <Text style={styles.company}>{company}</Text>
-                    <Text style={styles.location}>{location}</Text>
-                </View>
+                    <Text style={styles.title}>{title}</Text>
+                    <View style={{ marginVertical: width * 0.03 }}>
+                        <Text style={styles.company}>{company}</Text>
+                        <Text style={styles.location}>{location}</Text>
+                    </View>
 
-                <Text style={styles.salary}>{salary}</Text>
-                <View style={styles.easyApplyContainer}>
-                    <Icon name="send" type="material" color="#007AFF" size={14} style={styles.sendIcon} />
-                    <Text style={styles.easyApply}>Nộp đơn dễ dàng</Text>
-                </View>
-                {/* <Text style={styles.timePosted}>{timePosted}</Text> */}
-            </Card>
-        </View>
+                    <Text style={styles.salary}>{salary}</Text>
+                    <View style={styles.easyApplyContainer}>
+                        <Icon name="send" type="material" color="#007AFF" size={14} style={styles.sendIcon} />
+                        <Text style={styles.easyApply}>Nộp đơn dễ dàng</Text>
+                    </View>
+                    {/* <Text style={styles.timePosted}>{timePosted}</Text> */}
+                </Card>
+            </View>
+        </TouchableOpacity >
     )
 };
 
 
-const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void, onMapSearchFocus: () => void }) => {
+const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocus: () => void, onMapSearchFocus: () => void, navigation: any }) => {
     interface dataJobsIteam {
         _id: string;
         title: string;
@@ -160,6 +162,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => voi
                     company={item.company}
                     salary={item.salary}
                     location={item.location}
+                    onPress={() => navigation.navigate('JobDetail', { jobId: item._id })}
                 // timePosted={item.timePosted}
                 // isPremium={item.isPremium}
                 />
@@ -192,7 +195,7 @@ const Home = ({ navigation, route }: Props) => {
                 const userInfoString = await AsyncStorage.getItem('userInfo');
                 if (userInfoString) {
                     const userInfo = await JSON.parse(userInfoString);
-                    
+
                     await axios.post(`${BASE_URL}/user/create-or-update`, {
                         googleId: userInfo.data.user.id,
                         name: userInfo.data.user.name,
@@ -238,7 +241,7 @@ const Home = ({ navigation, route }: Props) => {
                     <SearchMap onCancel={handleCancelSearch} />
                 ) : (
                     <>
-                        <Content onSearchFocus={handleSearchFocus} onMapSearchFocus={handleMapSearchFocus} />
+                        <Content onSearchFocus={handleSearchFocus} onMapSearchFocus={handleMapSearchFocus} navigation={navigation}/>
                     </>
                 )}
             </View>
