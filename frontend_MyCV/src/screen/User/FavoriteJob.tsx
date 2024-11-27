@@ -1,0 +1,148 @@
+import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
+import { BASE_URL } from '../../utils/url';
+
+
+const FavoriteJob = () => {
+  const [jobs, setJobs] = useState([]);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const loadBookmarkedJobs = async () => {
+      try {
+        const bookmarkedJobsString = await AsyncStorage.getItem('bookmarkedJobs');
+        const bookmarkedJobs = bookmarkedJobsString ? JSON.parse(bookmarkedJobsString) : [];
+        setJobs(bookmarkedJobs);
+      } catch (error) {
+        console.error("Failed to load bookmarked jobs:", error);
+      }
+    };
+    loadBookmarkedJobs();
+  }, []);
+
+  const renderJobItem = ({ item }: { item: { _id: string; title: string; company: string; location: string; salary: string; status: string; } }) => (
+    <View style={styles.jobCard}>
+      <Text style={styles.jobTitle}>{item.title}</Text>
+      <Text style={styles.company}>{item.company}</Text>
+      <Text style={styles.location}>{item.location}</Text>
+      <Text style={styles.salary}>{item.salary}</Text>
+      <Text style={[styles.status, item.status === 'Mở' ? styles.open : styles.closed]}>
+        Trạng thái: {item.status}
+      </Text>
+      <TouchableOpacity style={styles.detailButton} onPress={() => navigation.navigate('JobDetail', { jobId: item._id })}>
+        <Text style={styles.detailButtonText}>Xem chi tiết</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={30} color="#011F82" />
+        </TouchableOpacity>
+        <Text style={styles.header}>Công việc yêu thích</Text>
+      </View>
+      <FlatList
+        data={jobs}
+        keyExtractor={(item) => item._id}
+        renderItem={renderJobItem}
+        contentContainerStyle={styles.listContainer}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#F5F9FF',
+    },
+    listContainer: {
+      paddingHorizontal: 16,
+    },
+    jobCard: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 8,
+      padding: 16,
+      marginBottom: 16,
+      borderWidth: 1,
+      borderColor: '#B9D6F3',
+    },
+    jobTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#011F82',
+      marginBottom: 8,
+    },
+    company: {
+      fontSize: 14,
+      color: '#6D92D0',
+      marginBottom: 4,
+    },
+    location: {
+      fontSize: 14,
+      color: '#6D92D0',
+      marginBottom: 8,
+    },
+    salary: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: '#011F82',
+      marginBottom: 8,
+    },
+    status: {
+      fontSize: 14,
+      fontWeight: '600',
+      marginBottom: 16,
+    },
+    open: {
+      color: '#28A745',
+    },
+    closed: {
+      color: '#DC3545',
+    },
+    detailButton: {
+      backgroundColor: '#011F82',
+      borderRadius: 8,
+      paddingVertical: 8,
+      alignItems: 'center',
+    },
+    detailButtonText: {
+      color: '#FFFFFF',
+      fontWeight: 'bold',
+      fontSize: 14,
+    },
+    headerContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between', // Điều chỉnh khoảng cách giữa các phần tử
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      backgroundColor: '#FFFFFF',
+      borderBottomWidth: 1,
+      borderBottomColor: '#FFFFFF',
+    },
+    backButton: {
+    //   padding: 8, // Làm cho nút mũi tên dễ bấm hơn
+    },
+    header: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: '#011F82',
+      textAlign: 'center', // Đặt tiêu đề ở giữa
+      flex: 1, // Chiếm phần không gian còn lại
+    },
+  });
+  
+export default FavoriteJob;

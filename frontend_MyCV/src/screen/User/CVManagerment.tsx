@@ -56,6 +56,10 @@ const CVManagerment = () => {
         navigation.navigate('NotificationScreen' as never);
     };
 
+    const handleNavigateToManageCVsApplied = () => {
+        navigation.navigate('ManageCVsApplied' as never);
+    };
+
     if (!profileData) {
         return (
             <View style={styles.container}>
@@ -103,7 +107,7 @@ const CVManagerment = () => {
                             </View>
                         )}
                     </View>
-                    <Icon name="chevron-right" size={24} color="#011F82" style={styles.infoArrow} />
+                    {/* <Icon name="chevron-right" size={24} color="#011F82" style={styles.infoArrow} /> */}
                 </View>
             </View>
 
@@ -122,6 +126,10 @@ const CVManagerment = () => {
                     </View>
                     <Icon name="chevron-right" size={24} color="#011F82" />
                 </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.manageCVsButton} onPress={handleNavigateToManageCVsApplied}>
+                <Text style={styles.manageCVsButtonText}>Manage CVs Applied</Text>
             </TouchableOpacity>
 
             {/* Navigation Bar */}
@@ -275,6 +283,19 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#011F82',
         marginBottom: 16,
+    },
+    manageCVsButton: {
+        backgroundColor: '#011F82',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    manageCVsButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     navBar: {
         flexDirection: 'row',
