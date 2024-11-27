@@ -14,7 +14,7 @@ type RootStackParamList = {
 
 const JobDetail = () => {
   const route = useRoute();
-  const { jobId } = route.params ? route.params as { jobId: string } : { jobId: '' };
+  const { jobId, disableButtons } = route.params ? route.params as { jobId: string, disableButtons: boolean } : { jobId: '', disableButtons: false };
   const [jobDetail, setJobDetail] = useState<any>(null);
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -103,7 +103,7 @@ const JobDetail = () => {
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
       {/* Header */}
       <View style={styles.header}>
-        <Icon style={styles.arrow} name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.navigate("JobList" as never)} />
+        <Icon style={styles.arrow} name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.goBack()} />
         <Text style={styles.headerText}>{jobDetail.title}</Text>
       </View>
 
@@ -170,12 +170,12 @@ const JobDetail = () => {
       </View>
 
       {/* Apply Button */}
-      <TouchableOpacity style={styles.applyButton} onPress={handleEditAndCreate}>
+      <TouchableOpacity style={[styles.applyButton, disableButtons && styles.disabledButton]} onPress={handleEditAndCreate} disabled={disableButtons}>
         <Text style={styles.applyButtonText}>Chỉnh sửa / Tạo CV</Text>
       </TouchableOpacity>
 
       {/* New Apply Now Button */}
-      <TouchableOpacity style={styles.applyNowButton} onPress={handleApplyNow}>
+      <TouchableOpacity style={[styles.applyNowButton, disableButtons && styles.disabledButton]} onPress={handleApplyNow} disabled={disableButtons}>
         <Text style={styles.applyNowButtonText}>Ứng tuyển ngay</Text>
       </TouchableOpacity>
 
@@ -325,6 +325,9 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  disabledButton: {
+    backgroundColor: '#B0B0B0',
   },
 });
 

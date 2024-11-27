@@ -15,5 +15,6 @@ export enum ScreenName {
     InforManager = 'InforManager',
     EmployerDetail = "EmployerDetail",
     CVManagerment = 'CVManagerment',
+    ManageCVsApplied = "ManageCVsApplied",
 }
 export default ScreenName;
