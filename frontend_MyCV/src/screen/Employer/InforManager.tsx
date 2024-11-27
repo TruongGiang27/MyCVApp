@@ -7,7 +7,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ScreenName from '../../constants/ScreenName';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
-
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
@@ -133,6 +132,17 @@ const InforManager = () => {
     };
 
     const handleStatusChange = async (status: "Mở" | "Tạm dừng" | "Đã đóng", employerId: string) => {
+        //       try{
+        //     if (status === "Đã đóng") {
+        //         // Kiểm tra tất cả CV đã duyệt
+        //         const response = await axios.get(`${BASE_URL}/jobs/${employerId}/cvs`);
+        //         const allCVReviewed = response.data.every((cv: any) => cv.status === "Đã duyệt");
+    
+        //         if (!allCVReviewed) {
+        //             Alert.alert("Không thể đóng", "Vui lòng duyệt tất cả CV trước khi đóng công việc này.");
+        //             return;
+        //         }
+        // }
         try {
             const response = await axios.put(`${BASE_URL}/jobs/${employerId}`, { status });
             const updatedEmployers = employers.map(emp => emp._id === employerId ? { ...emp, status } : emp);
