@@ -18,12 +18,13 @@ import MessageScreen from '../screen/User/Message';
 import HomeEmployer from '../screen/Employer/HomeEmployer';
 import JobPost from '../screen/Employer/JobPost';
 import InforManager from '../screen/Employer/InforManager';
+import FavoriteJob from '../screen/User/FavoriteJob';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
     return (
 
-        <Stack.Navigator initialRouteName="CVManagerment" screenOptions={{ headerShown: false, animation: 'none' }}>
+        <Stack.Navigator initialRouteName="ManageCVsApplied" screenOptions={{ headerShown: false, animation: 'none' }}>
             <Stack.Screen name={ScreenName.CreateEmployer} component={CreateEmployer} />
             <Stack.Screen name={ScreenName.InforEmployers} component={InforEmployers} />
             <Stack.Screen name={ScreenName.InforManager} component={InforManager} />
@@ -40,6 +41,7 @@ const App = () => {
             <Stack.Screen name={ScreenName.MessageScreen} component={MessageScreen} />
             <Stack.Screen name={ScreenName.CVManagerment} component={CVManagerment} />
             <Stack.Screen name={ScreenName.ManageCVsApplied} component={ManageCVsApplied} />
+            <Stack.Screen name={ScreenName.FavoriteJob} component={FavoriteJob} />
         </Stack.Navigator>
     );
 };
