@@ -7,6 +7,7 @@ import { BASE_URL } from '../../utils/url';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 type RootStackParamList = {
+  Home: undefined;
   CVCreate: { startStep: number };
   JobList: undefined;
   JobDetail: { jobId: string };
@@ -14,7 +15,7 @@ type RootStackParamList = {
 
 const JobDetail = () => {
   const route = useRoute();
-  const { jobId } = route.params ? route.params as { jobId: string } : { jobId: '' };
+  const { jobId } = route.params as { jobId: string };
   const [jobDetail, setJobDetail] = useState<any>(null);
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -23,6 +24,7 @@ const JobDetail = () => {
 
 
   useEffect(() => {
+    console.log('jobId', jobId);
     const fetchJobDetail = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/jobs/${jobId}`);
@@ -103,7 +105,7 @@ const JobDetail = () => {
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
       {/* Header */}
       <View style={styles.header}>
-        <Icon style={styles.arrow} name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.navigate("JobList" as never)} />
+        <Icon style={styles.arrow} name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.goBack()} />
         <Text style={styles.headerText}>{jobDetail.title}</Text>
       </View>
 
