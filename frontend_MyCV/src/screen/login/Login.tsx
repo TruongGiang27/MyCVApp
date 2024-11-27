@@ -8,6 +8,7 @@ const Login = () => {
   return (
 
     <View style={styles.container}>
+      <Image style={styles.login} source={require('../../../assets/images/loginlogo.png')} />
       <View style={styles.btnlogin}>
         <Image source={require('../../../assets/images/google-icon.png')}
           style={styles.logoGoogle}/>
@@ -32,6 +33,10 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     marginRight: 10,
+  },
+  login: {
+    width:400,
+    height: 400,
   },
   btnlogin: {
     display: 'flex',
