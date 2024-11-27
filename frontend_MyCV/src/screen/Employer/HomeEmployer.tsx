@@ -19,7 +19,7 @@ export type RootStackParamList = {
   HomeEmployer: undefined;
   EmployerDetail: { jobDetails: Job };
   Login: undefined;
-  InforManager: undefined;
+  Home: undefined;
 };
 interface Job {
   deadline: string;
@@ -232,9 +232,9 @@ const HomeEmployer = () => {
           <View style={styles.overlay}>
             <Animated.View style={[styles.menuAccountContainer, { transform: [{ translateX: slideAnim_r }] }]}>
               <ScrollView>
-                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InforManager')}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Home')}>
                   <Icon name="settings" size={25} color="#011F82" />
-                  <Text style={styles.menuText}>Cài đặt tài khoản</Text>
+                  <Text style={styles.menuText}>Chuyển về trang chủ</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.menuItem} onPress={signOut}>
                   <Icon name="logout" size={25} color="#011F82" />

@@ -1,25 +1,23 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import 'react-native-get-random-values';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ScreenName from '../constants/ScreenName';
 import { RootStackParamList } from './RootStackParamList';
 import Home from '../screen/home/Home';
 import CreateEmployer from '../screen/Employer/CreateEmployer';
 import InforEmployers from '../screen/Admin/InforEmployers';
 import ApplyManager from '../screen/Employer/ApplyManager';
+import EmployerDetail from '../screen/Employer/EmployerDetail';
+import ManageCVsApplied from '../screen/User/ManageCVsApplied';
+import Profile from '../screen/profile/Profile';
 import CVCreate from '../screen/User/CVCreate';
+import CVManagerment from '../screen/User/CVManagerment';
+import JobDetail from '../screen/User/JobDetail';
+import JobList from '../screen/User/JobList';
+import MessageScreen from '../screen/User/Message';
 import HomeEmployer from '../screen/Employer/HomeEmployer';
 import JobPost from '../screen/Employer/JobPost';
-import JobList from '../screen/User/JobList';
-import JobDetail from '../screen/User/JobDetail';
-import Profile from '../screen/profile/Profile';
-import MessageScreen from '../screen/User/Message';
 import InforManager from '../screen/Employer/InforManager';
-import EmployerDetail from '../screen/Employer/EmployerDetail';
-import CVManagerment from '../screen/User/CVManagerment';
-import ManageCVsApplied from '../screen/User/ManageCVsApplied';
-
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {

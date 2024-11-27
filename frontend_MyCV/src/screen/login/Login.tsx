@@ -1,16 +1,22 @@
 import React from 'react';
-import { View, Button, StyleSheet } from 'react-native';
-import { signIn } from '../../utils/auth';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { RootStackParamList } from '../../navigator/RootStackParamList';
-import ScreenName from '../../constants/ScreenName';
+import { signIn } from '../../utils/auth';
 
 const Login = () => {
   const dispatch = useDispatch();
   return (
+
     <View style={styles.container}>
-      <Button title="Login with Google" onPress={() => signIn(dispatch)} />
+      <Image style={styles.login} source={require('../../../assets/images/loginlogo.png')} />
+      <View style={styles.btnlogin}>
+        <Image source={require('../../../assets/images/google-icon.png')}
+          style={styles.logoGoogle}/>
+        {/* <Button title="Login with Google" onPress={() => signIn(dispatch)} /> */}
+          <TouchableOpacity onPress={() => signIn(dispatch)}>
+            <Text style={styles.text}>Login with Google</Text>
+          </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -22,5 +28,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  logoGoogle: {
+    width: 25,
+    height: 25,
+    marginRight: 10,
+  },
+  login: {
+    width:400,
+    height: 400,
+  },
+  btnlogin: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '65%',
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#80B3FF',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });
