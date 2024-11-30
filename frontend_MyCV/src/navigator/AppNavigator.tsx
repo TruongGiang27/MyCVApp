@@ -23,7 +23,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
     return (
-        <Stack.Navigator initialRouteName="HomeEmployer" screenOptions={{ headerShown: false, animation: 'none' }}>
+        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, animation: 'none' }}>
             <Stack.Screen name={ScreenName.Home} component={Home} />
             <Stack.Screen name={ScreenName.CreateEmployer} component={CreateEmployer} />
             <Stack.Screen name={ScreenName.InforEmployers} component={InforEmployers} />
@@ -39,8 +39,6 @@ const App = () => {
             <Stack.Screen name={ScreenName.ApplyManager} component={ApplyManager} />
             <Stack.Screen name={ScreenName.MessageScreen} component={MessageScreen} />
             <Stack.Screen name={ScreenName.CVManagerment} component={CVManagerment} />
-
-
         </Stack.Navigator>
     );
 };

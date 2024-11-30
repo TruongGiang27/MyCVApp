@@ -12,7 +12,6 @@ const Login = () => {
       <View style={styles.btnlogin}>
         <Image source={require('../../../assets/images/google-icon.png')}
           style={styles.logoGoogle}/>
-        {/* <Button title="Login with Google" onPress={() => signIn(dispatch)} /> */}
           <TouchableOpacity onPress={() => signIn(dispatch)}>
             <Text style={styles.text}>Login with Google</Text>
           </TouchableOpacity>
@@ -28,6 +27,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 150,
   },
   logoGoogle: {
     width: 25,

@@ -1,5 +1,5 @@
 export type RootStackParamList = {
-    Home: undefined;
+    Home:{id: string};
     Login: undefined;
     CreateEmployer: undefined;
     InforEmployer: undefined;

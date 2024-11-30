@@ -8,7 +8,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { appColors } from '../../constants/appColors';
 import { signOut } from '../../utils/auth';
 import { useDispatch } from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
@@ -20,7 +20,7 @@ const Profile = ({ navigation, route }: Props) => {
     };
     const handleLogout = async () => {
         try {
-            
+
         } catch (error) {
             console.error('Failed to log out:', error);
         }
@@ -55,7 +55,7 @@ const Profile = ({ navigation, route }: Props) => {
                         <TouchableOpacity style={styles.menuItem}>
                             <Text style={styles.menuItemText}>Cài đặt</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.menuItem} onPress={()=>signOut(dispatch)}>
+                        <TouchableOpacity style={styles.menuItem} onPress={() => signOut(dispatch)}>
                             <Text style={styles.menuItemText}>Đăng xuất</Text>
                             <Text style={styles.menuItemText}></Text>
                         </TouchableOpacity>
@@ -67,7 +67,7 @@ const Profile = ({ navigation, route }: Props) => {
                 <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Tải lên CV</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('CVCreate')}>
                     <Text style={styles.buttonText}>Xây dựng Indeed CV</Text>
                 </TouchableOpacity>
                 <Text style={styles.agreementText}>
