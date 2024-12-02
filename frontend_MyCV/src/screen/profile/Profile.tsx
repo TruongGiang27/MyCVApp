@@ -68,7 +68,7 @@ const Profile = ({ navigation, route }: Props) => {
                 <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Tải lên CV</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('CVCreate')}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('CVCreate', { startStep: 1, source: 'Profile' } as never)}>
                     <Text style={styles.buttonText}>Xây dựng Indeed CV</Text>
                 </TouchableOpacity>
                 <Text style={styles.agreementText}>

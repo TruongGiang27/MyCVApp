@@ -10,7 +10,7 @@ const Navbar = ({ route, navigation }: Props) => {
   return (
     <View style={styles.navbar}>
       <View style={styles.group}>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home" as never)}>
           <Icon name="home" size={25} color="#011F82" />
           <Text style={styles.navText}>Trang chủ</Text>
         </TouchableOpacity>

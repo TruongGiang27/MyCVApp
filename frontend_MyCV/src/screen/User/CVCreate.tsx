@@ -15,7 +15,9 @@ type RootStackParamList = {
 };
 
 type JobDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'JobDetail'>;
-type JobDetailScreenRouteProp = RouteProp<RootStackParamList, 'JobDetail'>;
+type JobDetailScreenRouteProp = RouteProp<RootStackParamList, 'JobDetail'> & {
+  params: RouteParams;
+};
 
 interface Props {
   navigation: JobDetailScreenNavigationProp;
@@ -26,6 +28,7 @@ interface Props {
 type RouteParams = {
   startStep: number;
   jobId: string;
+  source: string; // Add source parameter
 };
 
 const CVCreate = () => {
@@ -256,8 +259,12 @@ const CVCreate = () => {
         console.log('Response data structure:', response.data); // Add this line to log the response data structure
         console.log('User ID:', userId);
         Alert.alert('Thành công', 'Bạn đã tạo CV thành công!');
-        // Handle successful post, e.g., navigate to another screen or show a success message
-        navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
+        // Navigate back to the appropriate screen based on the source parameter
+        if (route.params?.source === 'JobDetail') {
+          navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
+        } else {
+          navigation.goBack();
+        }
       }
     } catch (error) {
       console.error('Error posting data to MongoDB:', error);
@@ -1338,4 +1345,3 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 export default CVCreate;
-
