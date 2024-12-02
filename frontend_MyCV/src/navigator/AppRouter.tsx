@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { useEffect, useState } from 'react';
 import { RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
