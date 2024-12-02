@@ -5,6 +5,7 @@ import ScreenName from '../constants/ScreenName';
 import InforEmployers from '../screen/Admin/InforEmployers';
 import ApplyManager from '../screen/Employer/ApplyManager';
 import CreateEmployer from '../screen/Employer/CreateEmployer';
+import CVDetail from '../screen/Employer/CvDetail';
 import EmployerDetail from '../screen/Employer/EmployerDetail';
 import HomeEmployer from '../screen/Employer/HomeEmployer';
 import InforManager from '../screen/Employer/InforManager';
@@ -41,6 +42,7 @@ const App = () => {
             <Stack.Screen name={ScreenName.CVManagerment} component={CVManagerment} />
             <Stack.Screen name={ScreenName.ManageCVsApplied} component={ManageCVsApplied} />
             <Stack.Screen name={ScreenName.FavoriteJob} component={FavoriteJob} />
+            <Stack.Screen name={ScreenName.CVDetail} component={CVDetail} />
         </Stack.Navigator>
     );
 };

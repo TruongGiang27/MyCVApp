@@ -18,5 +18,6 @@ export type RootStackParamList = {
     JobDetail: { jobId: string };
     ManageCVsApplied: undefined;
     FavoriteJob: undefined;
+    CVDetail: {userId: string};
 };
 export default RootStackParamList;
