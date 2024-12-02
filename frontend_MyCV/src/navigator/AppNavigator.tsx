@@ -2,28 +2,28 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import 'react-native-get-random-values';
 import ScreenName from '../constants/ScreenName';
-import { RootStackParamList } from './RootStackParamList';
-import Home from '../screen/home/Home';
-import CreateEmployer from '../screen/Employer/CreateEmployer';
 import InforEmployers from '../screen/Admin/InforEmployers';
 import ApplyManager from '../screen/Employer/ApplyManager';
+import CreateEmployer from '../screen/Employer/CreateEmployer';
 import EmployerDetail from '../screen/Employer/EmployerDetail';
-import ManageCVsApplied from '../screen/User/ManageCVsApplied';
+import HomeEmployer from '../screen/Employer/HomeEmployer';
+import InforManager from '../screen/Employer/InforManager';
+import JobPost from '../screen/Employer/JobPost';
+import Home from '../screen/home/Home';
 import Profile from '../screen/profile/Profile';
 import CVCreate from '../screen/User/CVCreate';
 import CVManagerment from '../screen/User/CVManagerment';
+import FavoriteJob from '../screen/User/FavoriteJob';
 import JobDetail from '../screen/User/JobDetail';
 import JobList from '../screen/User/JobList';
+import ManageCVsApplied from '../screen/User/ManageCVsApplied';
 import MessageScreen from '../screen/User/Message';
-import HomeEmployer from '../screen/Employer/HomeEmployer';
-import JobPost from '../screen/Employer/JobPost';
-import InforManager from '../screen/Employer/InforManager';
-import FavoriteJob from '../screen/User/FavoriteJob';
+import { RootStackParamList } from './RootStackParamList';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
     return (
-        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, animation: 'none' }}>
+        <Stack.Navigator initialRouteName="ManageCVsApplied" screenOptions={{ headerShown: false, animation: 'none' }}>
             <Stack.Screen name={ScreenName.CreateEmployer} component={CreateEmployer} />
             <Stack.Screen name={ScreenName.InforEmployers} component={InforEmployers} />
             <Stack.Screen name={ScreenName.InforManager} component={InforManager} />
