@@ -136,7 +136,7 @@ const CVCreate = () => {
         }
         console.log('Google ID:', userId);
         console.log('Email:', email);
-        console.log('Name:', name);  
+        console.log('Name:', name);
         if (savedFormData) {
           const parsedFormData = JSON.parse(savedFormData);
           // Convert date strings back to Date objects
@@ -241,7 +241,7 @@ const CVCreate = () => {
       skills: selectedSkills,
     };
 
-    console.log('Submitting data:', formattedData); 
+    console.log('Submitting data:', formattedData);
 
     try {
       // Check if a CV with the same userId, fullName, and email already exists
