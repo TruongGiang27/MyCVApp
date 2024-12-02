@@ -19,15 +19,15 @@ interface Employer {
     status: string;
 }
 type EmployerDetailScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'EmployerDetail'
+    RootStackParamList,
+    'EmployerDetail'
 >;
 
 type Props = {
-  navigation: EmployerDetailScreenNavigationProp;
+    navigation: EmployerDetailScreenNavigationProp;
 };
 
-const ApplyManager: React.FC<Props> = ({ navigation })=> {
+const ApplyManager: React.FC<Props> = ({ navigation }) => {
     const [employers, setEmployers] = useState<Employer[]>([]);
     const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
     const [formData, setFormData] = useState<Employer | null>(null);
@@ -97,9 +97,9 @@ const ApplyManager: React.FC<Props> = ({ navigation })=> {
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
-                {/* <TouchableOpacity style={styles.buttonSearch} onPress={handleSearch}>
+                <TouchableOpacity style={styles.buttonSearch} onPress={handleSearch}>
                     <Text style={styles.searchButtonText}>Search</Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
             </View>
 
             {applicants.map(employer => (
@@ -110,7 +110,7 @@ const ApplyManager: React.FC<Props> = ({ navigation })=> {
                         <Text style={styles.jobDetail}>{employer.status}</Text>
                     </View>
                     <View style={styles.actionIconsRight}>
-                        <Icon name="eye" size={20} color="#007bff" style={styles.iconButton} onPress={() => handleViewDetails(employer)} />
+                        <Icon name="eye" size={20} color="#007bff" style={styles.iconButton} onPress={() => navigation.navigate('CVDetail')} />
                     </View>
                 </View>
             ))}

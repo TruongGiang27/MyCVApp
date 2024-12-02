@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../../utils/url';
 
 const ManageCVsApplied = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
 
