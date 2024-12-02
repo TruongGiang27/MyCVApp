@@ -1,29 +1,60 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { View, Button, StyleSheet, Alert, Linking, Platform } from 'react-native';
+import {
+    View,
+    Button,
+    StyleSheet,
+    Alert,
+    Linking,
+    Platform,
+    TextInput,
+    PermissionsAndroid,
+    BackHandler,
+    Text,
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import SendSMS from 'react-native-sms';
-import { PermissionsAndroid } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { useRoute } from '@react-navigation/native';
 
 const SendSMSComponent = () => {
+    const navigation = useNavigation();
     const [hasPermission, setHasPermission] = useState(false);
-    const [isSending, setIsSending] = useState(false);  // Thêm flag kiểm tra trạng thái gửi tin nhắn
+    const [isSending, setIsSending] = useState(false);
+    const [recipient, setRecipient] = useState('');
+    const [selectedTime, setSelectedTime] = useState('08:00 - 09:00'); // Default time
+    const [message, setMessage] = useState('Chúc mừng bạn đã ứng tuyển');  // Default message
+    // Time slots
+    const timeSlots = [
+        '08:00 - 09:00',
+        '09:00 - 10:00',
+        '10:00 - 11:00',
+        '11:00 - 12:00',
+        '13:00 - 14:00',
+        '14:00 - 15:00',
+        '15:00 - 16:00',
+        '16:00 - 17:00',
+    ];
 
-    // Hàm yêu cầu quyền gửi SMS trên Android
+    const BackHandler = () => {
+        navigation.goBack();
+    };
+
     const requestSMSPermission = async () => {
         if (Platform.OS === 'android') {
             try {
                 const granted = await PermissionsAndroid.request(
                     PermissionsAndroid.PERMISSIONS.SEND_SMS,
                     {
-                        title: "SMS Permission",
-                        message: "Ứng dụng cần quyền gửi tin nhắn SMS.",
-                        buttonNeutral: "Sau",
-                        buttonNegative: "Hủy",
-                        buttonPositive: "Cho phép",
+                        title: 'SMS Permission',
+                        message: 'This app needs permission to send SMS.',
+                        buttonNeutral: 'Later',
+                        buttonNegative: 'Cancel',
+                        buttonPositive: 'Allow',
                     }
                 );
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                     setHasPermission(true);
-                    console.log("Quyền gửi SMS đã được cấp!");
                 } else {
                     handlePermissionDenied();
                 }
@@ -31,56 +62,57 @@ const SendSMSComponent = () => {
                 console.warn(err);
             }
         } else {
-            setHasPermission(true);  // Giả định quyền đã được cấp trên iOS
+            setHasPermission(true);
         }
     };
 
     const handlePermissionDenied = () => {
         Alert.alert(
-            "Quyền bị từ chối",
-            "Ứng dụng cần quyền gửi SMS để có thể gửi tin nhắn. Bạn có thể cấp quyền trong cài đặt.",
+            'Permission Denied',
+            'The app needs SMS permission to send messages. You can enable it in settings.',
             [
-                {
-                    text: "Hủy",
-                    style: "cancel"
-                },
-                {
-                    text: "Mở cài đặt",
-                    onPress: () => Linking.openSettings(),
-                }
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Open Settings', onPress: () => Linking.openSettings() },
             ]
         );
     };
 
-    // Hàm gửi tin nhắn
     const sendMessage = () => {
         if (!hasPermission) {
-            Alert.alert("Lỗi", "Bạn chưa cấp quyền gửi SMS.");
+            Alert.alert('Error', 'You haven\'t granted SMS permission.');
             return;
         }
 
         if (isSending) {
-            Alert.alert('Đang gửi', 'Vui lòng đợi cho đến khi tin nhắn được gửi.');
-            return;  // Tránh gửi tin nhắn khi đang gửi
+            Alert.alert('Sending', 'Please wait until the message is sent.');
+            return;
         }
 
-        setIsSending(true);  // Đánh dấu là đang gửi tin nhắn
+        if (!recipient || !message) {
+            Alert.alert('Error', 'Please enter a phone number and message.');
+            return;
+        }
+
+        setIsSending(true);
+
+        // Combine message with time slot
+        const timeMessage = selectedTime ? `\nContact time: ${selectedTime}` : '';
+        const fullMessage = `${message}${timeMessage}`;
 
         SendSMS.send(
             {
-                body: 'Hello! Đây là tin nhắn thử nghiệm.',
-                recipients: ['0356382367'],
-                successTypes: ['sent', 'queued']
+                body: fullMessage,
+                recipients: [recipient],
+                successTypes: ['sent', 'queued'],
             },
             (completed, cancelled, error) => {
-                setIsSending(false);  // Đánh dấu đã hoàn thành gửi tin nhắn
-
+                setIsSending(false);
                 if (completed) {
-                    Alert.alert('Thành công', 'Tin nhắn đã được gửi.');
+                    Alert.alert('Success', 'Message has been sent.');
                 } else if (cancelled) {
-                    Alert.alert('Đã hủy', 'Người dùng đã hủy gửi tin nhắn.');
+                    Alert.alert('Cancelled', 'The user cancelled the sending.');
                 } else if (error) {
-                    Alert.alert('Lỗi', 'Không thể gửi tin nhắn.');
+                    Alert.alert('Error', 'Could not send the message.');
                 }
             }
         );
@@ -92,7 +124,45 @@ const SendSMSComponent = () => {
 
     return (
         <View style={styles.container}>
-            <Button title="Gửi SMS" onPress={sendMessage} />
+            <Icon name="arrow-back" size={30} color="#011F82" onPress={BackHandler} style={styles.backIcon} />
+
+            {/* Phone Number Input */}
+            <TextInput
+                style={styles.input}
+                placeholder="Enter phone number"
+                keyboardType="phone-pad"
+                value={recipient}
+                onChangeText={setRecipient}
+            />
+            {/* <Text style={styles.staticText} >
+                Chúc mừng bạn đã trúng tuyển thành công, vui lòng hãy chú ý thời gian để phỏng vấn
+            </Text> */}
+            {/* Message Input */}
+            <TextInput
+                style={[styles.input, styles.messageInput]}
+                
+                defaultValue='Chúc mừng bạn đã trúng tuyển thành công, vui lòng hãy chú ý thời gian để phỏng vấn'
+                placeholder="Enter message"
+                multiline
+                value={message}
+                onChangeText={setMessage}
+            />
+
+            {/* Time Slot Picker */}
+            <Picker
+                selectedValue={selectedTime}
+                onValueChange={(itemValue) => setSelectedTime(itemValue)}
+                style={styles.picker}
+            >
+                {timeSlots.map((slot) => (
+                    <Picker.Item key={slot} label={slot} value={slot} />
+                ))}
+            </Picker>
+
+            {/* Send Button */}
+            <View style={styles.buttonContainer}>
+                <Button title="Send SMS" onPress={sendMessage} disabled={isSending} />
+            </View>
         </View>
     );
 };
@@ -100,8 +170,53 @@ const SendSMSComponent = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',  // Align content at the top
         alignItems: 'center',
+        padding: 20,  // Increased padding for better spacing
+        backgroundColor: '#f9f9f9', // Light background color
+    },
+    backIcon: {
+        alignSelf: 'flex-start',
+        marginBottom: 20,
+    },
+    input: {
+        width: '90%',  // Make input fields narrower
+        padding: 12,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        marginBottom: 16,
+        backgroundColor: '#fff',
+        fontSize: 16,
+    },
+    staticText: {
+        width: '90%',  // Make text width match input fields
+        padding: 12,
+        textAlign: 'center',  // Center align the text
+        fontSize: 18,
+        marginBottom: 16,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        borderColor: '#ccc',
+        borderWidth: 1,
+    },
+    messageInput: {
+        height: 150,  // Increased height for better visibility
+        textAlignVertical: 'top',
+    },
+    picker: {
+        width: '90%',  // Match picker width with input fields
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 16,
+        backgroundColor: '#fff',
+    },
+    buttonContainer: {
+        marginTop: 20,
+        width: '90%',  // Ensure button width matches input fields
+        backgroundColor: '#4CAF50', // Green button
+        borderRadius: 8,
     },
 });
 

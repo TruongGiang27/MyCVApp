@@ -8,6 +8,7 @@ import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../../utils/url';
 import { RootStackParamList } from '../User/types';
+import { useNavigation } from '@react-navigation/native';
 
 interface cv_form {
     _id: string;
@@ -34,6 +35,8 @@ type Props = {
     navigation: CreateEmployerScreenNavigationProp;
 };
 
+
+
 const CVDetail: React.FC<Props> = ({ navigation }) => {
     const [cv, setCv] = useState<cv_form[]>([]);
     const [name, setName] = useState<string>();
@@ -42,6 +45,7 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
 
     const { cvId, disableButtons } = route.params ? route.params as { cvId: string, disableButtons: boolean } : { cvId: '', disableButtons: false };
 
+    
     useEffect(() => {
         const fetchCv = async () => {
             const { userId } = route.params as { userId: string };
@@ -149,7 +153,7 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                     ))}
                 </View>
                 <View style={styles.btn}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SendSMS' as never)}>
                         <Text style={{ color: '#fff' }}>Liên hệ</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.buttonRefuse ,disableButtons && styles.disabledButton]} onPress={confirmRefuse} disabled={disableButtons}>

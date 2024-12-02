@@ -22,6 +22,7 @@ export type RootStackParamList = {
     InforManager: undefined;
     JobPost: undefined;
     Service: undefined;
+    SendSMS: undefined;
     //Admin
     InforEmloyer: undefined;
 
