@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
   FlatList,
   StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
-import { BASE_URL } from '../../utils/url';
 
 
 const FavoriteJob = () => {
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState<any>([]);
   const navigation = useNavigation();
 
   useEffect(() => {
