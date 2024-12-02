@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SectionList, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SectionList, Platform, Alert } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useRoute, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -241,13 +241,24 @@ const CVCreate = () => {
     console.log('Submitting data:', formattedData); 
 
     try {
-      const response = await axios.post(`${BASE_URL}/cv_form`, formattedData);
-      console.log('Data successfully posted to MongoDB:', response.data);
-      console.log('Response data structure:', response.data); // Add this line to log the response data structure
-      console.log('User ID:', userId);
-      // Handle successful post, e.g., navigate to another screen or show a success message
-      navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
-
+      // Check if a CV with the same userId, fullName, and email already exists
+      const existingCVResponse = await axios.get(`${BASE_URL}/cv_form?userId=${userId}&fullName=${formData.fullName}&email=${formData.email}`);
+      if (existingCVResponse.data.length > 0) {
+        const existingCVId = existingCVResponse.data[0]._id;
+        console.log('CV already exists for this user. Updating existing CV.');
+        await axios.put(`${BASE_URL}/cv_form/${existingCVId}`, formattedData);
+        Alert.alert('Thông báo', 'CV của bạn đã được cập nhật.', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
+      } else {
+        const response = await axios.post(`${BASE_URL}/cv_form`, formattedData);
+        console.log('Data successfully posted to MongoDB:', response.data);
+        console.log('Response data structure:', response.data); // Add this line to log the response data structure
+        console.log('User ID:', userId);
+        Alert.alert('Thành công', 'Bạn đã tạo CV thành công!');
+        // Handle successful post, e.g., navigate to another screen or show a success message
+        navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
+      }
     } catch (error) {
       console.error('Error posting data to MongoDB:', error);
       if (axios.isAxiosError(error)) {
@@ -1326,5 +1337,5 @@ const pickerSelectStyles = StyleSheet.create({
 
 });
 
-export default CVCreate; 
+export default CVCreate;
 
