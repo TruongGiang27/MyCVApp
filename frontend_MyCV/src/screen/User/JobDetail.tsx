@@ -43,9 +43,9 @@ const JobDetail = () => {
       console.log('Has CV:', hasCV);
 
       if (hasCV) {
-        navigationCVCreate.navigate('CVCreate', { startStep: 10, jobId } as never);
+        navigationCVCreate.navigate('CVCreate', { startStep: 10, jobId, source: 'JobDetail' } as never);
       } else {
-        navigationCVCreate.navigate('CVCreate', { startStep: 1, jobId } as never);
+        navigationCVCreate.navigate('CVCreate', { startStep: 1, jobId, source: 'JobDetail' } as never);
       }
     } catch (error) {
       console.error('Error checking CV:', error);
