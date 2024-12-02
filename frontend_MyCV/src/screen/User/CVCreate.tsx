@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SectionList, Platform } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import { useRoute, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import RNPickerSelect from "react-native-picker-select";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import axios from 'axios';
-import { BASE_URL } from '../../utils/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Platform, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import RNPickerSelect from "react-native-picker-select";
+import Icon from 'react-native-vector-icons/Ionicons';
+import { BASE_URL } from '../../utils/url';
 
 type RootStackParamList = {
   JobDetail: { jobId: string };
@@ -133,7 +133,7 @@ const CVCreate = () => {
         }
         console.log('Google ID:', userId);
         console.log('Email:', email);
-        console.log('Name:', name);  
+        console.log('Name:', name);
         if (savedFormData) {
           const parsedFormData = JSON.parse(savedFormData);
           // Convert date strings back to Date objects
@@ -238,7 +238,7 @@ const CVCreate = () => {
       skills: selectedSkills,
     };
 
-    console.log('Submitting data:', formattedData); 
+    console.log('Submitting data:', formattedData);
 
     try {
       const response = await axios.post(`${BASE_URL}/cv_form`, formattedData);
@@ -1210,6 +1210,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flex: 1,
     flexWrap: 'wrap', // Ensure text wraps within the input field
+    color: 'black',
   },
   formContainer: {
     flex: 1,
@@ -1257,6 +1258,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+    color: 'black',
   },
   selectedSkillsContainer: {
     flexDirection: 'row',
@@ -1284,6 +1286,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap', // Ensure text wraps within the content
     // backgroundColor: 'red',
     width: '30%',
+    color: 'black',
   },
   boldText: {
     fontWeight: 'bold',
@@ -1326,5 +1329,5 @@ const pickerSelectStyles = StyleSheet.create({
 
 });
 
-export default CVCreate; 
+export default CVCreate;
 

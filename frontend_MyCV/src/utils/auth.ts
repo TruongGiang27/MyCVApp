@@ -4,8 +4,6 @@ import { Dispatch } from 'redux';
 import { login, logout } from '../redux/reducers/authReducer';
 GoogleSignin.configure({
     webClientId: '29647774100-3d7b9j6m74v9bknvb9ic11lm5c7p2k04.apps.googleusercontent.com',
-    offlineAccess: true,
-    forceCodeForRefreshToken: true,
 });
 
 export const signIn = async (dispatch: Dispatch) => {

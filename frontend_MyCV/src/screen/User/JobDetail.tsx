@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, Modal, Alert } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../../utils/url';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 type RootStackParamList = {
   Home: undefined;
@@ -15,7 +14,7 @@ type RootStackParamList = {
 
 const JobDetail = () => {
   const route = useRoute();
-  const { jobId } = route.params as { jobId: string };
+  const { jobId, disableButtons } = route.params ? route.params as { jobId: string, disableButtons: boolean } : { jobId: '', disableButtons: false };
   const [jobDetail, setJobDetail] = useState<any>(null);
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -172,12 +171,12 @@ const JobDetail = () => {
       </View>
 
       {/* Apply Button */}
-      <TouchableOpacity style={styles.applyButton} onPress={handleEditAndCreate}>
+      <TouchableOpacity style={[styles.applyButton, disableButtons && styles.disabledButton]} onPress={handleEditAndCreate} disabled={disableButtons}>
         <Text style={styles.applyButtonText}>Chỉnh sửa / Tạo CV</Text>
       </TouchableOpacity>
 
       {/* New Apply Now Button */}
-      <TouchableOpacity style={styles.applyNowButton} onPress={handleApplyNow}>
+      <TouchableOpacity style={[styles.applyNowButton, disableButtons && styles.disabledButton]} onPress={handleApplyNow} disabled={disableButtons}>
         <Text style={styles.applyNowButtonText}>Ứng tuyển ngay</Text>
       </TouchableOpacity>
 
@@ -327,6 +326,9 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  disabledButton: {
+    backgroundColor: '#B0B0B0',
   },
 });
 

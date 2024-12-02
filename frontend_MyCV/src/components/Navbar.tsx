@@ -14,14 +14,14 @@ const Navbar = ({ route, navigation }: Props) => {
           <Icon name="home" size={25} color="#011F82" />
           <Text style={styles.navText}>Trang chủ</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('FavoriteJob')}>
           <Icon name="bookmark" size={25} color="#011F82" />
           <Text style={styles.navText}>Việc làm của tôi</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.group}>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('MessageScreen')}>
           <Icon name="chatbox-ellipses" size={25} color="#011F82" />
           <Text style={styles.navText}>Tin nhắn</Text>
         </TouchableOpacity>

@@ -1,13 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { BASE_URL } from '../../utils/url';
-import { RootStackParamList } from '../../navigator/RootStackParamList';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ScreenName from '../../constants/ScreenName';
-
+import { RootStackParamList } from '../../navigator/RootStackParamList';
+import { BASE_URL } from '../../utils/url';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
