@@ -15,9 +15,6 @@ const Footer = () => {
                 <Text style={styles.buttonText}>Hiển thị thêm việc làm</Text>
             </TouchableOpacity>
 
-            <View style={styles.section}>
-                <Text style={styles.sectionText}>quocduy2003a@gmail.com</Text>
-            </View>
 
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Người tìm việc</Text>
