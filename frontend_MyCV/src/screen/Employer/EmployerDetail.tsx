@@ -44,10 +44,6 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
     }
   };
 
-  // Get current job ID
-
-
-
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
       {/* Header */}
