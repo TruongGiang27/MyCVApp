@@ -18,7 +18,7 @@ export class CvService {
   }
 
   async getCv(id: string): Promise<Cv> {
-    return this.cvModel.findById(id);
+    return this.cvModel.findById({ _id: id });
   }
 
   async deleteCv(id: string): Promise<Cv> {

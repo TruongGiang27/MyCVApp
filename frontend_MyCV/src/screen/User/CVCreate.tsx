@@ -245,9 +245,9 @@ const CVCreate = () => {
 
     try {
       // Check if a CV with the same userId, fullName, and email already exists
-      const existingCVResponse = await axios.get(`${BASE_URL}/cv_form?userId=${userId}&fullName=${formData.fullName}&email=${formData.email}`);
+      const existingCVResponse = await axios.get(`${BASE_URL}/cv_form?userId=${userId}`);
       if (existingCVResponse.data.length > 0) {
-        const existingCVId = existingCVResponse.data[0]._id;
+        const existingCVId = existingCVResponse.data._id;
         console.log('CV already exists for this user. Updating existing CV.');
         await axios.put(`${BASE_URL}/cv_form/${existingCVId}`, formattedData);
         Alert.alert('Thông báo', 'CV của bạn đã được cập nhật.', [
