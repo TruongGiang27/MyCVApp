@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../../utils/url';
-import { RootStackParamList } from '../User/types';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
@@ -43,10 +43,6 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
       Alert.alert("Lỗi", "Không thể kết nối với server.");
     }
   };
-
-  // Get current job ID
-
-
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>

@@ -89,7 +89,8 @@ const isJobBookmarked = async (jobId: string) => {
     try {
         const bookmarkedJobsString = await AsyncStorage.getItem('bookmarkedJobs');
         const bookmarkedJobs = bookmarkedJobsString ? JSON.parse(bookmarkedJobsString) : [];
-        return bookmarkedJobs.some((job: dataJobsIteam) => job._id === jobId);
+        const validBookmarkedJobs = bookmarkedJobs.filter((job: any) => job && job._id); // Filter out invalid jobs
+        return validBookmarkedJobs.some((job: dataJobsIteam) => job._id === jobId);
     } catch (error) {
         console.error("Failed to check if job is bookmarked:", error);
         return false;
@@ -97,10 +98,14 @@ const isJobBookmarked = async (jobId: string) => {
 };
 
 const toggleBookmarkJob = async (job: dataJobsIteam, setIsBookmarked: (value: boolean) => void) => {
+    if (!job || !job._id) {
+        console.error("Invalid job object:", job);
+        return;
+    }
     try {
         const bookmarkedJobsString = await AsyncStorage.getItem('bookmarkedJobs');
         let bookmarkedJobs = bookmarkedJobsString ? JSON.parse(bookmarkedJobsString) : [];
-        const jobIndex = bookmarkedJobs.findIndex((bookmarkedJob: dataJobsIteam) => bookmarkedJob._id === job._id);
+        const jobIndex = bookmarkedJobs.findIndex((bookmarkedJob: dataJobsIteam) => bookmarkedJob && bookmarkedJob._id === job._id);
 
         if (jobIndex !== -1) {
             bookmarkedJobs.splice(jobIndex, 1);
@@ -166,12 +171,17 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
     }
     const [dataJobs, setDataJobs] = useState<dataJobsIteam[]>([]);
     const [loading, setLoading] = useState(true);  // Trạng thái loading
-
+    const [userId, setUserId]= useState('');
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
             try {
                 console.log("Fetching data from:", `${BASE_URL}/jobs`);
+                const userInfoString = await AsyncStorage.getItem('userInfo');
+                const userInfo = userInfoString ? JSON.parse(userInfoString) : {};
+                setUserId(userInfo.data.user.id);
+                console.log("-------------------");
+                console.log("userInfo", userInfo.data.user.id);
                 const response = await fetch(`${BASE_URL}/jobs`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -206,7 +216,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
                     company={item.company}
                     salary={item.salary}
                     location={item.location}
-                    onPress={() => navigation.navigate('JobDetail', { jobId: item._id })}
+                    onPress={() => navigation.navigate('JobDetail', { jobId: item._id, userId: userId })}
                     job={item}
                     navigation={navigation}
                 // timePosted={item.timePosted}

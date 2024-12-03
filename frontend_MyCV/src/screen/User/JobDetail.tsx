@@ -18,6 +18,7 @@ const JobDetail = () => {
   const [jobDetail, setJobDetail] = useState<any>(null);
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const {userId} = route.params as {userId: string};
   // Add the new navigation prop
   const navigationCVCreate = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -38,14 +39,14 @@ const JobDetail = () => {
 
   const handleEditAndCreate = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/cv_form`);
+      const response = await axios.get(`${BASE_URL}/cv_form/${userId}`);
       const hasCV = response.data.length > 0;
       console.log('Has CV:', hasCV);
 
       if (hasCV) {
-        navigationCVCreate.navigate('CVCreate', { startStep: 10, jobId } as never);
+        navigationCVCreate.navigate('CVCreate', { startStep: 10, jobId, source: 'JobDetail' } as never);
       } else {
-        navigationCVCreate.navigate('CVCreate', { startStep: 1, jobId } as never);
+        navigationCVCreate.navigate('CVCreate', { startStep: 1, jobId, source: 'JobDetail' } as never);
       }
     } catch (error) {
       console.error('Error checking CV:', error);
@@ -59,8 +60,9 @@ const JobDetail = () => {
   const confirmApplyNow = async () => {
     setIsModalVisible(false);
     try {
-      const response = await axios.get(`${BASE_URL}/cv_form`);
-      const cv = response.data[0]; // Assuming the first CV is the one to be used
+      const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
+      console.log('CVs:', response.data);
+      const cv = response.data; // Assuming the first CV is the one to be used
       if (cv) {
         const cvId = cv._id;
         const CVfullNameUser = cv.fullName;
@@ -72,6 +74,7 @@ const JobDetail = () => {
         // Check if the application already exists with both cvId and jobId
         const existingApplicationResponse = await axios.get(`${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}&userId=${userId}`);
         console.log('Google ID Job Detail:', userId);
+        console.log('cvid', cv._id);
         if (existingApplicationResponse.data.some((application: any) => application.cvId === cvId && application.jobId === jobId && application.userId === userId )) {
           Alert.alert('Thông báo', 'Bạn đã ứng tuyển vào công việc này rồi!');
           console.log('data', existingApplicationResponse.data);

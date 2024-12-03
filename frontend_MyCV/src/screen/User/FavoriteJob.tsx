@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
   FlatList,
   StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
-import { BASE_URL } from '../../utils/url';
 
 
 const FavoriteJob = () => {
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState<any>([]);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -22,7 +20,8 @@ const FavoriteJob = () => {
       try {
         const bookmarkedJobsString = await AsyncStorage.getItem('bookmarkedJobs');
         const bookmarkedJobs = bookmarkedJobsString ? JSON.parse(bookmarkedJobsString) : [];
-        setJobs(bookmarkedJobs);
+        const validBookmarkedJobs = bookmarkedJobs.filter((job: any) => job && job._id); // Filter out invalid jobs
+        setJobs(validBookmarkedJobs);
       } catch (error) {
         console.error("Failed to load bookmarked jobs:", error);
       }
@@ -39,7 +38,7 @@ const FavoriteJob = () => {
       <Text style={[styles.status, item.status === 'Mở' ? styles.open : styles.closed]}>
         Trạng thái: {item.status}
       </Text>
-      <TouchableOpacity style={styles.detailButton} onPress={() => navigation.navigate('JobDetail', { jobId: item._id })}>
+      <TouchableOpacity style={styles.detailButton} onPress={() => navigation.navigate('JobDetail' as never, { jobId: item._id } as never)}>
         <Text style={styles.detailButtonText}>Xem chi tiết</Text>
       </TouchableOpacity>
     </View>
@@ -55,7 +54,7 @@ const FavoriteJob = () => {
       </View>
       <FlatList
         data={jobs}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => item._id.toString()} // Ensure the key is a string
         renderItem={renderJobItem}
         contentContainerStyle={styles.listContainer}
       />

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { Cv } from './entities/cv.entity';
 
@@ -22,7 +22,10 @@ export class CvController {
     return this.cvService.getCv(id);
   }
 
-  @Get()
+  @Get('/user/:userId')
+  async getCvByUserId(@Param('userId') userId: string): Promise<Cv> {
+    return this.cvService.getCvByUserId(userId);
+  }
   async getAllCvs(): Promise<Cv[]> {
     return this.cvService.getAllCvs();
   }

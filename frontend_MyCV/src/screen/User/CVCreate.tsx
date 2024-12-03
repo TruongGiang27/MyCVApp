@@ -1,21 +1,23 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { Platform, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import RNPickerSelect from "react-native-picker-select";
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SectionList, Platform, Alert } from 'react-native';
+import { useForm, Controller } from 'react-hook-form';
+import { useRoute, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import RNPickerSelect from "react-native-picker-select";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import axios from 'axios';
 import { BASE_URL } from '../../utils/url';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 type RootStackParamList = {
   JobDetail: { jobId: string };
 };
 
 type JobDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'JobDetail'>;
-type JobDetailScreenRouteProp = RouteProp<RootStackParamList, 'JobDetail'>;
+type JobDetailScreenRouteProp = RouteProp<RootStackParamList, 'JobDetail'> & {
+  params: RouteParams;
+};
 
 interface Props {
   navigation: JobDetailScreenNavigationProp;
@@ -26,6 +28,7 @@ interface Props {
 type RouteParams = {
   startStep: number;
   jobId: string;
+  source: string; // Add source parameter
 };
 
 const CVCreate = () => {
@@ -241,13 +244,29 @@ const CVCreate = () => {
     console.log('Submitting data:', formattedData);
 
     try {
-      const response = await axios.post(`${BASE_URL}/cv_form`, formattedData);
-      console.log('Data successfully posted to MongoDB:', response.data);
-      console.log('Response data structure:', response.data); // Add this line to log the response data structure
-      console.log('User ID:', userId);
-      // Handle successful post, e.g., navigate to another screen or show a success message
-      navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
-
+      // Check if a CV with the same userId already exists
+      const existingCVResponse = await axios.get(`${BASE_URL}/cv_form?userId=${userId}`);
+      const existingCV = existingCVResponse.data.find((cv: { userId: string }) => cv.userId === userId);
+      if (existingCV) {
+        const existingCVId = existingCV._id;
+        console.log('CV already exists for this user. Updating existing CV.');
+        await axios.put(`${BASE_URL}/cv_form/${existingCVId}`, formattedData);
+        Alert.alert('Thông báo', 'CV của bạn đã được cập nhật.', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
+      } else {
+        const response = await axios.post(`${BASE_URL}/cv_form`, formattedData);
+        console.log('Data successfully posted to MongoDB:', response.data);
+        console.log('Response data structure:', response.data); // Add this line to log the response data structure
+        console.log('User ID:', userId);
+        Alert.alert('Thành công', 'Bạn đã tạo CV thành công!');
+        // Navigate back to the appropriate screen based on the source parameter
+        if (route.params?.source === 'JobDetail') {
+          navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
+        } else {
+          navigation.goBack();
+        }
+      }
     } catch (error) {
       console.error('Error posting data to MongoDB:', error);
       if (axios.isAxiosError(error)) {
@@ -266,14 +285,6 @@ const CVCreate = () => {
       console.log('Data that failed to post:', formattedData);
       console.log('userInfoString:', await AsyncStorage.getItem('userInfo'));
       // Handle error, e.g., show an error message
-    }
-  };
-
-  const handleBackPress = () => {
-    if (currentStep === 1) {
-      navigation.goBack(); // Quay lại trang trước đó nếu đang ở bước đầu tiên
-    } else {
-      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -1210,7 +1221,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flex: 1,
     flexWrap: 'wrap', // Ensure text wraps within the input field
-    color: 'black',
   },
   formContainer: {
     flex: 1,
@@ -1258,7 +1268,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
-    color: 'black',
   },
   selectedSkillsContainer: {
     flexDirection: 'row',
@@ -1286,7 +1295,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap', // Ensure text wraps within the content
     // backgroundColor: 'red',
     width: '30%',
-    color: 'black',
   },
   boldText: {
     fontWeight: 'bold',
@@ -1330,4 +1338,3 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 export default CVCreate;
-
