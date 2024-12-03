@@ -1,33 +1,54 @@
-//Uyên
-//+1popup contact
 import { useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import axios from 'axios';
+// import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../../utils/url';
 import { RootStackParamList } from '../User/types';
-
 interface cv_form {
     _id: string;
     userId: string;
     fullname: string;
     email: string;
     phone: string;
-    address: string;
-    education: string;
-    experience: string;
+    address: {
+        country: string;
+        city: string;
+        address: string;
+        zipCode: string;
+    };
+    education: {
+        educationLevel: string;
+        fieldOfStudy: string;
+        schoolName: string;
+        educationCountry: string;
+        educationCity: string;
+        educationStartDate: string;
+        educationEndDate: string;
+    };
+    experience: {
+        companyName: string;
+        jobTitle: string;
+        workCountry: string;
+        workCity: string;
+        workStartDate: string;
+        workEndDate: string;
+    };
     skills: string;
     certifications: string;
     birthDate: string;
     summary: string;
-    jobPreferences: string;
+    jobPreferences: {
+        desiredJobTitle: string;
+        jobType: string;
+        minimumSalary: string;
+    };
 }
-// Khai báo kiểu cho props 'navigation'
+
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
-    'ApplyManager'
+    'CVManagerment'
 >;
 
 type Props = {
@@ -35,40 +56,35 @@ type Props = {
 };
 
 const CVDetail: React.FC<Props> = ({ navigation }) => {
-    const [cv, setCv] = useState<cv_form[]>([]);
+    const [cv, setCv] = useState<cv_form>();
     const [name, setName] = useState<string>();
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const initials = name ? name.split(' ').map(n => n[0]).join('') : 'U';
     const route = useRoute();
-
-    const { cvId, disableButtons } = route.params ? route.params as { cvId: string, disableButtons: boolean } : { cvId: '', disableButtons: false };
-
     useEffect(() => {
-        const fetchCv = async () => {
-            const { userId } = route.params as { userId: string };
-
-            try {
-                const response = await axios.get(`${BASE_URL}/cv_form/${userId}`);
-                setCv(response.data);
-                setName(response.data.name);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-        fetchCv();
-    }, []);
+        console.log("Route params:", route.params);
+    }, [route.params]);
+    
     const BackHandler = () => {
         navigation.goBack();
     }
-    const initials = name
-        ? name.split(' ').map((word: string) => word[0]).join('').toUpperCase()
-        : 'U';
+    const {cvId} = route.params as {cvId: string };
 
-    const cancelRefuse = () => {
-        setIsModalVisible(false);
-    };
-
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`${BASE_URL}/cv_form/${cvId}`);
+                const data = await response.json();
+                setCv(data);
+            } catch (error) {
+                console.error("Lỗi khi lấy dữ liệu CV:", error);
+            }
+        };
+        fetchData();
+    }, [cvId]);
     const confirmRefuse = () => {
-        setIsModalVisible(true);
+        setIsModalVisible(false);
     };
 
     return (
@@ -81,108 +97,56 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.avatar}>
                     <Text style={styles.initials}>{initials}</Text>
                 </View>
-                <Text style={styles.name}>{name}</Text>
-                {cv.map((item: any, index: number) => (
-                    <View style={styles.info} key={index}>
-                        <View style={styles.infoCv}>
-                            <View style={styles.email}>
-                                <Icon name="mail" size={20} color="#011F82" />
-                                <Text style={{ marginLeft: 10 }}>{item.email}</Text>
-                            </View>
-                            <Text>{item.phone}</Text>
-                        </View>
-                        <View style={styles.edit}>
-                            <Icon name="create-outline" size={20} color="#011F82" />
+                <Text style={styles.name}>{name || 'Đang tải...'}</Text>
+
+                <View style={styles.info}>
+                    <View style={styles.infoCv}>
+                        <Text style={{ fontSize: 20, color: '#011F82' }}>Email:</Text>
+                        <View style={styles.email}>
+                            <Icon name="mail" size={20} color="#011F82" />
+                            <Text style={{ fontSize: 17, color: '#011F82', marginLeft: 10 }}>{cv?.email}</Text>
                         </View>
                     </View>
-                ))}
-                <View style={styles.detail}>
-                    <Text>Thông tin cá nhân</Text>
-                    {cv.map((item: any, index: number) => (
-                        <View key={index}>
-                            <Text>Họ và tên: {item.fullname}</Text>
-                            <Text>Ngày sinh: {item.birthDate}</Text>
-                            <Text>Địa chỉ: {item.address}</Text>
-                            <Text>Tóm tắt: {item.summary}</Text>
-                        </View>
-                    ))}
                 </View>
                 <View style={styles.detail}>
-                    <Text>Thông tin học vấn</Text>
-                    {cv.map((item: any, index: number) => (
-                        <View key={index}>
-                            <Text>Trình độ học vấn: {item.education}</Text>
-                        </View>
-                    ))}
-                </View>
-                <View style={styles.detail}>
-                    <Text>Kinh nghiệm làm việc</Text>
-                    {cv.map((item: any, index: number) => (
-                        <View key={index}>
-                            <Text>Công ty: {item.experience}</Text>
-                        </View>
-                    ))}
-                </View>
+                    <Text style={{fontSize: 20, color: '#011F82' }}>Thông tin cá nhân:</Text>
+                    <Icon name="location" size={20} color="#011F82" />
+                    <Text style={{fontSize: 17}}>{cv?.address?.address}</Text>
 
-                <View style={styles.detail}>
-                    <Text>Kỹ năng</Text>
-                    {cv.map((item: any, index: number) => (
-                        <View key={index}>
-                            <Text>{item.skills}</Text>
-                        </View>
-                    ))}
-                </View>
-                <View style={styles.detail}>
-                    <Text>Chứng chỉ</Text>
-                    {cv.map((item: any, index: number) => (
-                        <View key={index}>
-                            <Text>{item.certifications}</Text>
-                        </View>
-                    ))}
-                </View>
-                <View style={styles.detail}>
-                    <Text>Ưu tiên công việc</Text>
-                    {cv.map((item: any, index: number) => (
-                        <View key={index}>
-                            <Text>{item.jobPreferences}</Text>
-                        </View>
-                    ))}
+                    <Text>{cv?.address?.city}</Text>
+                    <Text>{cv?.address?.country}</Text>
+                    <Text>{cv?.phone}</Text>
+                    <Text>{cv?.birthDate}</Text>
+                    <Text>{cv?.summary}</Text>
                 </View>
                 <View style={styles.btn}>
                     <TouchableOpacity style={styles.button}>
                         <Text style={{ color: '#fff' }}>Liên hệ</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.buttonRefuse ,disableButtons && styles.disabledButton]} onPress={confirmRefuse} disabled={disableButtons}>
+                    <TouchableOpacity
+                        style={[styles.buttonRefuse]}
+                        onPress={confirmRefuse}
+                        // disabled={disableButtons}
+                    >
                         <Text style={{ color: '#fff' }}>Từ chối</Text>
                     </TouchableOpacity>
-                    <Modal
-                        visible={isModalVisible}
-                        transparent={true}
-                        animationType="slide"
-                        onRequestClose={cancelRefuse}
-                    >
-                        <View style={styles.modalContainer}>
-                            <View style={styles.modalContent}>
-                                <Text style={styles.modalText}>Bạn có chắc chắn muốn từ chối ứng viên này không ?</Text>
-                                <View style={styles.modalButtons}>
-                                    <TouchableOpacity style={styles.modalButton} onPress={() => navigation.navigate('ApplyManager' as never)}>
-                                        <Text style={styles.modalButtonText}>Xác nhận</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.modalButton} onPress={cancelRefuse}>
-                                        <Text style={styles.modalButtonText}>Hủy</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
                 </View>
             </View>
         </ScrollView>
     );
+
 };
 
 export default CVDetail;
+
 const styles = StyleSheet.create({
+    loadingText: {
+        textAlign: 'center',
+        marginTop: 20,
+        fontSize: 16,
+        color: '#888',
+
+    },
     container: {
         flex: 1,
         backgroundColor: '#F5F5F5',
@@ -232,6 +196,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         color: '#011F82',
+        fontSize: 20,
+
     },
     email: {
         display: 'flex',
@@ -242,6 +208,8 @@ const styles = StyleSheet.create({
     },
     infoCv: {
         width: '90%',
+        color: '#011F82',
+
     },
     edit: {
         width: 40,
