@@ -244,27 +244,16 @@ const CVCreate = () => {
     console.log('Submitting data:', formattedData); 
 
     try {
-      // Check if a CV with the same userId, fullName, and email already exists
-      const existingCVResponse = await axios.get(`${BASE_URL}/cv_form?userId=${userId}&fullName=${formData.fullName}&email=${formData.email}`);
-      if (existingCVResponse.data.length > 0) {
-        const existingCVId = existingCVResponse.data[0]._id;
-        console.log('CV already exists for this user. Updating existing CV.');
-        await axios.put(`${BASE_URL}/cv_form/${existingCVId}`, formattedData);
-        Alert.alert('Thông báo', 'CV của bạn đã được cập nhật.', [
-          { text: 'OK', onPress: () => navigation.goBack() }
-        ]);
+      const response = await axios.post(`${BASE_URL}/cv_form`, formattedData);
+      console.log('Data successfully posted to MongoDB:', response.data);
+      console.log('Response data structure:', response.data); // Add this line to log the response data structure
+      console.log('User ID:', userId);
+      Alert.alert('Thành công', 'Bạn đã tạo CV thành công!');
+      // Navigate back to the appropriate screen based on the source parameter
+      if (route.params?.source === 'JobDetail') {
+        navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
       } else {
-        const response = await axios.post(`${BASE_URL}/cv_form`, formattedData);
-        console.log('Data successfully posted to MongoDB:', response.data);
-        console.log('Response data structure:', response.data); // Add this line to log the response data structure
-        console.log('User ID:', userId);
-        Alert.alert('Thành công', 'Bạn đã tạo CV thành công!');
-        // Navigate back to the appropriate screen based on the source parameter
-        if (route.params?.source === 'JobDetail') {
-          navigationJobDetail.navigate('JobDetail', { jobId: route.params?.jobId });
-        } else {
-          navigation.goBack();
-        }
+        navigation.goBack();
       }
     } catch (error) {
       console.error('Error posting data to MongoDB:', error);
@@ -284,14 +273,6 @@ const CVCreate = () => {
       console.log('Data that failed to post:', formattedData);
       console.log('userInfoString:', await AsyncStorage.getItem('userInfo'));
       // Handle error, e.g., show an error message
-    }
-  };
-
-  const handleBackPress = () => {
-    if (currentStep === 1) {
-      navigation.goBack(); // Quay lại trang trước đó nếu đang ở bước đầu tiên
-    } else {
-      setCurrentStep(currentStep - 1);
     }
   };
 
