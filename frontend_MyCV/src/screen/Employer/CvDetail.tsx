@@ -55,18 +55,20 @@ type Props = {
     navigation: CreateEmployerScreenNavigationProp;
 };
 
+
+
 const CVDetail: React.FC<Props> = ({ navigation }) => {
     const [cv, setCv] = useState<cv_form>();
     const [name, setName] = useState<string>();
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const initials = cv?.email
-    ? cv.email
-          .split(' ') // Tách tên thành mảng các từ
-          .map(word => word[0]) // Lấy chữ cái đầu của mỗi từ
-          .join('') // Gộp lại thành một chuỗi
-          .toUpperCase() // Chuyển thành chữ in hoa
-    : 'CV';
+        ? cv.email
+            .split(' ') // Tách tên thành mảng các từ
+            .map(word => word[0]) // Lấy chữ cái đầu của mỗi từ
+            .join('') // Gộp lại thành một chuỗi
+            .toUpperCase() // Chuyển thành chữ in hoa
+        : 'CV';
     const route = useRoute();
     useEffect(() => {
         console.log("Route params:", route.params);
@@ -98,7 +100,7 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date);
     };
-    
+
 
     return (
         <ScrollView>
@@ -257,7 +259,7 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                 </View>
 
                 <View style={styles.btnGroup}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SendSMS', { phone: cv?.phone })}>
                         <Text style={styles.buttonText}>Liên hệ</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -318,7 +320,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     name: {
-        fontSize:20,
+        fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#011F82',
