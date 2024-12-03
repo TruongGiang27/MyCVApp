@@ -1,4 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
+// SendSMS.tsx
+import { useNavigation, useRoute ,RouteProp} from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
     View,
@@ -15,15 +16,24 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import SendSMS from 'react-native-sms';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useRoute } from '@react-navigation/native';
-
+type RouteParams = {
+    phone: string;
+};
 const SendSMSComponent = () => {
     const navigation = useNavigation();
+    const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>();
     const [hasPermission, setHasPermission] = useState(false);
     const [isSending, setIsSending] = useState(false);
     const [recipient, setRecipient] = useState('');
     const [selectedTime, setSelectedTime] = useState('08:00 - 09:00'); // Default time
     const [message, setMessage] = useState('Chúc mừng bạn đã ứng tuyển');  // Default message
+
+    useEffect(() => {
+        if (route.params && route.params.phone) {
+            setRecipient(route.params.phone);
+        }
+    }, [route.params]);
+
     // Time slots
     const timeSlots = [
         '08:00 - 09:00',
@@ -136,7 +146,6 @@ const SendSMSComponent = () => {
             />
             <TextInput
                 style={[styles.input, styles.messageInput]}
-                
                 defaultValue='Chúc mừng bạn đã trúng tuyển thành công, vui lòng hãy chú ý thời gian để phỏng vấn'
                 placeholder="Enter message"
                 multiline
@@ -184,17 +193,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         backgroundColor: '#fff',
         fontSize: 16,
-    },
-    staticText: {
-        width: '90%',  // Make text width match input fields
-        padding: 12,
-        textAlign: 'center',  // Center align the text
-        fontSize: 18,
-        marginBottom: 16,
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        borderColor: '#ccc',
-        borderWidth: 1,
     },
     messageInput: {
         height: 150,  // Increased height for better visibility
