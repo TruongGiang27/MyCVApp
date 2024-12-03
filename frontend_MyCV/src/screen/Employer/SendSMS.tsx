@@ -1,5 +1,5 @@
 // SendSMS.tsx
-import { useNavigation, useRoute ,RouteProp} from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
     View,
@@ -12,6 +12,7 @@ import {
     PermissionsAndroid,
     BackHandler,
     Text,
+    TouchableOpacity
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import SendSMS from 'react-native-sms';
@@ -134,7 +135,11 @@ const SendSMSComponent = () => {
 
     return (
         <View style={styles.container}>
-            <Icon name="arrow-back" size={30} color="#011F82" onPress={BackHandler} style={styles.backIcon} />
+            <View style={styles.header}>
+                <Icon name="arrow-back" size={30} color="#011F82" onPress={BackHandler} style={styles.backIcon} />
+                <Text style={styles.headerText}>Send SMS</Text>
+            </View>
+
 
             {/* Phone Number Input */}
             <TextInput
@@ -166,7 +171,10 @@ const SendSMSComponent = () => {
 
             {/* Send Button */}
             <View style={styles.buttonContainer}>
-                <Button title="Send SMS" onPress={sendMessage} disabled={isSending} />
+                {/* <Button title="Send SMS" onPress={sendMessage} disabled={isSending} /> */}
+                <TouchableOpacity onPress={sendMessage} disabled={isSending}>
+                    <Text style={styles.buttonText}>Send SMS</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -175,43 +183,79 @@ const SendSMSComponent = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'flex-start',  // Align content at the top
+        backgroundColor: '#f0f4f8', // Màu nền tinh tế, dễ nhìn
+        padding: 20,
         alignItems: 'center',
-        padding: 20,  // Increased padding for better spacing
-        backgroundColor: '#f9f9f9', // Light background color
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        marginBottom: 30,
+    },
+    headerText: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#2d5fb8', // Màu xanh nổi bật
+        marginLeft: 10,
     },
     backIcon: {
-        alignSelf: 'flex-start',
-        marginBottom: 20,
+        color: '#2d5fb8',
     },
     input: {
-        width: '90%',  // Make input fields narrower
-        padding: 12,
+        width: '100%',
+        padding: 15,
         borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        marginBottom: 16,
-        backgroundColor: '#fff',
+        borderColor: '#d9d9d9',
+        borderRadius: 12,
+        backgroundColor: '#ffffff',
         fontSize: 16,
+        color: '#333',
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
     },
     messageInput: {
-        height: 150,  // Increased height for better visibility
+        height: 120,
         textAlignVertical: 'top',
     },
     picker: {
-        width: '90%',  // Match picker width with input fields
-        borderColor: '#ccc',
+        width: '100%',
+        padding: 10,
         borderWidth: 1,
-        borderRadius: 8,
-        marginBottom: 16,
-        backgroundColor: '#fff',
+        borderColor: '#d9d9d9',
+        borderRadius: 12,
+        backgroundColor: '#ffffff',
+        fontSize: 16,
+        color: '#333',
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
     },
     buttonContainer: {
-        marginTop: 20,
-        width: '90%',  // Ensure button width matches input fields
-        backgroundColor: '#4CAF50', // Green button
-        borderRadius: 8,
+        width: '100%',
+        backgroundColor: '#2d5fb8', // Màu xanh đậm cho nút
+        borderRadius: 12,
+        padding: 15,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
+
 
 export default SendSMSComponent;
