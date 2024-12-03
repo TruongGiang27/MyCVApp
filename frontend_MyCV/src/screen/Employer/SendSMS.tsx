@@ -134,10 +134,6 @@ const SendSMSComponent = () => {
                 value={recipient}
                 onChangeText={setRecipient}
             />
-            {/* <Text style={styles.staticText} >
-                Chúc mừng bạn đã trúng tuyển thành công, vui lòng hãy chú ý thời gian để phỏng vấn
-            </Text> */}
-            {/* Message Input */}
             <TextInput
                 style={[styles.input, styles.messageInput]}
                 
