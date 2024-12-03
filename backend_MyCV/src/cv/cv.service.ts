@@ -28,4 +28,8 @@ export class CvService {
   async getAllCvs(): Promise<Cv[]> {
     return this.cvModel.find();
   }
+
+  async getCvByUserId(userId: string): Promise<Cv> {
+    return this.cvModel.findOne({ userId: userId });
+  }
 }

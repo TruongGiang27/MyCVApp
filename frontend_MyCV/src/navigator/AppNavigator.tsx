@@ -11,6 +11,7 @@ import HomeEmployer from '../screen/Employer/HomeEmployer';
 import InforManager from '../screen/Employer/InforManager';
 import JobPost from '../screen/Employer/JobPost';
 import Home from '../screen/home/Home';
+import Login from '../screen/login/Login';
 import Profile from '../screen/profile/Profile';
 import CVCreate from '../screen/User/CVCreate';
 import CVManagerment from '../screen/User/CVManagerment';
@@ -19,7 +20,6 @@ import JobDetail from '../screen/User/JobDetail';
 import JobList from '../screen/User/JobList';
 import ManageCVsApplied from '../screen/User/ManageCVsApplied';
 import MessageScreen from '../screen/User/Message';
-import Login from '../screen/login/Login';
 import { RootStackParamList } from './RootStackParamList';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
