@@ -30,7 +30,7 @@ const MessageScreen = ({navigation, route} : Props) => {
 
             {/* Các nút */}
             <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={styles.buttonPrimary} onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity style={styles.buttonPrimary} onPress={() => navigation.navigate('Home' as never)}>
                     <Text style={styles.buttonText}>Tìm việc làm</Text>
                 </TouchableOpacity>
                 <View style={styles.spacer} />
