@@ -89,7 +89,8 @@ const isJobBookmarked = async (jobId: string) => {
     try {
         const bookmarkedJobsString = await AsyncStorage.getItem('bookmarkedJobs');
         const bookmarkedJobs = bookmarkedJobsString ? JSON.parse(bookmarkedJobsString) : [];
-        return bookmarkedJobs.some((job: dataJobsIteam) => job._id === jobId);
+        const validBookmarkedJobs = bookmarkedJobs.filter((job: any) => job && job._id); // Filter out invalid jobs
+        return validBookmarkedJobs.some((job: dataJobsIteam) => job._id === jobId);
     } catch (error) {
         console.error("Failed to check if job is bookmarked:", error);
         return false;
@@ -97,10 +98,14 @@ const isJobBookmarked = async (jobId: string) => {
 };
 
 const toggleBookmarkJob = async (job: dataJobsIteam, setIsBookmarked: (value: boolean) => void) => {
+    if (!job || !job._id) {
+        console.error("Invalid job object:", job);
+        return;
+    }
     try {
         const bookmarkedJobsString = await AsyncStorage.getItem('bookmarkedJobs');
         let bookmarkedJobs = bookmarkedJobsString ? JSON.parse(bookmarkedJobsString) : [];
-        const jobIndex = bookmarkedJobs.findIndex((bookmarkedJob: dataJobsIteam) => bookmarkedJob._id === job._id);
+        const jobIndex = bookmarkedJobs.findIndex((bookmarkedJob: dataJobsIteam) => bookmarkedJob && bookmarkedJob._id === job._id);
 
         if (jobIndex !== -1) {
             bookmarkedJobs.splice(jobIndex, 1);
