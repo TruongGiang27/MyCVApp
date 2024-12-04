@@ -1,9 +1,9 @@
 import { useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 // import axios from 'axios';
+import { Icon } from '@rneui/themed';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BASE_URL } from '../../utils/url';
 import { RootStackParamList } from '../User/types';
 interface cv_form {
@@ -55,8 +55,6 @@ type Props = {
     navigation: CreateEmployerScreenNavigationProp;
 };
 
-
-
 const CVDetail: React.FC<Props> = ({ navigation }) => {
     const [cv, setCv] = useState<cv_form>();
     const [name, setName] = useState<string>();
@@ -77,7 +75,7 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
     const BackHandler = () => {
         navigation.goBack();
     }
-    const { cvId } = route.params as { cvId: string };
+    const { cvId, disableButtons } = route.params ? route.params as { cvId: string, disableButtons: boolean } : { cvId: '', disableButtons: false };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -92,13 +90,18 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
         };
         fetchData();
     }, [cvId]);
+
     const confirmRefuse = () => {
-        setIsModalVisible(false);
+        setIsModalVisible(true);
     };
 
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date);
+    };
+
+    const cancelRefuse = () => {
+        setIsModalVisible(false);
     };
 
 
@@ -127,32 +130,32 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.infoCard}>
                     <Text style={styles.infoTitle}>Thông tin cá nhân:</Text>
                     <View style={styles.info}>
-                        <Icon name="location" size={20} color="#011F82" />
+                        <Icon name="map-marker" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Vị trí: {cv?.address?.address}</Text>
                     </View>
 
                     <View style={styles.info}>
-                        <Icon name="location" size={20} color="#011F82" />
-                        <Text style={styles.infoText}>Địa chỉ: {cv?.address?.city}</Text>
+                        <Icon name="city" type="material-community" size={20} color="#011F82" />
+                        <Text style={styles.infoText}>Thành phố: {cv?.address?.city}</Text>
                     </View>
 
                     <View style={styles.info}>
-                        <Icon name="location" size={20} color="#011F82" />
+                        <Icon name="globe" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Quốc gia: {cv?.address?.country}</Text>
                     </View>
 
                     <View style={styles.info}>
-                        <Icon name="location" size={20} color="#011F82" />
+                        <Icon name="phone" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Số điện thoại: {cv?.phone}</Text>
                     </View>
 
                     <View style={styles.info}>
-                        <Icon name="location" size={20} color="#011F82" />
+                        <Icon name="birthday-cake" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Sinh nhật: {cv?.birthDate ? formatDate(cv.birthDate) : 'N/A'}</Text>
                     </View>
 
                     <View style={styles.info}>
-                        <Icon name="location" size={20} color="#011F82" />
+                        <Icon name="person-outline" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Tóm tắt về bản thân: {cv?.summary}</Text>
                     </View>
                 </View>
@@ -160,31 +163,31 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.infoCard}>
                     <Text style={styles.infoTitle}>Học vấn:</Text>
                     <View style={styles.info}>
-                        <Icon name="school" size={20} color="#011F82" />
+                        <Icon name="graduation-cap" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Trình độ: {cv?.education?.educationLevel}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="school" size={20} color="#011F82" />
+                        <Icon name="book" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Ngành học: {cv?.education?.fieldOfStudy}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="school" size={20} color="#011F82" />
+                        <Icon name="university" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Trường: {cv?.education?.schoolName}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="school" size={20} color="#011F82" />
+                        <Icon name="globe" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Quốc gia: {cv?.education?.educationCountry}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="school" size={20} color="#011F82" />
+                        <Icon name="city" type="material-community" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Thành phố: {cv?.education?.educationCity}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="school" size={20} color="#011F82" />
+                        <Icon name="calendar-alt" type="font-awesome-5" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Ngày bắt đầu: {cv?.education?.educationStartDate ? formatDate(cv.education.educationStartDate) : 'N/A'}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="school" size={20} color="#011F82" />
+                        <Icon name="calendar-check" type="material-community" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Ngày kết thúc: {cv?.education?.educationEndDate ? formatDate(cv.education.educationEndDate) : 'N/A'}</Text>
                     </View>
                 </View>
@@ -192,27 +195,27 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.infoCard}>
                     <Text style={styles.infoTitle}>Kinh nghiệm làm việc:</Text>
                     <View style={styles.info}>
-                        <Icon name="briefcase" size={20} color="#011F82" />
+                        <Icon name="building" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Công ty: {cv?.experience?.companyName}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="briefcase" size={20} color="#011F82" />
+                        <Icon name="briefcase" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Chức vụ: {cv?.experience?.jobTitle}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="briefcase" size={20} color="#011F82" />
+                        <Icon name="globe" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Quốc gia: {cv?.experience?.workCountry}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="briefcase" size={20} color="#011F82" />
+                        <Icon name="city" type="material-community" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Thành phố: {cv?.experience?.workCity}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="briefcase" size={20} color="#011F82" />
+                        <Icon name="calendar-alt" type="font-awesome-5" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Ngày bắt đầu: {cv?.experience?.workStartDate ? formatDate(cv.experience.workStartDate) : 'N/A'}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="briefcase" size={20} color="#011F82" />
+                        <Icon name="calendar-check" type="material-community" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Ngày kết thúc: {cv?.experience?.workEndDate ? formatDate(cv.experience.workEndDate) : 'N/A'}</Text>
                     </View>
                 </View>
@@ -220,7 +223,7 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.infoCard}>
                     <Text style={styles.infoTitle}>Kỹ năng:</Text>
                     <View style={styles.info}>
-                        <Icon name="construct" size={20} color="#011F82" />
+                        <Icon name="cogs" type="font-awesome-5" size={20} color="#011F82" />
                         <Text style={styles.infoText}>{cv?.skills}</Text>
                     </View>
                 </View>
@@ -229,7 +232,7 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.infoCard}>
                     <Text style={styles.infoTitle}>Chứng chỉ:</Text>
                     <View style={styles.info}>
-                        <Icon name="construct" size={20} color="#011F82" />
+                        <Icon name="certificate" type="font-awesome-5" size={20} color="#011F82" />
                         <Text style={styles.infoText}>{cv?.certifications}</Text>
                     </View>
                 </View>
@@ -237,38 +240,51 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.infoCard}>
                     <Text style={styles.infoTitle}>Mong muốn:</Text>
                     <View style={styles.info}>
-                        <Icon name="construct" size={20} color="#011F82" />
+                        <Icon name="briefcase" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Vị trí mong muốn: {cv?.jobPreferences?.desiredJobTitle}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="construct" size={20} color="#011F82" />
+                        <Icon name="calendar-check" type="material-community" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Loại công việc: {cv?.jobPreferences?.jobType}</Text>
                     </View>
                     <View style={styles.info}>
-                        <Icon name="construct" size={20} color="#011F82" />
-                        <Text style={styles.infoText}>Mức lương mong muốn: {cv?.jobPreferences?.minimumSalary}</Text>
-                    </View>
-                </View>
-
-                <View style={styles.infoCard}>
-                    <Text style={styles.infoTitle}>Thông tin thêm:</Text>
-                    <View style={styles.info}>
-                        <Icon name="construct" size={20} color="#011F82" />
+                        <Icon name="money" type="font-awesome" size={20} color="#011F82" />
                         <Text style={styles.infoText}>Mức lương mong muốn: {cv?.jobPreferences?.minimumSalary} $</Text>
                     </View>
                 </View>
 
                 <View style={styles.btnGroup}>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SendSMS', { phone: cv?.phone, email: cv?.email })}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SendSMS', { phone: cv?.phone, fullname: cv?.fullname })}>
                         <Text style={styles.buttonText}>Liên hệ</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[styles.buttonRefuse]}
+                        style={[styles.buttonRefuse, disableButtons && styles.disabledButton]}
                         onPress={confirmRefuse}
-                    // disabled={disableButtons}
+                        disabled={disableButtons}
                     >
                         <Text style={styles.buttonText}>Từ chối</Text>
                     </TouchableOpacity>
+                    <Modal
+                        visible={isModalVisible}
+                        transparent={true}
+                        animationType="slide"
+                        onRequestClose={cancelRefuse}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalText}>Bạn có chắc chắn từ chối ứng viên này?</Text>
+                                <View style={styles.modalButtons}>
+                                    <TouchableOpacity style={styles.modalButton} onPress={confirmRefuse}>
+                                        <Text style={styles.modalButtonText}>Xác nhận</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.modalButton} onPress={cancelRefuse}>
+                                        <Text style={styles.modalButtonText}>Hủy</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
+
                 </View>
             </View>
         </ScrollView>
@@ -385,5 +401,44 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: '#FFFFFF',
+    },
+    disabledButton: {
+        backgroundColor: '#ccc',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        width: '80%',
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalText: {
+        fontSize: 18,
+        marginBottom: 20,
+        textAlign: 'center',
+        color: '#011F82',
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    modalButton: {
+        flex: 1,
+        padding: 10,
+        margin: 5,
+        borderRadius: 5,
+        alignItems: 'center',
+        backgroundColor: '#011F82',
+    },
+    modalButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
 });

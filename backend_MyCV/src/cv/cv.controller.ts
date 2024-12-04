@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { Cv } from './entities/cv.entity';
 
@@ -29,5 +29,10 @@ export class CvController {
   
   async getAllCvs(): Promise<Cv[]> {
     return this.cvService.getAllCvs();
+  }
+
+  @Delete('/deletecv/:cvId')
+  async deleteCv(@Param('cvId') cvId: string): Promise<Cv> {
+    return this.cvService.deleteCv(cvId);
   }
 }
