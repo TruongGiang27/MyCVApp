@@ -8,5 +8,6 @@ import { Application, ApplicationSchema } from './entities/application.entity';
   imports: [MongooseModule.forFeature([{ name: Application.name, schema: ApplicationSchema }])],
   controllers: [ApplicationController],
   providers: [ApplicationService],
+  exports: [ApplicationService],
 })
 export class ApplicationsModule {}

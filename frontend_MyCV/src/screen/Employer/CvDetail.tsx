@@ -3,13 +3,13 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 // import axios from 'axios';
 import { Icon } from '@rneui/themed';
 import React, { useEffect, useState } from 'react';
-import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BASE_URL } from '../../utils/url';
 import { RootStackParamList } from '../User/types';
 interface cv_form {
     _id: string;
     userId: string;
-    fullname: string;
+    fullName: string;
     email: string;
     phone: string;
     address: {
@@ -75,7 +75,7 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
     const BackHandler = () => {
         navigation.goBack();
     }
-    const { cvId, disableButtons } = route.params ? route.params as { cvId: string, disableButtons: boolean } : { cvId: '', disableButtons: false };
+    const { cvId, disableButtons, employerId } = route.params ? route.params as { cvId: string, disableButtons: boolean, employerId: string } : { cvId: '', disableButtons: false, employerId: '' };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -91,17 +91,27 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
         fetchData();
     }, [cvId]);
 
-    const confirmRefuse = () => {
-        setIsModalVisible(true);
-    };
-
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date);
     };
 
-    const cancelRefuse = () => {
+    const cancelRefuse = async () => {
         setIsModalVisible(false);
+    };
+
+    //Từ chối cv
+    const confirmRefuse = async () => {
+        try {
+            const response = await fetch(`${BASE_URL}/cv_form/${cvId}/decline/${employerId}`, {
+                method: 'DELETE',
+            });
+            const result = await response.json();
+            Alert.alert(result); // Thông báo cho người dùng về kết quả từ chối
+            setIsModalVisible(false); // Đóng modal
+        } catch (error) {
+            console.error("Lỗi khi từ chối CV:", error);
+        }
     };
 
 
@@ -116,7 +126,7 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                     <View style={styles.avatar}>
                         <Text style={styles.initials}>{initials}</Text>
                     </View>
-                    <Text style={styles.name}>{cv?.email}</Text>
+                    <Text style={styles.name}>{cv?.fullName}</Text>
 
                 </View>
 

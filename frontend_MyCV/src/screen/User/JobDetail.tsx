@@ -38,7 +38,7 @@ const JobDetail = () => {
 
   const handleEditAndCreate = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/cv_form/${userId}`);
+      const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
       const hasCV = response.data.length > 0;
       console.log('Has CV:', hasCV);
 
