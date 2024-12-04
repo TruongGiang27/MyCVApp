@@ -1,5 +1,5 @@
 // SendSMS.tsx
-import { useNavigation, useRoute ,RouteProp} from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
     View,
@@ -18,6 +18,7 @@ import SendSMS from 'react-native-sms';
 import Icon from 'react-native-vector-icons/Ionicons';
 type RouteParams = {
     phone: string;
+    email: string; // Add name parameter
 };
 const SendSMSComponent = () => {
     const navigation = useNavigation();
@@ -25,12 +26,16 @@ const SendSMSComponent = () => {
     const [hasPermission, setHasPermission] = useState(false);
     const [isSending, setIsSending] = useState(false);
     const [recipient, setRecipient] = useState('');
+    const [recipientName, setRecipientName] = useState(''); // Add state for recipient name
     const [selectedTime, setSelectedTime] = useState('08:00 - 09:00'); // Default time
     const [message, setMessage] = useState('Chúc mừng bạn đã ứng tuyển');  // Default message
 
     useEffect(() => {
-        if (route.params && route.params.phone) {
+        if (route.params.phone) {
             setRecipient(route.params.phone);
+        }
+        if (route.params.email) {
+            setRecipientName(route.params.email);
         }
     }, [route.params]);
 
@@ -134,16 +139,14 @@ const SendSMSComponent = () => {
 
     return (
         <View style={styles.container}>
-            <Icon name="arrow-back" size={30} color="#011F82" onPress={BackHandler} style={styles.backIcon} />
-
-            {/* Phone Number Input */}
-            <TextInput
-                style={styles.input}
-                placeholder="Enter phone number"
-                keyboardType="phone-pad"
-                value={recipient}
-                onChangeText={setRecipient}
-            />
+            <View style={styles.header}>
+                <Icon name="arrow-back" size={30} color="#011F82" onPress={BackHandler} style={styles.backIcon} />
+                <View style={styles.headerContent}>
+                    <Text style={styles.recipientName}>{recipientName}</Text>
+                </View>
+            </View>
+            <Text style={styles.phoneLabel}>Số điện thoại:</Text>
+            <Text style={styles.recipient}>{recipient}</Text>
             <TextInput
                 style={[styles.input, styles.messageInput]}
                 defaultValue='Chúc mừng bạn đã trúng tuyển thành công, vui lòng hãy chú ý thời gian để phỏng vấn'
@@ -166,7 +169,7 @@ const SendSMSComponent = () => {
 
             {/* Send Button */}
             <View style={styles.buttonContainer}>
-                <Button title="Send SMS" onPress={sendMessage} disabled={isSending} />
+                <Text style={styles.buttonText} onPress={sendMessage}>Send SMS</Text>
             </View>
         </View>
     );
@@ -175,42 +178,90 @@ const SendSMSComponent = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'flex-start',  // Align content at the top
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        padding: 20,  // Increased padding for better spacing
-        backgroundColor: '#f9f9f9', // Light background color
+        padding: 20,
+        backgroundColor: '#f0f0f0',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+        width: '100%',
     },
     backIcon: {
-        alignSelf: 'flex-start',
+        position: 'absolute',
+        left: 10,
+    },
+    headerContent: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    phoneLabel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#011F82',
+        marginBottom: 5,
+    },
+    recipient: {
+        fontSize: 16,
+        color: '#011F82',
         marginBottom: 20,
     },
     input: {
-        width: '90%',  // Make input fields narrower
-        padding: 12,
+        width: '90%',
+        padding: 15,
         borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        marginBottom: 16,
+        borderColor: '#ddd',
+        borderRadius: 10,
+        marginBottom: 20,
         backgroundColor: '#fff',
         fontSize: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
     },
     messageInput: {
-        height: 150,  // Increased height for better visibility
+        height: 150,
         textAlignVertical: 'top',
     },
     picker: {
-        width: '90%',  // Match picker width with input fields
-        borderColor: '#ccc',
+        width: '90%',
+        borderColor: '#ddd',
         borderWidth: 1,
-        borderRadius: 8,
-        marginBottom: 16,
+        borderRadius: 10,
+        marginBottom: 20,
         backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
     },
     buttonContainer: {
         marginTop: 20,
-        width: '90%',  // Ensure button width matches input fields
-        backgroundColor: '#4CAF50', // Green button
-        borderRadius: 8,
+        width: '90%',
+        backgroundColor: '#4CAF50',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+    },
+    recipientName: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 15,
+        color: '#011F82',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 18,
+        textAlign: 'center',
+        padding: 10,
     },
 });
 

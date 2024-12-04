@@ -259,7 +259,7 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                 </View>
 
                 <View style={styles.btnGroup}>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SendSMS', { phone: cv?.phone })}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SendSMS', { phone: cv?.phone, email: cv?.email })}>
                         <Text style={styles.buttonText}>Liên hệ</Text>
                     </TouchableOpacity>
                     <TouchableOpacity

@@ -26,6 +26,7 @@ export class CvController {
   async getCvByUserId(@Param('userId') userId: string): Promise<Cv> {
     return this.cvService.getCvByUserId(userId);
   }
+  
   async getAllCvs(): Promise<Cv[]> {
     return this.cvService.getAllCvs();
   }
