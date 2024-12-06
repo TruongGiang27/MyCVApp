@@ -19,7 +19,7 @@ import SendSMS from 'react-native-sms';
 import Icon from 'react-native-vector-icons/Ionicons';
 type RouteParams = {
     phone: string;
-    email: string; // Add name parameter
+    fullName: string; // Add name parameter
 };
 const SendSMSComponent = () => {
     const navigation = useNavigation();
@@ -35,8 +35,8 @@ const SendSMSComponent = () => {
         if (route.params.phone) {
             setRecipient(route.params.phone);
         }
-        if (route.params.email) {
-            setRecipientName(route.params.email);
+        if (route.params.fullName) {
+            setRecipientName(route.params.fullName);
         }
     }, [route.params]);
 
@@ -120,6 +120,7 @@ const SendSMSComponent = () => {
                 body: fullMessage,
                 recipients: [recipient],
                 successTypes: ['sent', 'queued'],
+                allowAndroidSendWithoutReadPermission: true,
             },
             (completed, cancelled, error) => {
                 setIsSending(false);
@@ -144,16 +145,21 @@ const SendSMSComponent = () => {
                 <Icon name="arrow-back" size={30} color="#011F82" onPress={BackHandler} style={styles.backIcon} />
                 <Text style={styles.headerText}>Send SMS</Text>
             </View>
+            <View style={styles.recipientInfo}>
+                <Text style={styles.recipientText}>Recipient: {recipientName}</Text>
+                <Text style={styles.recipientText}>Phone: {recipient}</Text>
+            </View>
+
 
 
             {/* Phone Number Input */}
-            <TextInput
+            {/* <TextInput
                 style={styles.input}
                 placeholder="Enter phone number"
                 keyboardType="phone-pad"
                 value={recipient}
                 onChangeText={setRecipient}
-            />
+            /> */}
             <TextInput
                 style={[styles.input, styles.messageInput]}
                 defaultValue='Chúc mừng bạn đã trúng tuyển thành công, vui lòng hãy chú ý thời gian để phỏng vấn'
@@ -188,7 +194,7 @@ const SendSMSComponent = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f0f4f8', // Màu nền tinh tế, dễ nhìn
+        backgroundColor: '#f8fafc',
         padding: 20,
         alignItems: 'center',
     },
@@ -196,61 +202,96 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
-        marginBottom: 30,
+        marginBottom: 20,
     },
     headerText: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#2d5fb8', // Màu xanh nổi bật
+        color: '#011F82',
         marginLeft: 10,
     },
     backIcon: {
-        color: '#2d5fb8',
+        color: '#011F82',
     },
+    recipientInfo: {
+        width: '90%',
+        padding: 15,
+        borderRadius: 10,
+        backgroundColor: '#ffffff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    recipientInfo: {
+        width: '90%',
+        padding: 15,
+        borderRadius: 10,
+        backgroundColor: '#ffffff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    recipientText: {
+        fontSize: 18, // Tăng kích thước
+        color: '#011F82', // Màu xanh cùng tông
+        fontWeight: 'bold', // Đậm để nổi bật
+        textAlign: 'center',
+        marginBottom: 5,
+    },
+
     input: {
-        width: '100%',
+        width: '90%',
         padding: 15,
         borderWidth: 1,
-        borderColor: '#d9d9d9',
-        borderRadius: 12,
+        borderColor: '#d1d5db',
+        borderRadius: 10,
         backgroundColor: '#ffffff',
         fontSize: 16,
-        color: '#333',
+        color: '#374151',
         marginBottom: 20,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
     },
     messageInput: {
-        height: 120,
+        height: 100,
         textAlignVertical: 'top',
     },
     picker: {
-        width: '100%',
+        width: '90%',
         padding: 10,
         borderWidth: 1,
-        borderColor: '#d9d9d9',
-        borderRadius: 12,
+        borderColor: '#d1d5db',
+        borderRadius: 10,
         backgroundColor: '#ffffff',
         fontSize: 16,
-        color: '#333',
+        color: '#374151',
         marginBottom: 20,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
     },
     buttonContainer: {
-        width: '100%',
-        backgroundColor: '#2d5fb8', // Màu xanh đậm cho nút
-        borderRadius: 12,
+        width: '90%',
+        backgroundColor: '#011F82',
+        borderRadius: 8,
         padding: 15,
         alignItems: 'center',
+        marginTop: 20,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 4,
         elevation: 5,
@@ -258,9 +299,11 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#ffffff',
         fontSize: 18,
-        fontWeight: 'bold',
+        fontWeight: '600',
     },
 });
+
+
 
 
 export default SendSMSComponent;
