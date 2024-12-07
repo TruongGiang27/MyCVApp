@@ -1,6 +1,6 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Picker } from '@react-native-picker/picker';
-import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import axios from 'axios';
 import React, { useEffect, useCallback, useState, useRef } from 'react';
@@ -35,6 +35,7 @@ interface Job {
 
 const HomeEmployer = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const route = useRoute();
   const [allJobs, setAllJobs] = useState<Job[]>([]); // Original data
   const [jobs, setJobs] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
@@ -163,6 +164,8 @@ const HomeEmployer = () => {
       console.error(error);
     }
   };
+const {userId} = route.params as {userId: string};
+console.log(userId);
 
   return (
     <View style={styles.container}>
