@@ -40,18 +40,38 @@ const HomeEmployer = () => {
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [userInfo, setUserInfo] = useState<any>(null);
   const [visibleCount, setVisibleCount] = useState(2); // Start by showing 5 jobs
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get(`${BASE_URL}/jobs`);
+  //       setAllJobs(response.data);  // lưu dữ liệu gốc
+  //       setJobs(response.data); // lưu dữ liệu hiển thị
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
+  const fetchJobsByCompany = async (company : string) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/jobs?company=${encodeURIComponent(company)}`);
+      setAllJobs(response.data); // Lưu tất cả công việc thuộc công ty
+      setJobs(response.data); // Hiển thị công việc đã lọc
+    } catch (error) {
+      console.error('Error fetching company jobs:', error);
+    }
+  };
+  console.log('Company jobs:', jobs);
+
+// Lấy thông tin user khi đã đăng nhập
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/jobs`);
-        setAllJobs(response.data); // Store original jobs list
-        setJobs(response.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    fetchData();
-  }, []);
+    if (userInfo) {
+      fetchJobsByCompany(userInfo.company);
+    } else {
+      setJobs([]); // Hoặc hiển thị thông báo cần đăng nhập
+    }
+  }, [userInfo]);
   
   // Hàm tải dữ liệu từ API
   const fetchJobs = async () => {

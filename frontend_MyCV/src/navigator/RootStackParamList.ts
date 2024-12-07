@@ -4,8 +4,8 @@ export type RootStackParamList = {
     Login: undefined;
     CreateEmployer: undefined;
     InforEmployer: undefined;
-    HomeEmployer: undefined;
-    Profile: undefined;
+    HomeEmployer: {userId: string};
+    Profile: {userId: string};
     JobPost: undefined;
     JobList: undefined;
     CVCreate: undefined;

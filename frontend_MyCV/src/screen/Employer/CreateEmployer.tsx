@@ -41,6 +41,7 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
       setError('Số điện thoại phải bắt đầu bằng 0. Ví dụ: 0987654321');
     }
   };
+  
 
   const handleSubmit = async () => {
     if (selectedCompany && companyName && numberOfEmployees && fullName && howDidYouHear && phoneNumber && describe) {

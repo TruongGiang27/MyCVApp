@@ -2,13 +2,13 @@ import { Card, Icon } from '@rneui/themed';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions } from 'react-native';
 import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
 import ScreenName from '../../constants/ScreenName';
 import { BASE_URL } from '../../utils/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -224,7 +224,6 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
                 />
             )}
             ListHeaderComponent={<Header onSearchFocus={onSearchFocus} onMapSearchFocus={onMapSearchFocus} />}
-            ListFooterComponent={loading ? <ActivityIndicator size="small" color="#007AFF" /> : <Footer />}
             onEndReachedThreshold={0.5}  // Trigger load when 50% from bottom
         />
     );
