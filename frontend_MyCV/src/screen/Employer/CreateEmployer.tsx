@@ -1,5 +1,6 @@
 //Giang 
 import { Picker } from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Thêm AsyncStorage nếu cần
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import axios from 'axios';
 import React, { useState } from 'react';
@@ -27,7 +28,6 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
   const [describe, setDescribe] = useState('');
   const [error, setError] = useState('');
 
-
   const handlePickerFocus = () => {
     Keyboard.dismiss();
   };
@@ -41,12 +41,15 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
       setError('Số điện thoại phải bắt đầu bằng 0. Ví dụ: 0987654321');
     }
   };
-  
+
 
   const handleSubmit = async () => {
+  const userId = await AsyncStorage.getItem('userId'); 
+
     if (selectedCompany && companyName && numberOfEmployees && fullName && howDidYouHear && phoneNumber && describe) {
       try {
         const employerData = {
+          userId, // Lấy userId từ AsyncStorage
           selectedCompany,
           companyName,
           numberOfEmployees,
@@ -67,7 +70,13 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
       Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin');
     }
   };
-
+  console.log('selectedCompany:', selectedCompany);
+  console.log('companyName:', companyName);
+  console.log('numberOfEmployees:', numberOfEmployees);
+  console.log('fullName:', fullName);
+  console.log('howDidYouHear:', howDidYouHear);
+  console.log('phoneNumber:', phoneNumber);
+  console.log('describe:', describe);
 
   return (
     <KeyboardAvoidingView
@@ -82,6 +91,22 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.subtitle}>Bạn chưa đăng việc làm nào trước đây, vì vậy bạn cần tạo một tài khoản nhà tuyển dụng.*</Text>
           <Card style={styles.card}>
             <Card.Content>
+              <Title style={styles.subtitle}>Loại công ty</Title>
+              <Picker
+                selectedValue={selectedCompany}
+                onValueChange={(itemValue: string) => setSelectedCompany(itemValue)}
+                onFocus={handlePickerFocus}
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label="Chọn một tùy chọn" value="choose" />
+                <Picker.Item label="Công ty phần mềm" value="software" />
+                <Picker.Item label="Công ty bảo hiểm" value="insurance" />
+                <Picker.Item label="Công ty y tế" value="healthcare" />
+                <Picker.Item label="Công ty sản xuất" value="manufacturing" />
+                <Picker.Item label="Công ty xây dựng" value="construction" />
+                <Picker.Item label="Công ty thực phẩm" value="food" />
+              </Picker>
               <Title style={styles.subtitle}>Tên của công ty</Title>
               <TextInput
                 label="Tên công ty"
@@ -160,7 +185,18 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                 theme={{ colors: { primary: '#011F82', outline: '#6D92D0' } }}
               />
               {error ? <Text style={styles.error}>{error}</Text> : null}
+              <Title style={styles.subtitle}>Mô tả về công ty</Title>
+              <TextInput
+                label="Mô tả về công ty"
+                value={describe}
+                onChangeText={setDescribe} // Cập nhật state describe
+                style={styles.input}
+                multiline
+                numberOfLines={4} // Cho phép nhập nhiều dòng
+                mode="outlined"
+              />
               <Button mode="contained" onPress={handleSubmit} style={styles.button}>Submit</Button>
+
             </Card.Content>
           </Card>
         </View>

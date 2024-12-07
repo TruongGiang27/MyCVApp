@@ -1,49 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Navbar from '../../components/Navbar';
-import { RootStackParamList } from '../../navigator/RootStackParamList';
-import ScreenName from '../../constants/ScreenName';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { appColors } from '../../constants/appColors';
-import { signOut } from '../../utils/auth';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch } from 'react-redux';
-
+import Navbar from '../../components/Navbar';
+import { appColors } from '../../constants/appColors';
+import ScreenName from '../../constants/ScreenName';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
+import { signOut } from '../../utils/auth';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
-type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'Home'
->;
 
-type user = {
-    _id: string;
-    email: string;
-    name: string;
-    avatar: string;
-};
 const Profile = ({ navigation, route }: Props) => {
     const { userEmail } = route.params as { userEmail: string };
     const [menuVisible, setMenuVisible] = useState(false);
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
-
-    useEffect(() => {
-        console.log("Route params:", route.params);
-    }, [route.params]);
-
+    const { userId } = route.params as { userId: string };
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
-    const handleLogout = async () => {
-        try {
 
-        } catch (error) {
-            console.error('Failed to log out:', error);
-        }
-    };
+    useEffect(() => {
+        const getInfo = async () => {
+            const userInfo = await AsyncStorage.getItem('userInfo');
+            if (userInfo) {
+                setUser(JSON.parse(userInfo));
+            }
+        };
+        getInfo();
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -68,18 +56,15 @@ const Profile = ({ navigation, route }: Props) => {
                         <Icon name="close" size={30} color="#000" />
                     </TouchableOpacity>
                     <View style={styles.menuContent}>
-                        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HomeEmployer')}>
+                        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HomeEmployer', { userId: user?.data?.user?.id })}>
                             <Text style={styles.menuItemText}>Nhà tuyển dụng</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.menuItem}>
-                            <Text style={styles.menuItemText}>Đánh giá của tôi</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.menuItem}>
-                            <Text style={styles.menuItemText}>Cài đặt</Text>git
+                            <Text style={styles.menuItemText}>Cài đặt</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.menuItem} onPress={() => signOut(dispatch)}>
                             <Text style={styles.menuItemText}>Đăng xuất</Text>
-                            <Text style={{fontSize:16,fontWeight:'300',paddingHorizontal: 20,marginTop:3}}>{userEmail}</Text>
+                            <Text style={{ fontSize: 16, fontWeight: '300', paddingHorizontal: 20, marginTop: 3 }}>{userEmail}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
