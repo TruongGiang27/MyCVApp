@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
+
 const Profile = ({ navigation, route }: Props) => {
     const { userEmail } = route.params as { userEmail: string };
     const [menuVisible, setMenuVisible] = useState(false);
@@ -18,7 +19,6 @@ const Profile = ({ navigation, route }: Props) => {
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
-
 
     return (
         <View style={styles.container}>
@@ -61,7 +61,7 @@ const Profile = ({ navigation, route }: Props) => {
                 <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Tải lên CV</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('CVCreate', { startStep: 1, source: 'Profile' } as never)}>
                     <Text style={styles.buttonText}>Xây dựng Indeed CV</Text>
                 </TouchableOpacity>
                 <Text style={styles.agreementText}>

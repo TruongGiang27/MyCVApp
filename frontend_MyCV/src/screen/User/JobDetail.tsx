@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, Modal, Alert } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../../utils/url';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 type RootStackParamList = {
   Home: undefined;
@@ -15,13 +14,13 @@ type RootStackParamList = {
 
 const JobDetail = () => {
   const route = useRoute();
-  const { jobId } = route.params as { jobId: string };
+  const { jobId, disableButtons } = route.params ? route.params as { jobId: string, disableButtons: boolean } : { jobId: '', disableButtons: false };
   const [jobDetail, setJobDetail] = useState<any>(null);
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const {userId} = route.params as {userId: string};
   // Add the new navigation prop
   const navigationCVCreate = useNavigation<NavigationProp<RootStackParamList>>();
-
 
   useEffect(() => {
     console.log('jobId', jobId);
@@ -39,14 +38,14 @@ const JobDetail = () => {
 
   const handleEditAndCreate = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/cv_form`);
+      const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
       const hasCV = response.data.length > 0;
       console.log('Has CV:', hasCV);
 
       if (hasCV) {
-        navigationCVCreate.navigate('CVCreate', { startStep: 10, jobId } as never);
+        navigationCVCreate.navigate('CVCreate', { startStep: 10, jobId, source: 'JobDetail' } as never);
       } else {
-        navigationCVCreate.navigate('CVCreate', { startStep: 1, jobId } as never);
+        navigationCVCreate.navigate('CVCreate', { startStep: 1, jobId, source: 'JobDetail' } as never);
       }
     } catch (error) {
       console.error('Error checking CV:', error);
@@ -60,8 +59,9 @@ const JobDetail = () => {
   const confirmApplyNow = async () => {
     setIsModalVisible(false);
     try {
-      const response = await axios.get(`${BASE_URL}/cv_form`);
-      const cv = response.data[0]; // Assuming the first CV is the one to be used
+      const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
+      console.log('CVs:', response.data);
+      const cv = response.data; // Assuming the first CV is the one to be used
       if (cv) {
         const cvId = cv._id;
         const CVfullNameUser = cv.fullName;
@@ -73,6 +73,7 @@ const JobDetail = () => {
         // Check if the application already exists with both cvId and jobId
         const existingApplicationResponse = await axios.get(`${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}&userId=${userId}`);
         console.log('Google ID Job Detail:', userId);
+        console.log('cvid', cv._id);
         if (existingApplicationResponse.data.some((application: any) => application.cvId === cvId && application.jobId === jobId && application.userId === userId )) {
           Alert.alert('Thông báo', 'Bạn đã ứng tuyển vào công việc này rồi!');
           console.log('data', existingApplicationResponse.data);
@@ -172,12 +173,12 @@ const JobDetail = () => {
       </View>
 
       {/* Apply Button */}
-      <TouchableOpacity style={styles.applyButton} onPress={handleEditAndCreate}>
+      <TouchableOpacity style={[styles.applyButton, disableButtons && styles.disabledButton]} onPress={handleEditAndCreate} disabled={disableButtons}>
         <Text style={styles.applyButtonText}>Chỉnh sửa / Tạo CV</Text>
       </TouchableOpacity>
 
       {/* New Apply Now Button */}
-      <TouchableOpacity style={styles.applyNowButton} onPress={handleApplyNow}>
+      <TouchableOpacity style={[styles.applyNowButton, disableButtons && styles.disabledButton]} onPress={handleApplyNow} disabled={disableButtons}>
         <Text style={styles.applyNowButtonText}>Ứng tuyển ngay</Text>
       </TouchableOpacity>
 
@@ -327,6 +328,9 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  disabledButton: {
+    backgroundColor: '#B0B0B0',
   },
 });
 

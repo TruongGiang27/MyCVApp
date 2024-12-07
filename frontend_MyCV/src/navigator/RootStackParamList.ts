@@ -1,5 +1,6 @@
+
 export type RootStackParamList = {
-    Home: undefined;
+    Home:{id: string};
     Login: undefined;
     CreateEmployer: undefined;
     InforEmployer: undefined;
@@ -16,6 +17,10 @@ export type RootStackParamList = {
     InforManager: undefined;
     EmployerDetail: { jobId: string };
     CVManagerment: undefined;
-    JobDetail: { jobId: string };
+    JobDetail: { jobId: string, userId: string };
+    ManageCVsApplied: undefined;
+    FavoriteJob: undefined;
+    CVDetail: {cvId: string};
+    SendSMS: undefined;
 };
 export default RootStackParamList;

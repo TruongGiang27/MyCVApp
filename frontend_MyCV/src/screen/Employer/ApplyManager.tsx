@@ -1,12 +1,11 @@
- import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { BASE_URL } from '../../utils/url';
-import { RootStackParamList } from '../User/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
+import { BASE_URL } from '../../utils/url';
 
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
@@ -18,16 +17,17 @@ interface Employer {
     CVEmailUser: string;
     status: string;
 }
+
 type EmployerDetailScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'EmployerDetail'
+    RootStackParamList,
+    'EmployerDetail'
 >;
 
 type Props = {
-  navigation: EmployerDetailScreenNavigationProp;
+    navigation: EmployerDetailScreenNavigationProp;
 };
 
-const ApplyManager: React.FC<Props> = ({ navigation })=> {
+const ApplyManager: React.FC<Props> = ({ navigation }) => {
     const [employers, setEmployers] = useState<Employer[]>([]);
     const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
     const [formData, setFormData] = useState<Employer | null>(null);
@@ -44,12 +44,12 @@ const ApplyManager: React.FC<Props> = ({ navigation })=> {
         setApplicants([]);
         // get params from route
         const { jobId } = route.params as { jobId: string };
+        console.log("Job ID:", jobId);
         setJobDetails(jobDetails);
         try {
             const response = await axios.get(`${BASE_URL}/applications/job/${jobId}`);
             // Kiểm tra dữ liệu trả về từ API
             console.log(response.data);
-            // Cập nhật state nếu có dữ liệu
             if (response.data && response.data.length > 0) {
                 setApplicants(response.data);
             } else {
@@ -85,7 +85,7 @@ const ApplyManager: React.FC<Props> = ({ navigation })=> {
 
 
     return (
-        <ScrollView style={styles.scrollView}>
+        <View style={styles.scrollView}>
             <View style={styles.container}>
                 <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.goBack()} />
                 <Text style={styles.pageTitle}>Danh sách ứng viên</Text>
@@ -97,24 +97,28 @@ const ApplyManager: React.FC<Props> = ({ navigation })=> {
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
-                {/* <TouchableOpacity style={styles.buttonSearch} onPress={handleSearch}>
+                <TouchableOpacity style={styles.buttonSearch} onPress={handleSearch}>
                     <Text style={styles.searchButtonText}>Search</Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
             </View>
 
-            {applicants.map(employer => (
-                <View style={styles.employerContainer} key={employer._id}>
-                    <View style={styles.employerInfo}>
-                        <Text style={styles.jobTitle}>{employer.CVfullNameUser}</Text>
-                        <Text style={styles.jobLocation}>{employer.CVEmailUser}</Text>
-                        <Text style={styles.jobDetail}>{employer.status}</Text>
+            <FlatList
+                data={applicants}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item: employer }) => (
+                    <View style={styles.employerContainer}>
+                        <View style={styles.employerInfo}>
+                            <Text style={styles.jobTitle}>{employer.CVfullNameUser}</Text>
+                            <Text style={styles.jobLocation}>{employer.CVEmailUser}</Text>
+                            <Text style={styles.jobDetail}>{employer.status}</Text>
+                        </View>
+                        <View style={styles.actionIconsRight}>
+                            <Icon name="eye" size={20} color="#007bff" style={styles.iconButton} onPress={() => navigation.navigate('CVDetail', { cvId: employer.cvId })} />
+                        </View>
                     </View>
-                    <View style={styles.actionIconsRight}>
-                        <Icon name="eye" size={20} color="#007bff" style={styles.iconButton} onPress={() => handleViewDetails(employer)} />
-                    </View>
-                </View>
-            ))}
-        </ScrollView>
+                )}
+            />
+        </View>
     )
 }
 const styles = StyleSheet.create({

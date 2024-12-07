@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { BASE_URL } from '../../utils/url';
-import { RootStackParamList } from '../User/types';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
@@ -44,10 +44,6 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
     }
   };
 
-  // Get current job ID
-  
-
-
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
       {/* Header */}
@@ -71,11 +67,11 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
           style={styles.statusPicker}
           mode="dropdown"
           onValueChange={(itemValue) => handleStatusChange(itemValue)}
-           dropdownIconColor="#1976D2"
+          dropdownIconColor="#1976D2"
         >
-          <Picker.Item label="Mở" value="Mở" style={{ color: '#011F82' }}/>
-          <Picker.Item label="Tạm dừng" value="Tạm dừng" style={{ color: '#011F82' }}/>
-          <Picker.Item label="Đã đóng" value="Đã đóng" style={{ color: '#011F82' }}/>
+          <Picker.Item label="Mở" value="Mở" style={{ color: '#011F82' }} />
+          <Picker.Item label="Tạm dừng" value="Tạm dừng" style={{ color: '#011F82' }} />
+          <Picker.Item label="Đã đóng" value="Đã đóng" style={{ color: '#011F82' }} />
         </Picker>
       </View>
 
@@ -147,7 +143,7 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.applyButtonText}>Tạo đơn tuyển dụng mới</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.viewcv} onPress={()=>navigation.navigate('ApplyManager', { jobId: jobDetails._id })}>
+        <TouchableOpacity style={styles.viewcv} onPress={() => navigation.navigate('ApplyManager', { jobId: jobDetails._id })}>
           <Text style={styles.applyButtonText}>Xem thông tin ứng viên</Text>
         </TouchableOpacity>
       </View>

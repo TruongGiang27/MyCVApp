@@ -33,35 +33,20 @@ const Navbar = ({ route, navigation }: Props) => {
   return (
     <View style={styles.navbar}>
       <View style={styles.group}>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => navigation.navigate('Home')}
-        >
-          <Icon name="home" size={25} color={getIconColor('Home')} />
-          <Text style={[styles.navText, { color: getTextColor('Home') }]}>
-            Trang chủ
-          </Text>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home" as never)}>
+          <Icon name="home" size={25} color="#011F82" />
+          <Text style={styles.navText}>Trang chủ</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Icon name="bookmark" size={25} color={getIconColor('Bookmarks')} />
-          <Text style={[styles.navText, { color: getTextColor('Bookmarks') }]}>
-            Việc làm của tôi
-          </Text>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('FavoriteJob')}>
+          <Icon name="bookmark" size={25} color="#011F82" />
+          <Text style={styles.navText}>Việc làm của tôi</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.group}>
-        <TouchableOpacity style={styles.navItem}>
-          <Icon
-            name="chatbox-ellipses"
-            size={25}
-            color={getIconColor('Messages')}
-          />
-          <Text
-            style={[styles.navText, { color: getTextColor('Messages') }]}
-          >
-            Tin nhắn
-          </Text>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('MessageScreen')}>
+          <Icon name="chatbox-ellipses" size={25} color="#011F82" />
+          <Text style={styles.navText}>Tin nhắn</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navItem}

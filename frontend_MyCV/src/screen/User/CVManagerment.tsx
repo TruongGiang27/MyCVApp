@@ -31,8 +31,8 @@ const CVManagerment = () => {
         const fetchProfileData = async () => {
             try {
                 const response = await axios.get(`${BASE_URL}/cv_form`);
-                console.log('Response data:', response.data); 
-                const profile = response.data[0]; 
+                console.log('Response data:', response.data);
+                const profile = response.data[0];
                 const { fullName, email, phone, address } = profile;
                 console.log('Profile data:', { fullName, email, phone, address });
                 if (fullName && email && phone && address) {
@@ -54,6 +54,10 @@ const CVManagerment = () => {
 
     const handleNavigateToNotifications = () => {
         navigation.navigate('NotificationScreen' as never);
+    };
+
+    const handleNavigateToManageCVsApplied = () => {
+        navigation.navigate('ManageCVsApplied' as never);
     };
 
     if (!profileData) {
@@ -103,13 +107,13 @@ const CVManagerment = () => {
                             </View>
                         )}
                     </View>
-                    <Icon name="chevron-right" size={24} color="#011F82" style={styles.infoArrow} />
+                    {/* <Icon name="chevron-right" size={24} color="#011F82" style={styles.infoArrow} /> */}
                 </View>
             </View>
 
             {/* CV Section */}
             <TouchableOpacity style={styles.cvSection} onPress={() => navigation.navigate('CVCreate', { startStep: 10 })}>
-                <Text style={styles.MyCVTitle}>CV của bạn</Text> 
+                <Text style={styles.MyCVTitle}>CV của bạn</Text>
                 <View style={styles.cvCard}>
                     <Image
                         source={{ uri: 'https://e7.pngegg.com/pngimages/205/491/png-clipart-cv-library-employment-website-curriculum-vitae-recruitment-job-others-miscellaneous-blue.png' }}
@@ -122,6 +126,10 @@ const CVManagerment = () => {
                     </View>
                     <Icon name="chevron-right" size={24} color="#011F82" />
                 </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.manageCVsButton} onPress={handleNavigateToManageCVsApplied}>
+                <Text style={styles.manageCVsButtonText}>Manage CVs Applied</Text>
             </TouchableOpacity>
 
             {/* Navigation Bar */}
@@ -270,11 +278,24 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#6D92D0',
     },
-    MyCVTitle: {    
+    MyCVTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         color: '#011F82',
         marginBottom: 16,
+    },
+    manageCVsButton: {
+        backgroundColor: '#011F82',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    manageCVsButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     navBar: {
         flexDirection: 'row',

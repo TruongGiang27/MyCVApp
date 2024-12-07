@@ -42,21 +42,71 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
 
 
 
+// Mid section (Content)
+// Job item component
+interface dataJobsIteam {
+    _id: string;
+    title: string;
+    company: string;
+    location: string;
+    salary: string;
+    jobType: string;
+    jobDescription: string;
+}
 
-const JobItem = ({ title, company, salary, location, onPress }: { title: string, company: string, salary: string, location: string, onPress: () => void }) => {
+const isJobBookmarked = async (jobId: string) => {
+    try {
+        const bookmarkedJobsString = await AsyncStorage.getItem('bookmarkedJobs');
+        const bookmarkedJobs = bookmarkedJobsString ? JSON.parse(bookmarkedJobsString) : [];
+        const validBookmarkedJobs = bookmarkedJobs.filter((job: any) => job && job._id); // Filter out invalid jobs
+        return validBookmarkedJobs.some((job: dataJobsIteam) => job._id === jobId);
+    } catch (error) {
+        console.error("Failed to check if job is bookmarked:", error);
+        return false;
+    }
+};
+
+const toggleBookmarkJob = async (job: dataJobsIteam, setIsBookmarked: (value: boolean) => void) => {
+    if (!job || !job._id) {
+        console.error("Invalid job object:", job);
+        return;
+    }
+    try {
+        const bookmarkedJobsString = await AsyncStorage.getItem('bookmarkedJobs');
+        let bookmarkedJobs = bookmarkedJobsString ? JSON.parse(bookmarkedJobsString) : [];
+        const jobIndex = bookmarkedJobs.findIndex((bookmarkedJob: dataJobsIteam) => bookmarkedJob && bookmarkedJob._id === job._id);
+
+        if (jobIndex !== -1) {
+            bookmarkedJobs.splice(jobIndex, 1);
+            setIsBookmarked(false);
+        } else {
+            bookmarkedJobs.push(job);
+            setIsBookmarked(true);
+        }
+
+        await AsyncStorage.setItem('bookmarkedJobs', JSON.stringify(bookmarkedJobs));
+    } catch (error) {
+        console.error("Failed to toggle bookmark job:", error);
+    }
+};
+
+const JobItem = ({ title, company, salary, location, onPress, job, navigation }: { title: string, company: string, salary: string, location: string, onPress: () => void, job: dataJobsIteam, navigation: any }) => {
+    const [isBookmarked, setIsBookmarked] = useState(false);
+
+    useEffect(() => {
+        const checkIfBookmarked = async () => {
+            const bookmarked = await isJobBookmarked(job._id);
+            setIsBookmarked(bookmarked);
+        };
+        checkIfBookmarked();
+    }, [job._id]);
 
     return (
         <TouchableOpacity onPress={onPress} activeOpacity={1}>
             <View style={{ paddingHorizontal: 15, paddingVertical: 0 }}>
                 <Card containerStyle={styles.cardContainer}>
-
-                    {/* {isPremium && (
-                <View style={styles.premiumTag}>
-                    <Text style={styles.premiumText}>Tuyển dụng nhiều ứng viên</Text>
-                </View>
-            )} */}
-                    <TouchableOpacity style={styles.icon}>
-                        <Icon name="bookmark" type="font-awesome" color="#666" size={25} />
+                    <TouchableOpacity style={styles.icon} onPress={() => toggleBookmarkJob(job, setIsBookmarked)}>
+                        <Icon name="bookmark" type="font-awesome" color={isBookmarked ? "#011F82" : "#666"} size={25} />
                     </TouchableOpacity>
 
                     <Text style={styles.title}>{title}</Text>
@@ -90,12 +140,17 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
     }
     const [dataJobs, setDataJobs] = useState<dataJobsIteam[]>([]);
     const [loading, setLoading] = useState(true);  // Trạng thái loading
-
+    const [userId, setUserId]= useState('');
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
             try {
                 console.log("Fetching data from:", `${BASE_URL}/jobs`);
+                const userInfoString = await AsyncStorage.getItem('userInfo');
+                const userInfo = userInfoString ? JSON.parse(userInfoString) : {};
+                setUserId(userInfo.data.user.id);
+                console.log("-------------------");
+                console.log("userInfo", userInfo.data.user.id);
                 const response = await fetch(`${BASE_URL}/jobs`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -130,7 +185,9 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
                     company={item.company}
                     salary={item.salary}
                     location={item.location}
-                    onPress={() => navigation.navigate('JobDetail', { jobId: item._id })}
+                    onPress={() => navigation.navigate('JobDetail', { jobId: item._id, userId: userId })}
+                    job={item}
+                    navigation={navigation}
                 // timePosted={item.timePosted}
                 // isPremium={item.isPremium}
                 />

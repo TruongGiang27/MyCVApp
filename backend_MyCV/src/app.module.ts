@@ -12,6 +12,7 @@ import { UserModule } from './user/user.module';
 import { CvModule } from './cv/cv.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { SearchModule } from './search/search.module';
+import { CompanyModule } from './company/company.module';
 const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryWrites=true&w=majority&appName=Admin';
 
 @Module({
@@ -25,6 +26,7 @@ const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryW
     CvModule,
     ApplicationsModule,
     SearchModule,
+    CompanyModule,
   ],
   controllers: [AppController, EmployerController],
   providers: [AppService, EmployerService],
