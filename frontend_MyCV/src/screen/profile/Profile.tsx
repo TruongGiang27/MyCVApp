@@ -12,13 +12,11 @@ import { signOut } from '../../utils/auth';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
-
 const Profile = ({ navigation, route }: Props) => {
-    const { userEmail } = route.params as { userEmail: string };
+    const { userEmail, userId } = route.params as { userEmail: string, userId: string };
     const [menuVisible, setMenuVisible] = useState(false);
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
-    const { userId } = route.params as { userId: string };
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -28,6 +26,10 @@ const Profile = ({ navigation, route }: Props) => {
             const userInfo = await AsyncStorage.getItem('userInfo');
             if (userInfo) {
                 setUser(JSON.parse(userInfo));
+                console.log("userid", userId);
+            }
+            if(user?.data?.user?.id === userId){
+                navigation.navigate('HomeEmployer', { userId: user?.data?.user?.id});
             }
         };
         getInfo();
