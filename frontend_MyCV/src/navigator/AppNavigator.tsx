@@ -18,7 +18,7 @@ import CVCreate from '../screen/User/CVCreate';
 import CVManagerment from '../screen/User/CVManagerment';
 import FavoriteJob from '../screen/User/FavoriteJob';
 import JobDetail from '../screen/User/JobDetail';
-import JobList from '../screen/User/JobList';
+import JobList1 from '../screen/User/JobList1';
 import ManageCVsApplied from '../screen/User/ManageCVsApplied';
 import MessageScreen from '../screen/User/Message';
 import { RootStackParamList } from './RootStackParamList';
@@ -38,7 +38,7 @@ const App = () => {
             <Stack.Screen name={ScreenName.ApplyManager} component={ApplyManager} />
 
             <Stack.Screen name={ScreenName.Home} component={Home} />
-            <Stack.Screen name={ScreenName.JobList} component={JobList} />
+            <Stack.Screen name={ScreenName.JobList1} component={JobList1} />
             <Stack.Screen name={ScreenName.JobDetail} component={JobDetail} />
             <Stack.Screen name={ScreenName.Profile} component={Profile} />
             <Stack.Screen name={ScreenName.CVCreate} component={CVCreate} />

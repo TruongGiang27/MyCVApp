@@ -1,12 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigator/RootStackParamList';
+import { appColors } from '../constants/appColors';
 import ScreenName from '../constants/ScreenName';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
 const Navbar = ({ route, navigation }: Props) => {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const getInfo = async () => {
+      const userInfo = await AsyncStorage.getItem('userInfo');
+      if (userInfo) {
+        setUser(JSON.parse(userInfo));
+      }
+    };
+    getInfo();
+  }, []);
+
+  const getIconColor = (screen: string) => {
+    return route.name === screen ? '#011F82' : appColors.gray; // Màu xanh cho trang hiện tại, xám cho trang khác
+  };
+
+  const getTextColor = (screen: string) => {
+    return route.name === screen ? '#011F82' : '#666'; // Tương tự như trên
+  };
+
   return (
     <View style={styles.navbar}>
       <View style={styles.group}>
@@ -25,22 +48,25 @@ const Navbar = ({ route, navigation }: Props) => {
           <Icon name="chatbox-ellipses" size={25} color="#011F82" />
           <Text style={styles.navText}>Tin nhắn</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profile')}>
-          <Icon name="person" size={25} color="#011F82" />
-          <Text style={styles.navText}>Hồ sơ</Text>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() =>
+            navigation.navigate('Profile', { userEmail: user?.data?.user?.email })
+          }
+        >
+          <Icon name="person" size={25} color={getIconColor('Profile')} />
+          <Text style={[styles.navText, { color: getTextColor('Profile') }]}>
+            Hồ sơ
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
-  )
+  );
 };
 
 export default Navbar;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
   navbar: {
     width: '100%',
     flexDirection: 'row',
@@ -57,12 +83,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   navItem: {
-
     alignItems: 'center',
-    paddingHorizontal: 10, // Adjust padding between items within each group
+    paddingHorizontal: 10,
   },
   navText: {
-    color: '#666',
     fontSize: 12,
     marginTop: 2,
   },
