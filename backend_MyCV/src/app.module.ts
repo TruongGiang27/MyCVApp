@@ -8,10 +8,10 @@ import { EmployerModule } from './employer/employer.module';
 import { EmployerService } from './employer/employer.service';
 import { Employer, EmployerSchema } from './employer/entities/employer.entity';
 import { JobsModule } from './jobs/jobs.module';
-import { SearchHistoryModule } from './search_history/search_history.module';
 import { UserModule } from './user/user.module';
 import { CvModule } from './cv/cv.module';
 import { ApplicationsModule } from './applications/applications.module';
+import { SearchModule } from './search/search.module';
 import { CompanyModule } from './company/company.module';
 const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryWrites=true&w=majority&appName=Admin';
 
@@ -22,10 +22,10 @@ const MONGODB_URI = 'mongodb+srv://giang:123@admin.9qcla.mongodb.net/demo?retryW
     AdminModule,
     EmployerModule,
     JobsModule,
-    SearchHistoryModule,
     UserModule,
     CvModule,
     ApplicationsModule,
+    SearchModule,
     CompanyModule,
   ],
   controllers: [AppController, EmployerController],

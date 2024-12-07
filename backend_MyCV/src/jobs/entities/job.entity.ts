@@ -5,13 +5,13 @@ export type JobDocument = Job & Document;
 
 @Schema()
 export class Job {
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   title: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   company: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   location: string;
 
   @Prop()
@@ -44,3 +44,4 @@ export class Job {
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
+JobSchema.index({ title: 'text', company: 'text', location: 'text' });

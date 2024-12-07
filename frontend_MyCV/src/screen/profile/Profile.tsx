@@ -9,8 +9,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { appColors } from '../../constants/appColors';
 import { signOut } from '../../utils/auth';
 import { useDispatch } from 'react-redux';
-import axios from 'axios';
-import { BASE_URL } from '../../utils/url';
+
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
@@ -26,6 +25,7 @@ type user = {
     avatar: string;
 };
 const Profile = ({ navigation, route }: Props) => {
+    const { userEmail } = route.params as { userEmail: string };
     const [menuVisible, setMenuVisible] = useState(false);
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
@@ -44,20 +44,7 @@ const Profile = ({ navigation, route }: Props) => {
             console.error('Failed to log out:', error);
         }
     };
-    const { userId } = route.params as { userId: string };
 
-    useEffect(() => {
-        const getUser = async () => {
-
-            try {
-                const res = await axios.get(`${BASE_URL}/users/${userId}`);
-                setUser(res.data);
-            } catch (error) {
-                console.error('Failed to get user:', error);
-            }
-        };
-        getUser();
-    }, [userId]);
     return (
         <View style={styles.container}>
 
@@ -81,18 +68,18 @@ const Profile = ({ navigation, route }: Props) => {
                         <Icon name="close" size={30} color="#000" />
                     </TouchableOpacity>
                     <View style={styles.menuContent}>
-                        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HomeEmployer', { userId: user._id })}>
+                        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HomeEmployer')}>
                             <Text style={styles.menuItemText}>Nhà tuyển dụng</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.menuItem}>
                             <Text style={styles.menuItemText}>Đánh giá của tôi</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.menuItem}>
-                            <Text style={styles.menuItemText}>Cài đặt</Text>
+                            <Text style={styles.menuItemText}>Cài đặt</Text>git
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.menuItem} onPress={() => signOut(dispatch)}>
                             <Text style={styles.menuItemText}>Đăng xuất</Text>
-                            <Text style={styles.menuItemText}></Text>
+                            <Text style={{fontSize:16,fontWeight:'300',paddingHorizontal: 20,marginTop:3}}>{userEmail}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

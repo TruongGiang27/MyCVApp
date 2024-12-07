@@ -1,6 +1,6 @@
 import { Card, Icon } from '@rneui/themed';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions, Platform } from 'react-native';
 import Navbar from '../../components/Navbar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
@@ -19,59 +19,28 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
     return (
         <View style={styles.header}>
             <View style={styles.searchBar}>
-                <Icon name="search" type="font-awesome" color="#373737" size={18} />
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Tìm kiếm"
-                    onChangeText={setSearchTerm}
-                    onFocus={onSearchFocus}
-                />
+                <Icon name="search" type="font-awesome" color="#373737" size={15} />
+                <TouchableOpacity
+                    style={styles.searchInput} // Dùng style cũ của TextInput
+                    onPress={onSearchFocus} // Khi nhấn, điều hướng sang màn hình tìm kiếm
+                >
+                    <Text style={{ color: '#666' }}>Nhập vị trí</Text>
+                </TouchableOpacity>
                 <View style={styles.divider} />
-                <Icon name="map-marker" type="font-awesome" color="#373737" size={18} />
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Vị trí"
-                    onChangeText={setSearchTerm}
-                    onFocus={onMapSearchFocus}
-                />
+                <Icon name="map-marker" type="font-awesome" color="#373737" size={15} />
+                <TouchableOpacity
+                    style={styles.searchInput} // Dùng style cũ của TextInput
+                    onPress={onMapSearchFocus} // Khi nhấn, điều hướng sang tìm kiếm bản đồ
+                >
+                    <Text style={{ color: '#666' }}>Vị trí</Text>
+                </TouchableOpacity>
             </View>
+            <Text style={{ fontSize: 20, fontWeight: '700', color: '#333', marginTop: 30 }}>Việc làm cho bạn</Text>
         </View>
     );
 };
 
-// Search
-const Search = ({ onCancel }: { onCancel: () => void }) => (
-    <View style={styles.searchContainer}>
-        <View style={styles.searchHeader}>
-            <TextInput
-                style={styles.fullSearchInput}
-                placeholder="Nhập từ khóa tìm kiếm"
-                autoFocus={true}  // Automatically focus when Search opens
-            />
-            <TouchableOpacity onPress={onCancel}>
-                <Text style={styles.cancelButton}>Hủy</Text>
-            </TouchableOpacity>
-        </View>
-        <Text style={styles.searchText}>Hiển thị kết quả tìm kiếm...</Text>
-    </View>
-);
 
-// Search Map
-const SearchMap = ({ onCancel }: { onCancel: () => void }) => (
-    <View style={styles.searchContainer}>
-        <View style={styles.searchHeader}>
-            <TextInput
-                style={styles.fullSearchInput}
-                placeholder="Nhập vị trí"
-                autoFocus={true}  // Automatically focus when Search Map opens
-            />
-            <TouchableOpacity onPress={onCancel}>
-                <Text style={styles.cancelButton}>Hủy</Text>
-            </TouchableOpacity>
-        </View>
-        <Text style={styles.searchText}>Hiển thị kết quả tìm kiếm trên bản đồ...</Text>
-    </View>
-);
 
 // Mid section (Content)
 // Job item component
@@ -133,8 +102,8 @@ const JobItem = ({ title, company, salary, location, onPress, job, navigation }:
     }, [job._id]);
 
     return (
-        <TouchableOpacity onPress={onPress}>
-            <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>
+        <TouchableOpacity onPress={onPress} activeOpacity={1}>
+            <View style={{ paddingHorizontal: 15, paddingVertical: 0 }}>
                 <Card containerStyle={styles.cardContainer}>
                     <TouchableOpacity style={styles.icon} onPress={() => toggleBookmarkJob(job, setIsBookmarked)}>
                         <Icon name="bookmark" type="font-awesome" color={isBookmarked ? "#011F82" : "#666"} size={25} />
@@ -267,19 +236,11 @@ const Home = ({ navigation, route }: Props) => {
     }, []);
 
     const handleSearchFocus = () => {
-        setIsSearching(true);
-        setIsMapSearching(false); // Close map search if it’s open
+        navigation.navigate('SearchSceen', { searchType: "text" }); // Điều hướng đến SearchScreen khi nhấn tìm kiếm
     };
 
     const handleMapSearchFocus = () => {
-        setIsMapSearching(true);
-        setIsSearching(false); // Close text search if it’s open
-    };
-
-    const handleCancelSearch = () => {
-        setIsSearching(false);
-        setIsMapSearching(false);
-        Keyboard.dismiss();
+        navigation.navigate('SearchSceen', { searchType: 'map' }); // Điều hướng đến SearchScreen khi nhấn tìm kiếm bản đồ
     };
     // responsive window width
     const { width } = useWindowDimensions();
@@ -290,15 +251,9 @@ const Home = ({ navigation, route }: Props) => {
                 <Image source={require('../../../assets/images/logo.png')} style={{ width: 130, height: logoWidth * 0.25 }} />
             </View>
             <View style={styles.headContainer}>
-                {isSearching ? (
-                    <Search onCancel={handleCancelSearch} />
-                ) : isMapSearching ? (
-                    <SearchMap onCancel={handleCancelSearch} />
-                ) : (
-                    <>
-                        <Content onSearchFocus={handleSearchFocus} onMapSearchFocus={handleMapSearchFocus} navigation={navigation}/>
-                    </>
-                )}
+                <>
+                    <Content onSearchFocus={handleSearchFocus} onMapSearchFocus={handleMapSearchFocus} navigation={navigation} />
+                </>
             </View>
             <View>
                 <Navbar navigation={navigation} route={route} />
@@ -321,28 +276,26 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     logo: {
-        padding: "3%",
+        paddingHorizontal: 15,
+        paddingTop: "3%",
         position: 'relative',
         height: width * 0.15,
     },
     // Top section (Header)
     header: {
-        paddingVertical: 10,
+        padding: 15,
     },
     searchBar: {
+        height: height * 0.055,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#FFFFFF',
-        borderWidth: 1,
         borderColor: '#CECECE',
         borderRadius: 9,
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
+        elevation: 4,
     },
-    searchInput: {
-        flex: 1,
-        marginLeft: 10,
-        color: '#373737',
-    },
+    
     divider: {
         width: 1,
         height: '70%',
@@ -350,6 +303,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 15,
     },
     // Search view styles
+    searchInput: {
+        flex: 1,
+        padding: 10,
+    },
     searchContainer: {
         flex: 1,
         padding: 20,
@@ -361,11 +318,10 @@ const styles = StyleSheet.create({
     },
     fullSearchInput: {
         flex: 1,
-        marginRight: 10,
-        padding: 10,
-        borderWidth: 1,
+        alignItems: 'center',
         borderColor: '#ccc',
         borderRadius: 8,
+        justifyContent: 'center',
     },
     cancelButton: {
         color: '#007AFF',
@@ -374,21 +330,16 @@ const styles = StyleSheet.create({
     searchText: {
         marginTop: 20,
         fontSize: 16,
-        textAlign: 'center',
         color: '#666',
     },
     // Mid section (Content)
     cardContainer: {
+        borderWidth: 0,
         borderRadius: 8,
-        borderWidth: 1,
         borderColor: '#ddd',
         width: '100%',
         alignSelf: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 6,
-        elevation: 3,
+        elevation: 2,
     },
     premiumTag: {
         backgroundColor: '#fdecef',
