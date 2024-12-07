@@ -1,14 +1,31 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
+import { query } from 'express';
 
 @Controller('jobs')
 export class JobsController {
-  constructor(private readonly jobsService: JobsService) {}
+  constructor(private readonly jobsService: JobsService) { }
 
   @Post()
   async create(@Body() createJobDto: CreateJobDto) {
     return this.jobsService.create(createJobDto);
+  }
+
+  //Search
+  @Get('search')
+  async search(
+    @Query('query') query?: string,
+    @Query('location') location?: string
+  ) {
+    console.log('Search query:', query);
+    console.log('Location:', location);
+    return this.jobsService.search(query, location);
+  }
+
+  @Get('suggest')
+  async suggestJobsOrCompanies(@Query('q') query: string) {
+    return this.jobsService.suggestJobsOrCompanies(query);
   }
 
   @Get()
@@ -20,6 +37,8 @@ export class JobsController {
   async findOne(@Param('id') id: string) {
     return this.jobsService.findOne(id);
   }
+
+
 
   @Put(':id')
   async update(@Param('id') id: string, @Body() createJobDto: CreateJobDto) {

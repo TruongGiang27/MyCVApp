@@ -8,23 +8,17 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { appColors } from '../../constants/appColors';
 import { signOut } from '../../utils/auth';
 import { useDispatch } from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
 const Profile = ({ navigation, route }: Props) => {
+    const { userEmail } = route.params as { userEmail: string };
     const [menuVisible, setMenuVisible] = useState(false);
     const dispatch = useDispatch();
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
-    const handleLogout = async () => {
-        try {
-            
-        } catch (error) {
-            console.error('Failed to log out:', error);
-        }
-    };
+
 
     return (
         <View style={styles.container}>
@@ -55,9 +49,9 @@ const Profile = ({ navigation, route }: Props) => {
                         <TouchableOpacity style={styles.menuItem}>
                             <Text style={styles.menuItemText}>Cài đặt</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.menuItem} onPress={()=>signOut(dispatch)}>
+                        <TouchableOpacity style={styles.menuItem} onPress={() => signOut(dispatch)}>
                             <Text style={styles.menuItemText}>Đăng xuất</Text>
-                            <Text style={styles.menuItemText}></Text>
+                            <Text style={{fontSize:16,fontWeight:'300',paddingHorizontal: 20,marginTop:3}}>{userEmail}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

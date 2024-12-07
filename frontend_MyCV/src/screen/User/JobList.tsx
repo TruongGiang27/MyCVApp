@@ -3,6 +3,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Card, Icon } from '@rneui/themed';
 import Navbar from '../../components/Navbar';
 import { BASE_URL } from '../../utils/url';
 type RootStackParamList = {
@@ -192,9 +193,10 @@ const JobList = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>MyCVApp</Text>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={25} color="#000" />
+        </TouchableOpacity>
       </View>
-
       <View style={styles.searchSection}>
         <TextInput
           placeholder="Chức danh, từ khóa hoặc công ty"
@@ -267,17 +269,16 @@ const JobList = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
     paddingTop: 20,
   },
   header: {
     flexDirection: 'row',
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: '#FFFFFF',
+  },
+  backButton: {
+    marginRight: 20,
+    padding: 10,
   },
   headerText: {
     fontSize: 20,
@@ -293,7 +294,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
     paddingHorizontal: 10,
-    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#B9D6F3',
     color: '#011F82',
