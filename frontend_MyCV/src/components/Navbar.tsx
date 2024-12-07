@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigator/RootStackParamList';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { appColors } from '../constants/appColors';
 import ScreenName from '../constants/ScreenName';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RootStackParamList } from '../navigator/RootStackParamList';
 
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
@@ -51,7 +51,7 @@ const Navbar = ({ route, navigation }: Props) => {
         <TouchableOpacity
           style={styles.navItem}
           onPress={() =>
-            navigation.navigate('Profile', { userEmail: user?.data?.user?.email })
+            navigation.navigate('Profile', { userId: user?.data?.user?.id ,userEmail: user?.data?.user?.email })
           }
         >
           <Icon name="person" size={25} color={getIconColor('Profile')} />
