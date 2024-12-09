@@ -28,8 +28,13 @@ const Profile = ({ navigation, route }: Props) => {
                 setUser(JSON.parse(userInfo));
                 console.log("userid", userId);
             }
-            if(user?.data?.user?.id === userId){
-                navigation.navigate('HomeEmployer', { userId: user?.data?.user?.id});
+            const storedUserId = await AsyncStorage.getItem('userId');
+            if (storedUserId === userId) {
+                navigation.navigate('HomeEmployer', { userId: storedUserId });
+              }
+              else {
+                // Chuyển hướng đến trang CreateEmployer và truyền userId
+                navigation.navigate('CreateEmployer', { userId });
             }
         };
         getInfo();

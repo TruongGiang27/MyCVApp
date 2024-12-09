@@ -1,7 +1,8 @@
 //Giang 
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Thêm AsyncStorage nếu cần
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+// import { RootStackParamList } from '../../navigator/RootStackParamList';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
@@ -9,16 +10,14 @@ import { Button, Card, TextInput, Title, Text } from 'react-native-paper';
 import { RootStackParamList } from '../User/types';
 import { BASE_URL } from '../../utils/url';
 // Khai báo kiểu cho props 'navigation'
-type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'CreateEmployer'
->;
 
-type Props = {
-  navigation: CreateEmployerScreenNavigationProp;
-};
+type Props = NativeStackScreenProps<RootStackParamList, 'CreateEmployer'>;
 
-const CreateEmployer: React.FC<Props> = ({ navigation }) => {
+// type Props = {
+//   navigation: CreateEmployerScreenNavigationProp;
+// };
+
+const CreateEmployer= ({ route, navigation }: Props) => {
   const [selectedCompany, setSelectedCompany] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [numberOfEmployees, setNumberOfEmployees] = useState('');
@@ -27,6 +26,7 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [describe, setDescribe] = useState('');
   const [error, setError] = useState('');
+  const { userId } = (route.params ?? { userId: '' }) as { userId: string };
 
   const handlePickerFocus = () => {
     Keyboard.dismiss();
@@ -44,7 +44,8 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
 
 
   const handleSubmit = async () => {
-  const userId = await AsyncStorage.getItem('userId'); 
+  // Lưu userId vào AsyncStorage
+  await AsyncStorage.setItem('userId', userId);
 
     if (selectedCompany && companyName && numberOfEmployees && fullName && howDidYouHear && phoneNumber && describe) {
       try {
@@ -61,7 +62,7 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
         console.log('Submitting employer data:', employerData);
         const response = await axios.post(`${BASE_URL}/employers`, employerData);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
-        navigation.navigate("HomeEmployer");
+        navigation.navigate("HomeEmployer", { userId });
       } catch (error) {
         console.error('Error creating employer:', error);
         Alert.alert('Lỗi', 'Đã có lỗi xảy ra');

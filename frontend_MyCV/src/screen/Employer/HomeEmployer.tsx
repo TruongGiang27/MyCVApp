@@ -16,7 +16,11 @@ import { BASE_URL } from '../../utils/url';
 const { width } = Dimensions.get('window');
 // types.ts
 export type RootStackParamList = {
-  HomeEmployer: undefined;
+  // HomeEmployer: undefined;
+
+  CreateEmployer: undefined;
+
+  HomeEmployer: { userId: string };
   EmployerDetail: { jobDetails: Job };
   Login: undefined;
   Home: undefined;
