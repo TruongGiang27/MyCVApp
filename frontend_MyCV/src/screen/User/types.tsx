@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import ScreenName from '../../constants/ScreenName';
 
 export type RootStackParamList = {
     //Home
@@ -24,11 +23,8 @@ export type RootStackParamList = {
     JobPost: undefined;
     Service: undefined;
     SendSMS: undefined;
-    //Admin
-
     //Component
     Navbar: undefined;
 };
-export type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
 export type TPropsLoginScreen = NativeStackScreenProps<RootStackParamList, 'Login'>;

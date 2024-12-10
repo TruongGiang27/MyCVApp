@@ -5,7 +5,7 @@ import { EmployerService } from './employer.service';
 
 @Controller('employers')
 export class EmployerController {
-  constructor(private readonly employerService: EmployerService) {}
+  constructor(private readonly employerService: EmployerService) { }
 
   @Post()
   create(@Body() createEmployerDto: CreateEmployerDto) {
@@ -32,14 +32,21 @@ export class EmployerController {
     return this.employerService.remove(id);
   }
 
-  @Get('employer_id')
-  getEmployer(@Query('employer_id') employerId: string) {
-    try{
-      return this.employerService.checkEmployer(employerId);
-    }
-    catch(error){
-      throw error;
-    }
+  // @Get('employer_id')
+  // getEmployer(@Query('employer_id') employerId: string) {
+  //   try{
+  //     return this.employerService.checkEmployer(employerId);
+  //   }
+  //   catch(error){
+  //     throw error;
+  //   }
+  // }
+
+  @Get('check-cv-employer/:userId')
+  async checkCvEmployer(@Param('userId') userId: string) {
+    const hasCv = await this.employerService.hasCvEmployer(userId);
+    return { hasCv };
   }
+
 
 }

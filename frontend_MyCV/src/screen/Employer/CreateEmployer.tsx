@@ -9,8 +9,9 @@ import { Alert, Image, Keyboard, KeyboardAvoidingView, ScrollView, StyleSheet, V
 import { Button, Card, Text, TextInput, Title } from 'react-native-paper';
 import { BASE_URL } from '../../utils/url';
 import { RootStackParamList } from '../User/types';
-import ScreenName from '../../constants/ScreenName';
+
 // Khai báo kiểu cho props 'navigation'
+export type Props = NativeStackScreenProps<RootStackParamList, 'CreateEmployer'>;
 
 
 const CreateEmployer: React.FC<Props> = ({ navigation }) => {

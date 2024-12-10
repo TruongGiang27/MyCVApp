@@ -35,25 +35,45 @@ const Profile = ({ navigation, route }: Props) => {
         };
         getInfo();
     }, []);
-    
-    const handleEmployer = async () => {
-        try {
-            const response = await axios.get(`${BASE_URL}/employers?employer_id=${userId}`);
-            setEmployer(response.data);
-            console.log("employer", employer);
 
+    const handleEmployer = async (userId: string) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/employers/check-cv-employer/${userId}`);
+            setEmployer(response.data);
+            console.log("hasCV", response.data.hasCv);
+            return response.data.hasCv; // Trả về giá trị true/false
+        } catch (error) {
+            console.error('Error checking CV:', error);
+            return false; // Default trường hợp lỗi
         }
-        catch (error) {
-            console.log(error);
-        }
-        
-        // if(user?.data?.user?.id === userId){
-        //     navigation.navigate('HomeEmployer');
+        // try {
+        //     const response = await axios.get(`${BASE_URL}/employers?employer_id=${userId}`);
+        //     setEmployer(response.data);
+        //     console.log("employer", employer);
+
         // }
-        // else if(user?.data?.user?.id !== userId){
-        //     navigation.navigate('CreateEmployer');
+        // catch (error) {
+        //     console.log(error);
         // }
+
+        // // if(user?.data?.user?.id === userId){
+        // //     navigation.navigate('HomeEmployer');
+        // // }
+        // // else if(user?.data?.user?.id !== userId){
+        // //     navigation.navigate('CreateEmployer');
+        // // }
     }
+    useEffect(() => {
+        const navigateBasedOnCv = async () => {
+            const hasCv = await handleEmployer(userId);
+            if (hasCv) {
+                navigation.navigate('HomeEmployer'); // Trang chính nếu đã có CV
+            } else {
+                navigation.navigate('CreateEmployer'); // Trang tạo CV
+            }
+        };
+        navigateBasedOnCv();
+    }, [userId]);
 
     return (
         <View style={styles.container}>
@@ -78,7 +98,7 @@ const Profile = ({ navigation, route }: Props) => {
                         <Icon name="close" size={30} color="#000" />
                     </TouchableOpacity>
                     <View style={styles.menuContent}>
-                        <TouchableOpacity style={styles.menuItem} onPress={handleEmployer}>
+                        <TouchableOpacity style={styles.menuItem} onPress={() => handleEmployer(userId)}>
                             <Text style={styles.menuItemText}>Nhà tuyển dụng</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.menuItem}>

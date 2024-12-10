@@ -54,13 +54,21 @@ export class EmployerService {
     return deletedEmployer;
   }
 
-  async checkEmployer(employerId: string): Promise<Employer> {
-    const employer = await this.employerModel.findOne({
-      userId: employerId,
-    }).exec();
-    if (!employer) {
-      throw new NotFoundException(`Employer with ID ${employerId} not found`);
-    }
-    return employer[0];
+  // async checkEmployer(employerId: string): Promise<Employer> {
+  //   const employer = await this.employerModel.findOne({
+  //     userId: employerId,
+  //   }).exec();
+  //   if (!employer) {
+  //     throw new NotFoundException(`Employer with ID ${employerId} not found`);
+  //   }
+  //   return employer[0];
+  // }
+
+  async hasCvEmployer(userId: string): Promise<boolean> {
+    const employer = await this.employerModel.findOne({ userId });
+    console.log("userid-----", userId);
+    console.log('employer:', employer);
+    return !!employer?.userId;
   }
+  
 }
