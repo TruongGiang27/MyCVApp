@@ -2,7 +2,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import 'react-native-get-random-values';
 import ScreenName from '../constants/ScreenName';
-import InforEmployers from '../screen/Admin/InforEmployers';
 import ApplyManager from '../screen/Employer/ApplyManager';
 import CreateEmployer from '../screen/Employer/CreateEmployer';
 import CVDetail from '../screen/Employer/CvDetail';
@@ -22,13 +21,13 @@ import JobList1 from '../screen/User/JobList1';
 import ManageCVsApplied from '../screen/User/ManageCVsApplied';
 import MessageScreen from '../screen/User/Message';
 import { RootStackParamList } from './RootStackParamList';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
     return (
-        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, animation: 'none' }}>
+        <Stack.Navigator initialRouteName="CreateEmployer" screenOptions={{ headerShown: false, animation: 'none' }}>
             <Stack.Screen name={ScreenName.CreateEmployer} component={CreateEmployer} />
-            <Stack.Screen name={ScreenName.InforEmployers} component={InforEmployers} />
             <Stack.Screen name={ScreenName.InforManager} component={InforManager} />
             <Stack.Screen name={ScreenName.EmployerDetail} component={EmployerDetail} />
             <Stack.Screen name={ScreenName.JobPost} component={JobPost} />

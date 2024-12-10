@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -9,6 +10,7 @@ import { appColors } from '../../constants/appColors';
 import ScreenName from '../../constants/ScreenName';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { signOut } from '../../utils/auth';
+import { BASE_URL } from '../../utils/url';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
@@ -17,6 +19,7 @@ const Profile = ({ navigation, route }: Props) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
+    const [employer, setEmployer] = useState<any>(null);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -26,14 +29,31 @@ const Profile = ({ navigation, route }: Props) => {
             const userInfo = await AsyncStorage.getItem('userInfo');
             if (userInfo) {
                 setUser(JSON.parse(userInfo));
-                console.log("userid", userId);
-            }
-            if(user?.data?.user?.id === userId){
-                navigation.navigate('HomeEmployer', { userId: user?.data?.user?.id});
+                console.log("userid////////", userId);
+                // console.log("user////////////", user?.data?.user?.id);
             }
         };
         getInfo();
     }, []);
+    
+    const handleEmployer = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/employers?employer_id=${userId}`);
+            setEmployer(response.data);
+            console.log("employer", employer);
+
+        }
+        catch (error) {
+            console.log(error);
+        }
+        
+        // if(user?.data?.user?.id === userId){
+        //     navigation.navigate('HomeEmployer');
+        // }
+        // else if(user?.data?.user?.id !== userId){
+        //     navigation.navigate('CreateEmployer');
+        // }
+    }
 
     return (
         <View style={styles.container}>
@@ -58,7 +78,7 @@ const Profile = ({ navigation, route }: Props) => {
                         <Icon name="close" size={30} color="#000" />
                     </TouchableOpacity>
                     <View style={styles.menuContent}>
-                        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HomeEmployer', { userId: user?.data?.user?.id})}>
+                        <TouchableOpacity style={styles.menuItem} onPress={handleEmployer}>
                             <Text style={styles.menuItemText}>Nhà tuyển dụng</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.menuItem}>

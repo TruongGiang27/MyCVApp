@@ -1,9 +1,10 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Picker } from '@react-native-picker/picker';
 import { NavigationProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import axios from 'axios';
-import React, { useEffect, useCallback, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated, Dimensions, Image,
   Keyboard,
@@ -41,6 +42,21 @@ const HomeEmployer = () => {
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [userInfo, setUserInfo] = useState<any>(null);
   const [visibleCount, setVisibleCount] = useState(2); // Start by showing 5 jobs
+  const [user, setUser] = useState<any>(null);
+  
+  useEffect(() => {
+    const getInfo = async () => {
+        const userInfo = await AsyncStorage.getItem('userInfo');
+        if (userInfo) {
+            setUser(JSON.parse(userInfo));
+            console.log("------------------");
+            console.log("userInfo", userInfo);
+        }
+      };
+      getInfo();
+  }, []);
+
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -164,8 +180,6 @@ const HomeEmployer = () => {
       console.error(error);
     }
   };
-const {userId} = route.params as {userId: string};
-console.log(userId);
 
   return (
     <View style={styles.container}>
