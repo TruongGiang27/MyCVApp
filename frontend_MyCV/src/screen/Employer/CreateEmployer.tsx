@@ -46,7 +46,7 @@ const CreateEmployer= ({ route, navigation }: Props) => {
   const handleSubmit = async () => {
   // Lưu userId vào AsyncStorage
   await AsyncStorage.setItem('userId', userId);
-
+  console.log("userId saved to AsyncStorage:", userId);
     if (selectedCompany && companyName && numberOfEmployees && fullName && howDidYouHear && phoneNumber && describe) {
       try {
         const employerData = {
@@ -61,6 +61,7 @@ const CreateEmployer= ({ route, navigation }: Props) => {
         };
         console.log('Submitting employer data:', employerData);
         const response = await axios.post(`${BASE_URL}/employers`, employerData);
+        console.log("Employer created with userId:", userId);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
         navigation.navigate("HomeEmployer", { userId });
       } catch (error) {

@@ -9,6 +9,7 @@ import { appColors } from '../../constants/appColors';
 import ScreenName from '../../constants/ScreenName';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { signOut } from '../../utils/auth';
+
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
@@ -17,25 +18,21 @@ const Profile = ({ navigation, route }: Props) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
+
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
 
     useEffect(() => {
         const getInfo = async () => {
-            const userInfo = await AsyncStorage.getItem('userInfo');
+            const userInfo = await AsyncStorage.getItem('userInfo'); // lấy userInfo từ AsyncStorage
             if (userInfo) {
                 setUser(JSON.parse(userInfo));
                 console.log("userid", userId);
             }
-            const storedUserId = await AsyncStorage.getItem('userId');
-            if (storedUserId === userId) {
-                navigation.navigate('HomeEmployer', { userId: storedUserId });
-              }
-              else {
-                // Chuyển hướng đến trang CreateEmployer và truyền userId
-                navigation.navigate('CreateEmployer', { userId });
-            }
+            const storedUserId = await AsyncStorage.getItem('userId'); // lấy userId từ AsyncStorage
+            console.log("Stored userId from AsyncStorage:", storedUserId);
+            console.log("userId from route params:", userId);
         };
         getInfo();
     }, []);
@@ -63,7 +60,21 @@ const Profile = ({ navigation, route }: Props) => {
                         <Icon name="close" size={30} color="#000" />
                     </TouchableOpacity>
                     <View style={styles.menuContent}>
-                        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HomeEmployer', { userId: user?.data?.user?.id })}>
+                        <TouchableOpacity
+                            style={styles.menuItem}
+                            onPress={async () => {
+                                try {
+                                    const storedUserId = await AsyncStorage.getItem('userId');
+                                    if (storedUserId) {
+                                        navigation.navigate('HomeEmployer', { userId: storedUserId });
+                                    } else {
+                                        navigation.navigate('CreateEmployer', { userId: user?.data?.user?.id });
+                                    }
+                                } catch (error) {
+                                    console.error('Error checking userId:', error);
+                                }
+                            }}
+                        >
                             <Text style={styles.menuItemText}>Nhà tuyển dụng</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.menuItem}>
