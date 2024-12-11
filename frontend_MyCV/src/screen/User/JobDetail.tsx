@@ -60,6 +60,7 @@ const JobDetail = () => {
     setIsModalVisible(false);
     try {
       const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
+      console.log('user ID:', userId);
       console.log('CVs:', response.data);
       const cv = response.data; // Assuming the first CV is the one to be used
       if (cv) {
