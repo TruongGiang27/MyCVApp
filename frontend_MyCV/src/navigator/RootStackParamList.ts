@@ -6,8 +6,8 @@ export type RootStackParamList = {
     HomeEmployer: {userId: string};
     Profile: {userId:string, userEmail: string };
     JobPost: undefined;
-    JobList1: { location: string, query: string };
-    SearchSceen: { searchType: string };
+    JobList: { location?: string, query: string };
+    SearchScreen: { searchType: string };
     CVCreate: undefined;
     MessageScreen: undefined;
     CvDetail: undefined;
@@ -15,7 +15,7 @@ export type RootStackParamList = {
     InforManager: undefined;
     EmployerDetail: { jobId: string };
     CVManagerment: undefined;
-    JobDetail: { jobId: string, userId: string };
+    JobDetail: { jobId: string};
     ManageCVsApplied: undefined;
     FavoriteJob: undefined;
     CVDetail: {cvId: string};

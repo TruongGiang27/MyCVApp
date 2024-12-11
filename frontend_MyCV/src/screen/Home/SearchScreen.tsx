@@ -1,13 +1,13 @@
 // SearchScreen.tsx
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, ScrollView, KeyboardAvoidingView } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { appColors } from '../../constants/appColors';
-import { Icon } from '@rneui/themed';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigator/RootStackParamList';
+import { Icon } from '@rneui/themed';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { FlatList, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { appColors } from '../../constants/appColors';
 import ScreenName from '../../constants/ScreenName';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
 
 const MAX_HISTORY = 10;
@@ -33,6 +33,7 @@ const majorCities = [
     { code: '31', name: 'Hải Phòng', type: 'city' },
     { code: '74', name: 'Bình Dương', type: 'city' },
 ];
+
 const Search = ({ navigation }: { navigation: any }) => {
     const [history, setHistory] = useState<SearchHistoryItem[]>([]);
     const [suggestions, setSuggestions] = useState<any[]>([]); // Gợi ý từ API
@@ -114,9 +115,9 @@ const Search = ({ navigation }: { navigation: any }) => {
                         onPress={() => {
                             const selectedQuery = item.title || item.query;
                             setQuery(selectedQuery);
-                            navigation.navigate('JobList1', {
+                            navigation.navigate('JobList', {
                                 query: selectedQuery,
-                                type: item.type,})
+                                location: '',})
                         }}
                     >
                         <View
@@ -224,7 +225,7 @@ const SearchMap = ({ onMapSearchSubmit, navigation }: { onMapSearchSubmit: (loca
         };
         saveSearchHistory(newHistoryItem);
         onMapSearchSubmit(item.name);
-        navigation.navigate('JobList1', { location: item.name });
+        navigation.navigate('JobList', { location: item.name, query: '' });
     };
     const handleSearch = (query: string) => {
         setSearchQuery(query);
@@ -317,8 +318,10 @@ const SearchScreen = ({ route, navigation }: { route: any, navigation: any }) =>
     };
 
     const handleMapSearchSubmit = (location: string) => {
-        navigation.navigate('JobList1', { location: location });
+        console.log('Location:', location);
+        // navigation.navigate('JobList', { location: location });
     }
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>

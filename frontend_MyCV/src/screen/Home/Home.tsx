@@ -22,7 +22,7 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
                     style={styles.searchInput} // Dùng style cũ của TextInput
                     onPress={onSearchFocus} // Khi nhấn, điều hướng sang màn hình tìm kiếm
                 >
-                    <Text style={{ color: '#666' }}>Nhập vị trí</Text>
+                    <Text style={{ color: '#666', height:'70%', width:'100%'}}>Nhập công việc, từ khóa</Text>
                 </TouchableOpacity>
                 <View style={styles.divider} />
                 <Icon name="map-marker" type="font-awesome" color="#373737" size={15} />
@@ -234,11 +234,11 @@ const Home = ({ navigation, route }: Props) => {
     }, []);
 
     const handleSearchFocus = () => {
-        navigation.navigate('SearchSceen', { searchType: "text" }); // Điều hướng đến SearchScreen khi nhấn tìm kiếm
+        navigation.navigate('SearchScreen', { searchType: "text" }); // Điều hướng đến SearchScreen khi nhấn tìm kiếm
     };
 
     const handleMapSearchFocus = () => {
-        navigation.navigate('SearchSceen', { searchType: 'map' }); // Điều hướng đến SearchScreen khi nhấn tìm kiếm bản đồ
+        navigation.navigate('SearchScreen', { searchType: 'map' }); // Điều hướng đến SearchScreen khi nhấn tìm kiếm bản đồ
     };
     // responsive window width
     const { width } = useWindowDimensions();

@@ -46,7 +46,7 @@ interface cv_form {
     };
 }
 
-type Props = NativeStackScreenProps<RootStackParamList,'CVDetail'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'CVDetail'>;
 
 const CVDetail: React.FC<Props> = ({ navigation }) => {
     const [cv, setCv] = useState<cv_form>();

@@ -20,11 +20,11 @@ import { BASE_URL } from '../../utils/url';
 
 const { width } = Dimensions.get('window');
 // types.ts
-type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+type Props = NativeStackScreenProps<RootStackParamList, 'HomeEmployer'>;
 
 interface Job {
   deadline: string;
-  id: string;
+  _id: string;
   title: string;
   company: string;
   location: string;
@@ -168,6 +168,8 @@ const HomeEmployer = ({navigation, route} : Props) => {
     }
   };
 
+  console.log("data-----", filteredData)
+
   return (
     <View style={styles.container}>
       <StatusBar />
@@ -286,7 +288,7 @@ const HomeEmployer = ({navigation, route} : Props) => {
           <TouchableOpacity
             key={index}
             style={styles.card}
-            onPress={() => navigation.navigate('EmployerDetail', { jobId: item.id })}
+            onPress={() => navigation.navigate('EmployerDetail', { jobId: item._id})}
           >
             <View style={styles.infoRow}>
               <Icon name="work-outline" size={20} color="#011F82" style={styles.icon} />

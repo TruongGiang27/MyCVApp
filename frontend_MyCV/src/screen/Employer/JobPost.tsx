@@ -16,11 +16,10 @@ import RootStackParamList from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
 
 // Khai báo kiểu cho props 'navigation'
-type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+type Props = NativeStackScreenProps<RootStackParamList, 'JobPost'>;
 
 const JobPost = ({ navigation }: Props) => {
     const route = useRoute();
-    const [date, setDate] = useState<Date | undefined>(undefined);
     const [show, setShow] = useState<boolean>(false);
     const [showDataJob, setShowDataJob] = useState<boolean>(false);
     const [title, setTitle] = useState<string>('');
@@ -30,6 +29,13 @@ const JobPost = ({ navigation }: Props) => {
     const [jobDescription, setJobDescription] = useState<string>('');
     const [user, setUser] = useState<any>(null);
     const [companyName, setCompanyName] = useState<string>('');
+    const [requirement, setRequirement] = useState<string>('');
+    const [benefits, setBenefits] = useState<string>('');
+    const [experience, setExperience] = useState<string>('');
+    const [education, setEducation] = useState<string>('');
+    const [quantity, setQuantity] = useState<number>(1);
+    const [deadline, setDeadline] = useState<Date | undefined>(undefined);
+    const [gender, setGender] = useState<string>('');
     useEffect(() => {
         const getInfo = async () => {
             const userInfo = await AsyncStorage.getItem('userInfo');
@@ -43,9 +49,9 @@ const JobPost = ({ navigation }: Props) => {
         getInfo();
     }, []);
     const onChange = (event: any, selectedDate?: Date) => {
-        const currentDate = selectedDate || date;
+        const currentDate = selectedDate || deadline;
         setShow(Platform.OS === 'ios');
-        setDate(currentDate);
+        setDeadline(currentDate);
     };
     const BackHandler = () => {
         navigation.goBack();
@@ -59,8 +65,14 @@ const JobPost = ({ navigation }: Props) => {
         setShow(true);
     };
 
+    const formatDate = (date: Date): string => {
+        return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    };
+
+
+
     const handleSubmit = async () => {
-        if (title && companyName && locationCity && salary && jobType && jobDescription.length > 30) {
+        if (title && companyName && locationCity && requirement && benefits && salary && deadline && experience && education && quantity && gender && jobType && jobDescription.length > 30) {
             try {
                 const JobsData = {
                     userId: user.data.user.id,
@@ -68,13 +80,23 @@ const JobPost = ({ navigation }: Props) => {
                     companyName,
                     location: locationCity,
                     salary,
+                    requirement,
+                    benefits,
+                    additionalInfo: {
+                        deadline: deadline ? deadline.toISOString() : new Date().toISOString(),
+                        experience: '1 năm',
+                        education: 'Đại học',
+                        quantity: 1,
+                        gender: 'Nam',
+                    },
                     jobType,
                     jobDescription,
+                    status: 'Mở',
                 };
                 console.log('Submitting employer data:', JobsData);
                 const response = await axios.post(`${BASE_URL}/jobs`, JobsData);
                 Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
-                navigation.navigate('HomeEmployer', { userId: user.data.user.id});
+                navigation.navigate('HomeEmployer', { userId: user.data.user.id });
             } catch (error) {
                 console.error('Error creating employer:', error);
                 Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
@@ -153,11 +175,11 @@ const JobPost = ({ navigation }: Props) => {
                                 itemStyle={styles.pickerItem}
                                 mode='dialog'>
                                 <Picker.Item label="Chọn một mức lương" value="choose" />
-                                <Picker.Item label="$1000 - $1500" value="salary" />
-                                <Picker.Item label="$1500 - $2000" value="salary" />
-                                <Picker.Item label="$2500 - $3000" value="salary" />
-                                <Picker.Item label="$3500 - $4000" value="salary" />
-                                <Picker.Item label="Bàn bạc sau" value="salary" />
+                                <Picker.Item label="$1000 - $1500" value="$1000 - $1500" />
+                                <Picker.Item label="$1500 - $2000" value="$1500 - $2000" />
+                                <Picker.Item label="$2500 - $3000" value="$2500 - $3000" />
+                                <Picker.Item label="$3500 - $4000" value="$3500 - $4000" />
+                                <Picker.Item label="Bàn bạc sau" value="Bàn bạc sau" />
                             </Picker>
                         </View>
                         <View style={styles.inputRow}>
@@ -175,11 +197,11 @@ const JobPost = ({ navigation }: Props) => {
                             <Text style={styles.label}>Ngày hết hạn</Text>
                         </View>
                         <Text onPress={showDatePicker} style={styles.textinput}>
-                            {date ? date.toLocaleDateString() : "dd/mm/yyyy"}
+                            {deadline ? formatDate(deadline) : "dd/mm/yyyy"}
                         </Text>
                         {show && (
                             <DateTimePicker
-                                value={date || new Date()}
+                                value={deadline || new Date()}
                                 mode="date"
                                 display="calendar"
                                 onChange={onChange}
@@ -196,6 +218,75 @@ const JobPost = ({ navigation }: Props) => {
                             multiline={true}
                             textAlignVertical='top'
                             onChangeText={setJobDescription}
+                        />
+
+                        <View style={styles.inputRow}>
+                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <Text style={styles.label}>Yêu cầu công việc</Text>
+                        </View>
+                        <TextInput
+                            style={styles.textinput}
+                            placeholder='Yêu cầu công việc'
+                            multiline={true}
+                            textAlignVertical='top'
+                            onChangeText={setRequirement}
+                        />
+
+                        <View style={styles.inputRow}>
+                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <Text style={styles.label}>Quyền lợi</Text>
+                        </View>
+
+                        <TextInput
+                            style={styles.textinput}
+                            placeholder='Quyền lợi'
+                            multiline={true}
+                            textAlignVertical='top'
+                            onChangeText={setBenefits}
+                        />
+
+                        <View style={styles.inputRow}>
+                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <Text style={styles.label}>Kinh nghiệm</Text>
+                        </View>
+
+                        <TextInput
+                            style={styles.textinput}
+                            placeholder='Kinh nghiệm'
+                            onChangeText={setExperience}
+                        />
+
+                        <View style={styles.inputRow}>
+                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <Text style={styles.label}>Trình độ</Text>
+                        </View>
+
+                        <TextInput
+                            style={styles.textinput}
+                            placeholder='Trình độ'
+                            onChangeText={setEducation}
+                        />
+
+                        <View style={styles.inputRow}>
+                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <Text style={styles.label}>Số lượng nhân viên</Text>
+                        </View>
+
+                        <TextInput
+                            style={styles.textinput}
+                            placeholder='Số lượng nhân viên'
+                            onChangeText={(text) => setQuantity(parseInt(text))}
+                        />
+
+                        <View style={styles.inputRow}>
+                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <Text style={styles.label}>Giới tính</Text>
+                        </View>
+
+                        <TextInput
+                            style={styles.textinput}
+                            placeholder='Giới tính'
+                            onChangeText={setGender}
                         />
                     </View>
 

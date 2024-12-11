@@ -29,7 +29,7 @@ const FavoriteJob = () => {
     loadBookmarkedJobs();
   }, []);
 
-  const renderJobItem = ({ item }: { item: { _id: string; title: string; company: string; location: string; salary: string; status: string; } }) => (
+  const renderJobItem = ({ item }: { item: { _id: string; title: string; company: string; location: string; salary: string; status: string } }) => (
     <View style={styles.jobCard}>
       <Text style={styles.jobTitle}>{item.title}</Text>
       <Text style={styles.company}>{item.company}</Text>
@@ -38,7 +38,7 @@ const FavoriteJob = () => {
       <Text style={[styles.status, item.status === 'Mở' ? styles.open : styles.closed]}>
         Trạng thái: {item.status}
       </Text>
-      <TouchableOpacity style={styles.detailButton} onPress={() => navigation.navigate('JobDetail' as never, { jobId: item._id } as never)}>
+      <TouchableOpacity style={styles.detailButton} onPress={() => navigation.navigate('JobDetail', { jobId: item._id })}>
         <Text style={styles.detailButtonText}>Xem chi tiết</Text>
       </TouchableOpacity>
     </View>
