@@ -1,9 +1,10 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Picker } from '@react-native-picker/picker';
 import { NavigationProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import axios from 'axios';
-import React, { useEffect, useCallback, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated, Dimensions, Image,
   Keyboard,
@@ -45,38 +46,28 @@ const HomeEmployer = () => {
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [userInfo, setUserInfo] = useState<any>(null);
   const [visibleCount, setVisibleCount] = useState(2); // Start by showing 5 jobs
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get(`${BASE_URL}/jobs`);
-  //       setAllJobs(response.data);  // lưu dữ liệu gốc
-  //       setJobs(response.data); // lưu dữ liệu hiển thị
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
-  const fetchJobsByCompany = async (company : string) => {
-    try {
-      const response = await axios.get(`${BASE_URL}/jobs?company=${encodeURIComponent(company)}`);
-      setAllJobs(response.data); // Lưu tất cả công việc thuộc công ty
-      setJobs(response.data); // Hiển thị công việc đã lọc
-    } catch (error) {
-      console.error('Error fetching company jobs:', error);
-    }
-  };
-  console.log('Company jobs:', jobs);
-
-// Lấy thông tin user khi đã đăng nhập
+  const [user, setUser] = useState<any>(null);
+  
   useEffect(() => {
-    if (userInfo) {
-      fetchJobsByCompany(userInfo.company);
-    } else {
-      setJobs([]); // Hoặc hiển thị thông báo cần đăng nhập
-    }
-  }, [userInfo]);
+    const getInfo = async () => {
+        const userInfo = await AsyncStorage.getItem('userInfo');
+        if (userInfo) {
+            setUser(JSON.parse(userInfo));
+            console.log("------------------");
+            console.log("userInfo", userInfo);
+        }
+      };
+      getInfo();
+  }, []);
+
+  
+  // useEffect(() => {
+  //   if (userInfo) {
+  //     fetchJobsByCompany(userInfo.company);
+  //   } else {
+  //     setJobs([]); // Hoặc hiển thị thông báo cần đăng nhập
+  //   }
+  // }, [userInfo]);
   
   // Hàm tải dữ liệu từ API
   const fetchJobs = async () => {
@@ -188,8 +179,6 @@ const HomeEmployer = () => {
       console.error(error);
     }
   };
-const {userId} = route.params as {userId: string};
-console.log(userId);
 
   return (
     <View style={styles.container}>

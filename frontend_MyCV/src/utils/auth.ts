@@ -11,6 +11,7 @@ export const signIn = async (dispatch: Dispatch) => {
         await GoogleSignin.hasPlayServices();
         const userInfo = await GoogleSignin.signIn();
         await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+        console.log("user----------------",userInfo);
         dispatch(login(userInfo));
     } catch (error: any) {
         if (error.code === statusCodes.SIGN_IN_CANCELLED) {

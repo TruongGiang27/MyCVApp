@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import axios from 'axios';
 import { Model } from 'mongoose';
-import { Employer } from './entities/employer.entity';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
-import axios from 'axios';
+import { Employer } from './entities/employer.entity';
 
 const API_URL = 'http://localhost:3000/employer';
 
@@ -53,4 +53,22 @@ export class EmployerService {
     }
     return deletedEmployer;
   }
+
+  // async checkEmployer(employerId: string): Promise<Employer> {
+  //   const employer = await this.employerModel.findOne({
+  //     userId: employerId,
+  //   }).exec();
+  //   if (!employer) {
+  //     throw new NotFoundException(`Employer with ID ${employerId} not found`);
+  //   }
+  //   return employer[0];
+  // }
+
+  async hasCvEmployer(userId: string): Promise<boolean> {
+    const employer = await this.employerModel.findOne({ userId });
+    console.log("userid-----", userId);
+    console.log('employer:', employer);
+    return !!employer?.userId;
+  }
+  
 }

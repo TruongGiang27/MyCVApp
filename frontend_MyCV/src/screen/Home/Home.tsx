@@ -1,20 +1,19 @@
-import { Card, Icon } from '@rneui/themed';
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions, Platform } from 'react-native';
-import Navbar from '../../components/Navbar';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigator/RootStackParamList';
-import ScreenName from '../../constants/ScreenName';
-import { BASE_URL } from '../../utils/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Card, Icon } from '@rneui/themed';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import Navbar from '../../components/Navbar';
+import ScreenName from '../../constants/ScreenName';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
+import { BASE_URL } from '../../utils/url';
 
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void, onMapSearchFocus: () => void }) => {
-    const [searchTerm, setSearchTerm] = useState('');
 
     return (
         <View style={styles.header}>
@@ -219,9 +218,9 @@ const Home = ({ navigation, route }: Props) => {
                 const userInfoString = await AsyncStorage.getItem('userInfo');
                 if (userInfoString) {
                     const userInfo = await JSON.parse(userInfoString);
-
+                    console.log("userInfo//////", userInfo);
                     await axios.post(`${BASE_URL}/user/create-or-update`, {
-                        googleId: userInfo.data.user.id,
+                        userId: userInfo.data.user.id,
                         name: userInfo.data.user.name,
                         email: userInfo.data.user.email,
                         avatar: userInfo.data.user.photo,

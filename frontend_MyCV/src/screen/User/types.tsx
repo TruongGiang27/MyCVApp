@@ -23,9 +23,6 @@ export type RootStackParamList = {
     JobPost: undefined;
     Service: undefined;
     SendSMS: undefined;
-    //Admin
-    InforEmloyer: undefined;
-
     //Component
     Navbar: undefined;
 };

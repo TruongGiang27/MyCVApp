@@ -1,23 +1,21 @@
 //Giang 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Thêm AsyncStorage nếu cần
+import { useRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-// import { RootStackParamList } from '../../navigator/RootStackParamList';
 import axios from 'axios';
-import React, { useState } from 'react';
-import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
-import { Button, Card, TextInput, Title, Text } from 'react-native-paper';
-import { RootStackParamList } from '../User/types';
+import React, { useEffect, useState } from 'react';
+import { Alert, Image, Keyboard, KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
+import { Button, Card, Text, TextInput, Title } from 'react-native-paper';
 import { BASE_URL } from '../../utils/url';
+import { RootStackParamList } from '../User/types';
+
 // Khai báo kiểu cho props 'navigation'
+export type Props = NativeStackScreenProps<RootStackParamList, 'CreateEmployer'>;
 
-type Props = NativeStackScreenProps<RootStackParamList, 'CreateEmployer'>;
 
-// type Props = {
-//   navigation: CreateEmployerScreenNavigationProp;
-// };
-
-const CreateEmployer= ({ route, navigation }: Props) => {
+const CreateEmployer: React.FC<Props> = ({ navigation }) => {
+  const route = useRoute();
   const [selectedCompany, setSelectedCompany] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [numberOfEmployees, setNumberOfEmployees] = useState('');
@@ -26,7 +24,20 @@ const CreateEmployer= ({ route, navigation }: Props) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [describe, setDescribe] = useState('');
   const [error, setError] = useState('');
-  const { userId } = (route.params ?? { userId: '' }) as { userId: string };
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const getInfo = async () => {
+      const userInfo = await AsyncStorage.getItem('userInfo');
+      if (userInfo) {
+        setUser(JSON.parse(userInfo));
+        console.log("------------------");
+        console.log("userInfo", userInfo);
+        console.log("user", user);
+      }
+    };
+    getInfo();
+  }, []);
 
   const handlePickerFocus = () => {
     Keyboard.dismiss();
@@ -44,13 +55,10 @@ const CreateEmployer= ({ route, navigation }: Props) => {
 
 
   const handleSubmit = async () => {
-  // Lưu userId vào AsyncStorage
-  await AsyncStorage.setItem('userId', userId);
-  console.log("userId saved to AsyncStorage:", userId);
     if (selectedCompany && companyName && numberOfEmployees && fullName && howDidYouHear && phoneNumber && describe) {
       try {
         const employerData = {
-          userId, // Lấy userId từ AsyncStorage
+          userId: user.data.user.id,
           selectedCompany,
           companyName,
           numberOfEmployees,
@@ -59,11 +67,10 @@ const CreateEmployer= ({ route, navigation }: Props) => {
           phoneNumber,
           describe,
         };
+
         console.log('Submitting employer data:', employerData);
-        const response = await axios.post(`${BASE_URL}/employers`, employerData);
-        console.log("Employer created with userId:", userId);
+        await axios.post(`${BASE_URL}/employers`, employerData);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
-        navigation.navigate("HomeEmployer", { userId });
       } catch (error) {
         console.error('Error creating employer:', error);
         Alert.alert('Lỗi', 'Đã có lỗi xảy ra');
@@ -93,21 +100,18 @@ const CreateEmployer= ({ route, navigation }: Props) => {
           <Text style={styles.subtitle}>Bạn chưa đăng việc làm nào trước đây, vì vậy bạn cần tạo một tài khoản nhà tuyển dụng.*</Text>
           <Card style={styles.card}>
             <Card.Content>
-              <Title style={styles.subtitle}>Loại công ty</Title>
+              <Title style={styles.subtitle}>Chọn loại công ty</Title>
               <Picker
                 selectedValue={selectedCompany}
-                onValueChange={(itemValue: string) => setSelectedCompany(itemValue)}
+                onValueChange={(itemValue: string, itemIndex: number) => setSelectedCompany(itemValue)}
                 onFocus={handlePickerFocus}
                 style={styles.picker}
                 itemStyle={styles.pickerItem}
               >
                 <Picker.Item label="Chọn một tùy chọn" value="choose" />
-                <Picker.Item label="Công ty phần mềm" value="software" />
-                <Picker.Item label="Công ty bảo hiểm" value="insurance" />
-                <Picker.Item label="Công ty y tế" value="healthcare" />
-                <Picker.Item label="Công ty sản xuất" value="manufacturing" />
-                <Picker.Item label="Công ty xây dựng" value="construction" />
-                <Picker.Item label="Công ty thực phẩm" value="food" />
+                <Picker.Item label="Bảo hiểm" value="Bảo hiểm" />
+                <Picker.Item label="Công Nghệ" value="Công Nghệ" />
+                <Picker.Item label="Y tế" value="Y tế" />
               </Picker>
               <Title style={styles.subtitle}>Tên của công ty</Title>
               <TextInput
@@ -186,6 +190,16 @@ const CreateEmployer= ({ route, navigation }: Props) => {
                 mode="outlined"
                 theme={{ colors: { primary: '#011F82', outline: '#6D92D0' } }}
               />
+              <Title style={styles.subtitle}>Mô tả công ty</Title>
+              <Text style={styles.describe}>Mô tả ngắn về công ty của bạn</Text>
+              <TextInput
+                label="Mô tả công ty"
+                value={describe}
+                onChangeText={setDescribe}
+                style={styles.input}
+                textColor='#6D92D0'
+                mode="outlined"
+                theme={{ colors: { primary: '#011F82', outline: '#6D92D0' } }} />
               {error ? <Text style={styles.error}>{error}</Text> : null}
               <Title style={styles.subtitle}>Mô tả về công ty</Title>
               <TextInput
