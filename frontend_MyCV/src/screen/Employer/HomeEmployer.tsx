@@ -169,7 +169,13 @@ const HomeEmployer = ({navigation, route} : Props) => {
   };
 
   console.log("data-----", filteredData)
-
+  if(!jobs) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text>Không có việc làm nào!! Hãy tạo bài đăng việc làm mới!</Text>
+      </View>
+    )
+  }
   return (
     <View style={styles.container}>
       <StatusBar />
