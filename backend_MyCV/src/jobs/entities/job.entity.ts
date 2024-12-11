@@ -6,10 +6,13 @@ export type JobDocument = Job & Document;
 @Schema()
 export class Job {
   @Prop({ required: true, index: true })
+  userId: string;
+  
+  @Prop({ required: true, index: true })
   title: string;
 
   @Prop({ required: true, index: true })
-  company: string;
+  companyName: string;
 
   @Prop({ required: true, index: true })
   location: string;

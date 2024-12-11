@@ -1,9 +1,9 @@
 
 export type RootStackParamList = {
-    Home:undefined;
+    Home:{userId: string};
     Login: undefined;
     CreateEmployer: undefined;
-    HomeEmployer:undefined;
+    HomeEmployer: {userId: string};
     Profile: {userId:string, userEmail: string };
     JobPost: undefined;
     JobList1: { location: string, query: string };

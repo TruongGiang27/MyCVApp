@@ -46,28 +46,12 @@ const Profile = ({ navigation, route }: Props) => {
             console.error('Error checking CV:', error);
             return false; // Default trường hợp lỗi
         }
-        // try {
-        //     const response = await axios.get(`${BASE_URL}/employers?employer_id=${userId}`);
-        //     setEmployer(response.data);
-        //     console.log("employer", employer);
-
-        // }
-        // catch (error) {
-        //     console.log(error);
-        // }
-
-        // // if(user?.data?.user?.id === userId){
-        // //     navigation.navigate('HomeEmployer');
-        // // }
-        // // else if(user?.data?.user?.id !== userId){
-        // //     navigation.navigate('CreateEmployer');
-        // // }
     }
     useEffect(() => {
         const navigateBasedOnCv = async () => {
             const hasCv = await handleEmployer(userId);
             if (hasCv) {
-                navigation.navigate('HomeEmployer'); // Trang chính nếu đã có CV
+                navigation.navigate('HomeEmployer', {userId}); // Trang chính nếu đã có CV
             } else {
                 navigation.navigate('CreateEmployer'); // Trang tạo CV
             }

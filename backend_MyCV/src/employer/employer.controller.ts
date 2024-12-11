@@ -32,16 +32,6 @@ export class EmployerController {
     return this.employerService.remove(id);
   }
 
-  // @Get('employer_id')
-  // getEmployer(@Query('employer_id') employerId: string) {
-  //   try{
-  //     return this.employerService.checkEmployer(employerId);
-  //   }
-  //   catch(error){
-  //     throw error;
-  //   }
-  // }
-
   @Get('check-cv-employer/:userId')
   async checkCvEmployer(@Param('userId') userId: string) {
     const hasCv = await this.employerService.hasCvEmployer(userId);
