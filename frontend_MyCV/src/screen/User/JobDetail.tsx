@@ -56,7 +56,7 @@ const JobDetail = ({ navigation, route }: Props)=> {
 
       {/* Company and Location */}
       <View style={styles.companyInfo}>
-        <Text style={styles.companyName}>{jobDetail.company}</Text>
+        <Text style={styles.companyName}>{jobDetail.companyName}</Text>
         <Text style={styles.location}>{jobDetail.location}</Text>
       </View>
 
@@ -82,7 +82,7 @@ const JobDetail = ({ navigation, route }: Props)=> {
       {/* Requirements */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Yêu cầu công việc</Text>
-        <Text style={styles.description}>{jobDetail.requirements}</Text>
+        <Text style={styles.description}>{jobDetail.requirement}</Text>
       </View>
 
       {/* Benefits */}
@@ -132,7 +132,7 @@ const JobDetail = ({ navigation, route }: Props)=> {
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>Bạn có chắc chắn muốn ứng tuyển ngay?</Text>
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.modalButton} onPress={()=> navigation.navigate('Profile',{userId: userId, userEmail: userEmail, jobId: jobId, jobName: jobDetail.title })}>
+              <TouchableOpacity style={styles.modalButton} onPress={()=> navigation.navigate('Profile',{userId: userId, userEmail: userEmail, jobId: jobId, jobName: jobDetail.title, updated: false})}>
                 <Text style={styles.modalButtonText}>Xác nhận</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.modalButton} onPress={cancelApplyNow}>
@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
     textAlign: 'center',
+    color: '#011F82',
   },
   modalButtons: {
     flexDirection: 'row',

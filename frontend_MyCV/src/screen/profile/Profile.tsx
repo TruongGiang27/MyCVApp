@@ -56,7 +56,7 @@ interface CV {
 }
 
 const Profile = ({ navigation, route }: Props) => {
-    const { userEmail, userId, jobId, jobName } = route.params as { userEmail: string, userId: string, jobId: string, jobName: string };
+    const { userEmail, userId, jobId, jobName, updated } = route.params as { userEmail: string, userId: string, jobId: string, jobName: string, updated?: boolean };
     const [menuVisible, setMenuVisible] = useState(false);
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
@@ -105,8 +105,28 @@ const Profile = ({ navigation, route }: Props) => {
     }, [userId]);
 
     useEffect(() => {
+        if (updated) {
+            // Gọi lại API để lấy danh sách CV mới nhất
+            const fetchUpdatedCVs = async () => {
+                try {
+                    const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
+                    setCvs(response.data);
+                    console.log('CVs đã được cập nhật:', response.data);
+                } catch (error) {
+                    console.error('Lỗi khi cập nhật danh sách CVs:', error);
+                }
+            };
+    
+            fetchUpdatedCVs();
+            // Xóa `updated` để tránh lặp lại không cần thiết
+            navigation.setParams({ updated: false });
+        }
+    }, [updated]);
+
+    useEffect(() => {
         console.log("cvs----", cvs);
     }, [cvs]);
+    
 
     const confirmApplyNow = async (cvId: string) => {
         try {
@@ -155,6 +175,40 @@ const Profile = ({ navigation, route }: Props) => {
         }
     };
 
+    const handleEditAndCreate = async (cvId: string) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
+            const hasCV = response.data.length > 0;
+            console.log('Has CV:', hasCV);
+
+            if (hasCV) {
+                navigation.navigate('CVCreate', { startStep: 10, jobId, source: 'Profile' } as never);
+            } else {
+                navigation.navigate('CVCreate', { startStep: 1, jobId, source: 'Profile' } as never);
+            }
+        } catch (error) {
+            console.error('Error checking CV:', error);
+        }
+    };
+
+    const handleDelete = async (cvId: string) => {
+        try {
+            const response = await axios.delete(`${BASE_URL}/cv_form/deletecv/${cvId}`);
+            if (response.status === 200) {
+                const updatedCVs = cvs.filter((cv) => cv._id !== cvId);
+                setCvs(updatedCVs);
+                await AsyncStorage.setItem('cvInfo', JSON.stringify(updatedCVs));
+                Alert.alert('Thành công', 'Đã xóa hồ sơ thành công!');
+            } else {
+                Alert.alert('Lỗi', 'Có lỗi xảy ra khi xóa hồ sơ.');
+            }
+        } catch (error) {
+            console.error('Error deleting CV:', error);
+            Alert.alert('Lỗi', 'Có lỗi xảy ra khi xóa hồ sơ.');
+        }
+    }
+
+
 
     return (
         <View style={styles.container}>
@@ -199,12 +253,19 @@ const Profile = ({ navigation, route }: Props) => {
                             onPress={() => confirmApplyNow(item._id)} // Truyền cvId
                         >
                             <Text style={styles.cvTitle}>Họ tên: {item.fullName}</Text>
-                            <Text>Email: {item.email}</Text>
-                            <Text>SĐT: {item.phone}</Text>
-                            <Text>Địa chỉ: {item.address.city}, {item.address.country}</Text>
-                            <Text>Kỹ năng: {item.skills}</Text>
-                            <Text>Loại công việc mong muốn: {item.jobPreferences.jobType}</Text>
+                            <Text style={styles.cvtext}>Email: {item.email}</Text>
+                            <Text style={styles.cvtext}>SĐT: {item.phone}</Text>
+                            <Text style={styles.cvtext}>Địa chỉ: {item.address.city}, {item.address.country}</Text>
+                            <Text style={styles.cvtext}>Kỹ năng: {item.skills}</Text>
+                            <Text style={styles.cvtext}>Loại công việc mong muốn: {item.jobPreferences.jobType}</Text>
+                            <Text style={styles.cvtext}>Mức lương mong muốn: {item.jobPreferences.minimumSalary}</Text>
+                            <View style={styles.allicon}>
+                                <Icon style={styles.icon} name="edit" size={30} color="#fff" onPress={() => navigation.navigate('EditCV',{ cvId: item._id })} />
+                                <Icon style={styles.icondelete} name="delete" size={30} color="#fff" onPress={() => handleDelete(item._id)} />
+                            </View>
+
                         </TouchableOpacity>
+
                     )}
                 />
 
@@ -237,6 +298,26 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#011F82',
     },
+
+    allicon: {
+        display: 'flex',
+        flexDirection: 'row-reverse',
+    },
+    icon: {
+        alignSelf: 'flex-end',
+        padding: 5,
+        backgroundColor: '#011F82',
+        borderRadius: 50,
+        marginLeft: 20,
+    },
+
+    icondelete: {
+        alignSelf: 'flex-end',
+        padding: 5,
+        backgroundColor: '#FF2929',
+        borderRadius: 50,
+    },
+
     backButton: {
         marginRight: 10,
     },
@@ -271,11 +352,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#f9f9f9',
         borderRadius: 8,
         marginVertical: 10,
+        display: 'flex',
+        flexDirection: 'column',
     },
     cvTitle: {
         fontSize: 16,
         fontWeight: 'bold',
         color: '#000',
+    },
+    cvtext: {
+        fontSize: 14,
+        color: '#666',
     },
     footer: {
         alignItems: 'center',

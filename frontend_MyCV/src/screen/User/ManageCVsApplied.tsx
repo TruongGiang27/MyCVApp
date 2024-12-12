@@ -32,10 +32,10 @@ const ManageCVsApplied = () => {
     fetchAppliedJobs();
   }, []);
 
-  const renderJobItem = ({ item }: { item: { id: string; title: string; company: string; location: string; salary: string; type: string; status: string; jobId: string; } }) => (
+  const renderJobItem = ({ item }: { item: { id: string; title: string; companyName: string; location: string; salary: string; type: string; status: string; jobId: string; } }) => (
     <View style={styles.jobCard} key={item.id}>
       <Text style={styles.jobTitle}>{item.title}</Text>
-      <Text style={styles.companyName}>{item.company}</Text>
+      <Text style={styles.companyName}>{item.companyName}</Text>
       <Text style={styles.location}>{item.location}</Text>
       <Text style={styles.salaryType}>
         {item.salary} - {item.type}

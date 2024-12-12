@@ -35,10 +35,10 @@ const FavoriteJob = ({ navigation, route }: Props)=> {
     loadBookmarkedJobs();
   }, []);
 
-  const renderJobItem = ({ item }: { item: { _id: string; title: string; company: string; location: string; salary: string; status: string } }) => (
+  const renderJobItem = ({ item }: { item: { _id: string; title: string; companyName: string; location: string; salary: string; status: string } }) => (
     <View style={styles.jobCard}>
       <Text style={styles.jobTitle}>{item.title}</Text>
-      <Text style={styles.company}>{item.company}</Text>
+      <Text style={styles.companyName}>{item.companyName}</Text>
       <Text style={styles.location}>{item.location}</Text>
       <Text style={styles.salary}>{item.salary}</Text>
       <Text style={[styles.status, item.status === 'Mở' ? styles.open : styles.closed]}>
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     color: '#011F82',
     marginBottom: 8,
   },
-  company: {
+  companyName: {
     fontSize: 14,
     color: '#6D92D0',
     marginBottom: 4,

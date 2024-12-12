@@ -16,7 +16,7 @@ type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
 interface SearchHistoryItem {
     query: string; // Từ khóa tìm kiếm
-    type: 'job' | 'company' | 'location'; // Loại tìm kiếm
+    type: 'job' | 'companyName' | 'location'; // Loại tìm kiếm
     jobTitle?: string; // Tên công việc
     companyName?: string; // Tên công ty
     locationName?: string; // Tên địa điểm (cho SearchMap)
@@ -68,10 +68,10 @@ const Search = ({ navigation }: { navigation: any }) => {
                     response.data.map((job: any) => ({
                         id: job._id,
                         title: job.title,
-                        company: job.company,
+                        companyName: job.companyName,
                         type: job.title?.toLowerCase().includes(query.toLowerCase())
                             ? 'job'
-                            : 'company',
+                            : 'companyName',
 
                     }))
                 );
@@ -139,7 +139,7 @@ const Search = ({ navigation }: { navigation: any }) => {
                             {(item.title || item.query) && (
                                 <>
                                     {item.type === 'job' && item.title && <Text>Công việc: {item.title}</Text>}
-                                    {item.type === 'company' && item.company && <Text>Công ty: {item.company}</Text>}
+                                    {item.type === 'companyName' && item.companyName && <Text>Công ty: {item.companyName}</Text>}
                                 </>
                             )} {/* Hiển thị công việc hoặc lịch sử */}
                         </Text>
