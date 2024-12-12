@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
+  Dimensions,
   FlatList,
   StyleSheet,
   Text,
@@ -9,11 +10,16 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Navbar from '../../components/Navbar';
+import ScreenName from '../../constants/ScreenName';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+const { width, height } = Dimensions.get('window');
 
-const FavoriteJob = () => {
+const FavoriteJob = ({ navigation, route }: Props)=> {
   const [jobs, setJobs] = useState<any>([]);
-  const navigation = useNavigation();
 
   useEffect(() => {
     const loadBookmarkedJobs = async () => {
@@ -58,90 +64,93 @@ const FavoriteJob = () => {
         renderItem={renderJobItem}
         contentContainerStyle={styles.listContainer}
       />
+      <Navbar navigation={navigation} route={route} />
+
     </View>
+
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#F5F9FF',
-    },
-    listContainer: {
-      paddingHorizontal: 16,
-    },
-    jobCard: {
-      backgroundColor: '#FFFFFF',
-      borderRadius: 8,
-      padding: 16,
-      marginBottom: 16,
-      borderWidth: 1,
-      borderColor: '#B9D6F3',
-    },
-    jobTitle: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#011F82',
-      marginBottom: 8,
-    },
-    company: {
-      fontSize: 14,
-      color: '#6D92D0',
-      marginBottom: 4,
-    },
-    location: {
-      fontSize: 14,
-      color: '#6D92D0',
-      marginBottom: 8,
-    },
-    salary: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: '#011F82',
-      marginBottom: 8,
-    },
-    status: {
-      fontSize: 14,
-      fontWeight: '600',
-      marginBottom: 16,
-    },
-    open: {
-      color: '#28A745',
-    },
-    closed: {
-      color: '#DC3545',
-    },
-    detailButton: {
-      backgroundColor: '#011F82',
-      borderRadius: 8,
-      paddingVertical: 8,
-      alignItems: 'center',
-    },
-    detailButtonText: {
-      color: '#FFFFFF',
-      fontWeight: 'bold',
-      fontSize: 14,
-    },
-    headerContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between', // Điều chỉnh khoảng cách giữa các phần tử
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      backgroundColor: '#FFFFFF',
-      borderBottomWidth: 1,
-      borderBottomColor: '#FFFFFF',
-    },
-    backButton: {
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F9FF',
+  },
+  listContainer: {
+    paddingHorizontal: 16,
+  },
+  jobCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#B9D6F3',
+  },
+  jobTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#011F82',
+    marginBottom: 8,
+  },
+  company: {
+    fontSize: 14,
+    color: '#6D92D0',
+    marginBottom: 4,
+  },
+  location: {
+    fontSize: 14,
+    color: '#6D92D0',
+    marginBottom: 8,
+  },
+  salary: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#011F82',
+    marginBottom: 8,
+  },
+  status: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  open: {
+    color: '#28A745',
+  },
+  closed: {
+    color: '#DC3545',
+  },
+  detailButton: {
+    backgroundColor: '#011F82',
+    borderRadius: 8,
+    paddingVertical: 8,
+    alignItems: 'center',
+  },
+  detailButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // Điều chỉnh khoảng cách giữa các phần tử
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#FFFFFF',
+  },
+  backButton: {
     //   padding: 8, // Làm cho nút mũi tên dễ bấm hơn
-    },
-    header: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: '#011F82',
-      textAlign: 'center', // Đặt tiêu đề ở giữa
-      flex: 1, // Chiếm phần không gian còn lại
-    },
-  });
-  
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#011F82',
+    textAlign: 'center', // Đặt tiêu đề ở giữa
+    flex: 1, // Chiếm phần không gian còn lại
+  },
+});
+
 export default FavoriteJob;

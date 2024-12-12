@@ -76,7 +76,7 @@ const Navbar = ({ route, navigation }: Props) => {
 
       <View style={styles.group}>
         <TouchableOpacity style={styles.navItem} onPress={navigateToEmployer}>
-          <Icon name="chatbox-ellipses" size={25} color="#011F82" />
+          <Icon name="business" size={25} color="#011F82" />
           <Text style={styles.navText}>Nhà tuyển dụng</Text>
         </TouchableOpacity>
         <TouchableOpacity

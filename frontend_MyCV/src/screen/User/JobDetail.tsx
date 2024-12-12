@@ -1,26 +1,20 @@
-import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import ScreenName from '../../constants/ScreenName';
+import RootStackParamList from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
 
-type RootStackParamList = {
-  Home: undefined;
-  CVCreate: { startStep: number };
-  JobList: undefined;
-  JobDetail: { jobId: string };
-};
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+const { width, height } = Dimensions.get('window');
 
-const JobDetail = () => {
-  const route = useRoute();
+const JobDetail = ({ navigation, route }: Props)=> {
   const { jobId, disableButtons } = route.params ? route.params as { jobId: string, disableButtons: boolean } : { jobId: '', disableButtons: false };
   const [jobDetail, setJobDetail] = useState<any>(null);
-  const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const {userId} = route.params as {userId: string};
-  // Add the new navigation prop
-  const navigationCVCreate = useNavigation<NavigationProp<RootStackParamList>>();
+  const {userId, userEmail} = route.params as {userId: string, userEmail: string};
 
   useEffect(() => {
     console.log('jobId', jobId);
@@ -36,59 +30,8 @@ const JobDetail = () => {
     fetchJobDetail();
   }, [jobId]);
 
-  const handleEditAndCreate = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
-      const hasCV = response.data.length > 0;
-      console.log('Has CV:', hasCV);
-
-      if (hasCV) {
-        navigationCVCreate.navigate('CVCreate', { startStep: 10, jobId, source: 'JobDetail' } as never);
-      } else {
-        navigationCVCreate.navigate('CVCreate', { startStep: 1, jobId, source: 'JobDetail' } as never);
-      }
-    } catch (error) {
-      console.error('Error checking CV:', error);
-    }
-  };
-
   const handleApplyNow = () => {
     setIsModalVisible(true);
-  };
-
-  const confirmApplyNow = async () => {
-    setIsModalVisible(false);
-    try {
-      const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
-      console.log('user ID:', userId);
-      console.log('CVs:', response.data);
-      const cv = response.data; // Assuming the first CV is the one to be used
-      if (cv) {
-        const cvId = cv._id;
-        const CVfullNameUser = cv.fullName;
-        const CVEmailUser = cv.email;
-        const status = 'applied';
-        const jobName = jobDetail.title;
-        const userId = cv.userId;
-
-        // Check if the application already exists with both cvId and jobId
-        const existingApplicationResponse = await axios.get(`${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}&userId=${userId}`);
-        console.log('Google ID Job Detail:', userId);
-        console.log('cvid', cv._id);
-        if (existingApplicationResponse.data.some((application: any) => application.cvId === cvId && application.jobId === jobId && application.userId === userId )) {
-          Alert.alert('Thông báo', 'Bạn đã ứng tuyển vào công việc này rồi!');
-          console.log('data', existingApplicationResponse.data);
-        } else {
-          await axios.post(`${BASE_URL}/applications`, { cvId, jobId, jobName, CVfullNameUser, CVEmailUser, status, userId });
-          console.log('Application submitted successfully');
-          Alert.alert('Thành công', 'Bạn đã ứng tuyển thành công!');
-        }
-      } else {
-        console.error('No CV found to apply with');
-      }
-    } catch (error) {
-      console.error('Error submitting application:', error);
-    }
   };
 
   const cancelApplyNow = () => {
@@ -173,11 +116,6 @@ const JobDetail = () => {
         </View>
       </View>
 
-      {/* Apply Button */}
-      <TouchableOpacity style={[styles.applyButton, disableButtons && styles.disabledButton]} onPress={handleEditAndCreate} disabled={disableButtons}>
-        <Text style={styles.applyButtonText}>Chỉnh sửa / Tạo CV</Text>
-      </TouchableOpacity>
-
       {/* New Apply Now Button */}
       <TouchableOpacity style={[styles.applyNowButton, disableButtons && styles.disabledButton]} onPress={handleApplyNow} disabled={disableButtons}>
         <Text style={styles.applyNowButtonText}>Ứng tuyển ngay</Text>
@@ -194,7 +132,7 @@ const JobDetail = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>Bạn có chắc chắn muốn ứng tuyển ngay?</Text>
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.modalButton} onPress={confirmApplyNow}>
+              <TouchableOpacity style={styles.modalButton} onPress={()=> navigation.navigate('Profile',{userId: userId, userEmail: userEmail, jobId: jobId, jobName: jobDetail.title })}>
                 <Text style={styles.modalButtonText}>Xác nhận</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.modalButton} onPress={cancelApplyNow}>

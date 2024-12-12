@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Icon } from '@rneui/themed';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
-import { Icon } from '@rneui/themed';
+import { Alert, Dimensions, FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import Navbar from '../../components/Navbar';
 import { appColors } from '../../constants/appColors';
@@ -11,8 +11,10 @@ import ScreenName from '../../constants/ScreenName';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { signOut } from '../../utils/auth';
 import { BASE_URL } from '../../utils/url';
+
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
+
 interface CV {
     _id: string;
     userId: string;
@@ -52,14 +54,15 @@ interface CV {
         minimumSalary: string;
     };
 }
+
 const Profile = ({ navigation, route }: Props) => {
-    const { userEmail, userId } = route.params as { userEmail: string, userId: string };
+    const { userEmail, userId, jobId, jobName } = route.params as { userEmail: string, userId: string, jobId: string, jobName: string };
     const [menuVisible, setMenuVisible] = useState(false);
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
-
-
+    const [loading, setLoading] = useState(false);
     const [cvs, setCvs] = useState<CV[]>([]);
+
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -69,45 +72,99 @@ const Profile = ({ navigation, route }: Props) => {
             const userInfo = await AsyncStorage.getItem('userInfo');
             if (userInfo) {
                 setUser(JSON.parse(userInfo));
-                console.log("userid////////", userId);
-                // console.log("user////////////", user?.data?.user?.id);
             }
         };
 
+        const getCV = async () => {
+            const cvInfo = await AsyncStorage.getItem('cvInfo');
+            if (cvInfo) {
+                setCvs(JSON.parse(cvInfo));
+                console.log("cvInfo:", cvInfo);
+
+            }
+        }
         getInfo();
-        fetchCVs();
+        getCV();
     }, []);
 
-    const fetchCVs = async () => {
+    useEffect(() => {
+        const fetchCVs = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`).then(
+                    (response) => {
+                        setCvs(response.data);
+                    }
+                );
+            } catch (error) {
+                console.error('Lỗi khi lấy dữ liệu CVs:', error);
+            }
+        };
+
+        fetchCVs();
+    }, [userId]);
+
+    useEffect(() => {
+        console.log("cvs----", cvs);
+    }, [cvs]);
+
+    const confirmApplyNow = async (cvId: string) => {
         try {
-            const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
-            console.log("response.data", response.data);
-            setCvs(response.data);
+            const response = await axios.get(`${BASE_URL}/cv_form/${cvId}`);
+            const cv = response.data;
+
+            if (cv) {
+                const CVfullNameUser = cv.fullName;
+                const CVEmailUser = cv.email;
+                const status = 'applied';
+
+                // Kiểm tra nếu ứng tuyển đã tồn tại
+                const existingApplicationResponse = await axios.get(
+                    `${BASE_URL}/applications?cvId=${cvId}&jobId=${jobId}&userId=${userId}`
+                );
+
+                if (
+                    existingApplicationResponse.data.some(
+                        (application: any) =>
+                            application.cvId === cvId &&
+                            application.jobId === jobId &&
+                            application.userId === userId
+                    )
+                ) {
+                    Alert.alert('Thông báo', 'Bạn đã ứng tuyển vào công việc này rồi!');
+                } else {
+                    // Tạo mới ứng tuyển
+                    await axios.post(`${BASE_URL}/applications`, {
+                        cvId,
+                        jobId,
+                        jobName, // Lấy jobName từ route.params
+                        CVfullNameUser,
+                        CVEmailUser,
+                        status,
+                        userId,
+                    });
+                    Alert.alert('Thành công', 'Bạn đã ứng tuyển thành công!');
+                    navigation.navigate('JobDetail', { jobId, jobName, userId, userEmail });
+                }
+            } else {
+                Alert.alert('Lỗi', 'Không tìm thấy CV để ứng tuyển.');
+            }
         } catch (error) {
-            console.error('Error fetching CVs:', error);
+            console.error('Error submitting application:', error);
+            Alert.alert('Lỗi', 'Có lỗi xảy ra khi ứng tuyển. Vui lòng thử lại.');
         }
     };
 
-    useEffect(() => {
-        console.log("cvs", cvs);
-    },[]);
-
-    const submitCV = (cvId: string) => {
-        // Chuyển đến màn hình nộp CV hoặc gọi API
-        // navigation.navigate('SubmitCV', { cvId });
-    };
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-
                 <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                     <Icon name="arrow-back" size={32} color="#000" />
                 </TouchableOpacity>
                 <Text style={styles.headerText}>HỒ SƠ XIN VIỆC CỦA BẠN</Text>
-
                 <TouchableOpacity onPress={toggleMenu}>
-                <Icon name="cog" type="font-awesome" size={30} color="#A6AEBF" />
+                    <Icon name="cog" type="font-awesome" size={30} color="#A6AEBF" />
                 </TouchableOpacity>
             </View>
             <Modal
@@ -117,7 +174,6 @@ const Profile = ({ navigation, route }: Props) => {
                 onRequestClose={toggleMenu}
             >
                 <View style={styles.fullMenu}>
-
                     <TouchableOpacity style={styles.closeButton} onPress={toggleMenu}>
                         <Icon name="close" size={30} color="#000" />
                     </TouchableOpacity>
@@ -134,19 +190,25 @@ const Profile = ({ navigation, route }: Props) => {
             </Modal>
 
             <View style={styles.content}>
-            <FlatList
-                    data={cvs}
+                <FlatList
+                    data={cvs.filter((cv) => cv.userId === userId)}
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.cvItem}
-                            onPress={() => submitCV(item._id)}
+                            onPress={() => confirmApplyNow(item._id)} // Truyền cvId
                         >
-                            <Text style={styles.cvTitle}>{item.fullName}</Text>
-                            <Text style={styles.cvTitle}>{item.email}</Text>
+                            <Text style={styles.cvTitle}>Họ tên: {item.fullName}</Text>
+                            <Text>Email: {item.email}</Text>
+                            <Text>SĐT: {item.phone}</Text>
+                            <Text>Địa chỉ: {item.address.city}, {item.address.country}</Text>
+                            <Text>Kỹ năng: {item.skills}</Text>
+                            <Text>Loại công việc mong muốn: {item.jobPreferences.jobType}</Text>
                         </TouchableOpacity>
                     )}
                 />
+
+
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => navigation.navigate('CVCreate')}>
@@ -170,13 +232,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 16,
     },
-
     headerText: {
         fontSize: 22,
         fontWeight: 'bold',
         color: '#011F82',
     },
-
     backButton: {
         marginRight: 10,
     },
@@ -233,7 +293,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
-
     closeButton: {
         alignSelf: 'flex-end',
         padding: 16,
