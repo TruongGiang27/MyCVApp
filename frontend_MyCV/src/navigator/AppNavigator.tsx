@@ -51,7 +51,7 @@ const App = () => {
 
             <Stack.Screen name={ScreenName.CVDetail} component={CVDetail} />
             <Stack.Screen name={ScreenName.EditCV} component={EditCV} />
-            <Stack.Screen name={ScreenName.SearchScreen} component={SearchScreen} />
+            <Stack.Screen name={ScreenName.FavoriteJob} component={FavoriteJob} />
         </Stack.Navigator>
     );
 };

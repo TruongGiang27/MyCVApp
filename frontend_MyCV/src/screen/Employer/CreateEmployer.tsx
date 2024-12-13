@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Image, Keyboard, KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Card, Text, TextInput, Title } from 'react-native-paper';
 import { BASE_URL } from '../../utils/url';
-import { RootStackParamList } from '../User/types';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
 
 // Khai báo kiểu cho props 'navigation'
 export type Props = NativeStackScreenProps<RootStackParamList, 'CreateEmployer'>;

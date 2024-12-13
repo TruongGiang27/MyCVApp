@@ -10,7 +10,7 @@ export enum ScreenName {
     SearchScreen = 'SearchScreen',
     CVCreate = 'CVCreate',
     ApplyManager = 'ApplyManager',
-    MessageScreen = 'MessageScreen',
+    MessageScreen = 'MessageScreen', 
     InforManager = 'InforManager',
     EmployerDetail = "EmployerDetail",
     CVManagerment = 'CVManagerment',

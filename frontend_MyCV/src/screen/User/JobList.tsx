@@ -21,7 +21,7 @@ const Header = ({ location, navigation, query }: { location: string, navigation:
 
           <TouchableOpacity
             style={styles.input}
-            onPress={() => navigation.navigate('SearchSceen', { searchType: 'text', location, query })}
+            onPress={() => navigation.navigate('SearchSrceen', { searchType: 'text', location, query })}
           >
             { }
             {!query ? <Text style={styles.text}>Tìm kiếm</Text> : <Text style={styles.text}>{query}</Text>}
@@ -33,7 +33,7 @@ const Header = ({ location, navigation, query }: { location: string, navigation:
           </View>
           <TouchableOpacity
             style={styles.input}
-            onPress={() => navigation.navigate('SearchSceen', { searchType: 'map', location, query })}
+            onPress={() => navigation.navigate('SearchScreen', { searchType: 'map', location, query })}
           >
             {!location ? <Text style={styles.text}>Vị trí</Text> : <Text style={styles.text}>{location}</Text>}
           </TouchableOpacity>

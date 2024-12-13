@@ -12,10 +12,6 @@ export class CvController {
     return this.cvService.createCv(createCvDto);
   }
 
-  @Get()
-  async getAllCvs(): Promise<Cv[]> {
-    return this.cvService.getAllCvs();
-  }
 
   @Put(':id')
   async updateCv(@Param('id') id: string, @Body() updateCvDto: any): Promise<Cv> {

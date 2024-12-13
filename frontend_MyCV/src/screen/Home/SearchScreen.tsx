@@ -86,7 +86,7 @@ const Search = ({ navigation, onJobSearchSubmit, onSearchHistory, locations }: {
         );
 
         if (foundCity) {
-            navigation.navigate('JobList1', { location: foundCity.name, query: '' });
+            navigation.navigate('JobList', { location: foundCity.name, query: '' });
         } else {
             onJobSearchSubmit(query);
         }
@@ -324,21 +324,21 @@ const SearchScreen = ({ route, navigation }: { route: any, navigation: any }) =>
     }, [searchType]);
     const handleSearchHistory = (query: string, location: string) => {
         if (query && location) {
-            navigation.navigate('JobList1', { location, query });
+            navigation.navigate('JobList', { location, query });
         } else if (query) {
-            navigation.navigate('JobList1', { location: '', query });
+            navigation.navigate('JobList', { location: '', query });
         } else if (location) {
-            navigation.navigate('JobList1', { location, query: '' });
+            navigation.navigate('JobList', { location, query: '' });
         }
 
 
     }
     const handleJobSearchSubmit = (selectedJob: string) => {
-        navigation.navigate('JobList1', { location, query: selectedJob });
+        navigation.navigate('JobList', { location, query: selectedJob });
     };
 
     const handleMapSearchSubmit = (selectedLocation: string) => {
-        navigation.navigate('JobList1', { location: selectedLocation, query });
+        navigation.navigate('JobList', { location: selectedLocation, query });
     };
     return (
         <View style={styles.container}>
