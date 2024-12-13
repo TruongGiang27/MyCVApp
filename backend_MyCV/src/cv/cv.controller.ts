@@ -12,6 +12,11 @@ export class CvController {
     return this.cvService.createCv(createCvDto);
   }
 
+  @Get()
+  async getAllCvs(): Promise<Cv[]> {
+    return this.cvService.getAllCvs();
+  }
+
   @Put(':id')
   async updateCv(@Param('id') id: string, @Body() updateCvDto: any): Promise<Cv> {
     return this.cvService.updateCv(id, updateCvDto);
@@ -23,11 +28,8 @@ export class CvController {
   }
 
   @Get('/user/:userId')
-  async getCvByUserId(@Param('userId') userId: string): Promise<Cv> {
+  async getCvByUserId(@Param('userId') userId: string): Promise<Cv[]> {
     return this.cvService.getCvByUserId(userId);
-  }
-  async getAllCvs(): Promise<Cv[]> {
-    return this.cvService.getAllCvs();
   }
 
   @Delete('/deletecv/:cvId')

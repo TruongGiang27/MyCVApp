@@ -46,6 +46,7 @@ export const signOut = async (dispatch: Dispatch) => {
         await GoogleSignin.revokeAccess();
         await GoogleSignin.signOut();
         await AsyncStorage.removeItem('userInfo');
+        await AsyncStorage.removeItem('searchHistory');
         dispatch(logout());
         console.log('User signed out');
     } catch (error) {

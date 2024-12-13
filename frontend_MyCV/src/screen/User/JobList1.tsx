@@ -5,10 +5,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../../navigator/RootStackParamList'
 import ScreenName from '../../constants/ScreenName'
 import { BASE_URL } from '../../utils/url'
+import { SearchHistoryItem } from '../../interfaces/SearchHistoryItem'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
-const Header = ({ location, navigation, query }: { location: string, navigation: any, query:string }) => {
+const Header = ({ location, navigation, query }: { location: string, navigation: any, query: string }) => {
   return (
     <View style={styles.header}>
       <View style={styles.searchBar}>
@@ -19,7 +21,7 @@ const Header = ({ location, navigation, query }: { location: string, navigation:
 
           <TouchableOpacity
             style={styles.input}
-            onPress={() => navigation.navigate('SearchSceen', { searchType: 'text' })}
+            onPress={() => navigation.navigate('SearchSceen', { searchType: 'text', location, query })}
           >
             { }
             {!query ? <Text style={styles.text}>Tìm kiếm</Text> : <Text style={styles.text}>{query}</Text>}
@@ -31,7 +33,7 @@ const Header = ({ location, navigation, query }: { location: string, navigation:
           </View>
           <TouchableOpacity
             style={styles.input}
-            onPress={() => navigation.navigate('SearchSceen', { searchType: 'map' })}
+            onPress={() => navigation.navigate('SearchSceen', { searchType: 'map', location, query })}
           >
             {!location ? <Text style={styles.text}>Vị trí</Text> : <Text style={styles.text}>{location}</Text>}
           </TouchableOpacity>
@@ -90,12 +92,22 @@ const Content = ({ navigation, location, query }: { navigation: any, location: s
   const [dataJobs, setDataJobs] = useState<dataJobsIteam[]>([]);
   const [loading, setLoading] = useState(true);  // Trạng thái loading
 
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       try {
-        console.log("Fetching data from:", `${BASE_URL}/jobs/search?query=${query}&location=${location}`);
-        const response = await fetch(`${BASE_URL}/jobs/search?query=${encodeURIComponent(query|| '')}${location ? `&location=${encodeURIComponent(location)}` : ''}`);
+        let queryString = '';
+        if (query) {
+          queryString += `?query=${encodeURIComponent(query)}`;
+        }
+
+        if (location) {
+          queryString += `${query ? '&' : '?'}location=${encodeURIComponent(location)}`;
+        }
+        console.log("Query string:", queryString);
+        console.log("URL:", `${BASE_URL}/jobs/search${queryString}`);
+        const response = await fetch(`${BASE_URL}/jobs/search${queryString}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -109,7 +121,7 @@ const Content = ({ navigation, location, query }: { navigation: any, location: s
       }
     };
     loadData();
-  }, []);
+  }, [query, location]);
 
 
 
@@ -142,18 +154,62 @@ const Content = ({ navigation, location, query }: { navigation: any, location: s
 
 
 const JobList1 = ({ navigation, route }: Props) => {
-  const { location } = route.params as { location: string };
-  const { query } = route.params as { query: string };
+  const { location: initialLocation, query: initialQuery } = route.params as { location: string, query: string };
+  const [location, setLocation] = useState(initialLocation);
+  const [query, setQuery] = useState(initialQuery);
+  const MAX_HISTORY = 20;
+  const [history, setHistory] = useState<SearchHistoryItem[]>([]);
+  const [historyStack, setHistoryStack] = useState<{ location: string; query: string }[]>([]);
+  console.log('location:', location);
+  console.log('Query:', query);
+
+  const saveSearchHistory = async () => {
+    try {
+      const newItem: SearchHistoryItem = {
+        location, 
+        query,    
+      };
+
+      // Lấy lịch sử cũ từ AsyncStorage
+      const historyJson = await AsyncStorage.getItem('searchHistory');
+      let updatedHistory: SearchHistoryItem[] = historyJson ? JSON.parse(historyJson) : [];
+
+      updatedHistory = updatedHistory.filter(item => !(item.query === newItem.query && item.location === newItem.location));
+
+      // Thêm mục mới vào đầu danh sách
+      updatedHistory.unshift(newItem);
+
+      // Giới hạn danh sách chỉ chứa tối đa MAX_HISTORY mục
+      if (updatedHistory.length > MAX_HISTORY) {
+        updatedHistory = updatedHistory.slice(0, MAX_HISTORY);
+      }
+
+      // Lưu danh sách vào AsyncStorage và cập nhật state
+      await AsyncStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+      setHistory(updatedHistory);
+
+      console.log('Search history saved:', updatedHistory);
+    } catch (error) {
+      console.error('Error saving location history:', error);
+    }
+  };
+
+  const handleGoBack = () => {
+    navigation.navigate('Home');
+  };
+
   useEffect(() => {
-    console.log('Location:', location);
-    console.log('Query:', query);
-  }, [location, query]);
+    if (query || location) {
+      saveSearchHistory(); // Lưu lại lịch sử tìm kiếm
+    }
+  }, [query, location]);
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
         <Icon name="arrow-back" size={25} color="#000" />
       </TouchableOpacity>
-      <Header navigation={navigation} location={location} query={query}/>
+      <Header navigation={navigation} location={location} query={query} />
       <Content navigation={navigation} location={location} query={query} />
     </View>
   )

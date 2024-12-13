@@ -14,6 +14,7 @@ import SendSMS from '../screen/Employer/SendSMS';
 import Home from '../screen/home/Home';
 import Login from '../screen/login/Login';
 import Profile from '../screen/profile/Profile';
+import SearchSceen from '../screen/home/SearchSceen';
 import CVCreate from '../screen/User/CVCreate';
 import CVManagerment from '../screen/User/CVManagerment';
 import FavoriteJob from '../screen/User/FavoriteJob';
@@ -26,7 +27,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
     return (
-        <Stack.Navigator initialRouteName="HomeEmployer" screenOptions={{ headerShown: false, animation: 'none' }}>
+        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, animation: 'none' }}>
             <Stack.Screen name={ScreenName.CreateEmployer} component={CreateEmployer} />
             <Stack.Screen name={ScreenName.InforEmployers} component={InforEmployers} />
             <Stack.Screen name={ScreenName.InforManager} component={InforManager} />
@@ -38,6 +39,7 @@ const App = () => {
             <Stack.Screen name={ScreenName.ApplyManager} component={ApplyManager} />
 
             <Stack.Screen name={ScreenName.Home} component={Home} />
+            <Stack.Screen name={ScreenName.SearchSceen} component={SearchSceen} />
             <Stack.Screen name={ScreenName.JobList1} component={JobList1} />
             <Stack.Screen name={ScreenName.JobDetail} component={JobDetail} />
             <Stack.Screen name={ScreenName.Profile} component={Profile} />

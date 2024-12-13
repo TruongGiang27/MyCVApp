@@ -8,18 +8,37 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { appColors } from '../../constants/appColors';
 import { signOut } from '../../utils/auth';
 import { useDispatch } from 'react-redux';
+import axios from 'axios';
+import { BASE_URL } from '../../utils/url';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
 
 const Profile = ({ navigation, route }: Props) => {
     const { userEmail } = route.params as { userEmail: string };
+    const useId  = 109332206105253186302n;
     const [menuVisible, setMenuVisible] = useState(false);
+
     const dispatch = useDispatch();
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
-
+    const [cvs, setCvs] = useState([]);
+    useEffect(() => {
+        try {
+            console.log(useId);
+            const response = axios.get(`${BASE_URL}/cv_form/user/${useId.toString()}`);
+            response.then((res) => {
+                setCvs(res.data);
+                console.log("aaaaaaaaaaaaaaaa",res.data);
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }, []);
+    useEffect(() => {
+        console.log(cvs);
+    }, [cvs]);
     return (
         <View style={styles.container}>
 
@@ -51,7 +70,7 @@ const Profile = ({ navigation, route }: Props) => {
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.menuItem} onPress={() => signOut(dispatch)}>
                             <Text style={styles.menuItemText}>Đăng xuất</Text>
-                            <Text style={{fontSize:16,fontWeight:'300',paddingHorizontal: 20,marginTop:3}}>{userEmail}</Text>
+                            <Text style={{ fontSize: 16, fontWeight: '300', paddingHorizontal: 20, marginTop: 3 }}>{userEmail}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

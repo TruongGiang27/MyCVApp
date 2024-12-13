@@ -50,7 +50,7 @@ export class JobsService {
       filters.location = { $regex: location, $options: 'i' };
     }
 
-    console.log('Filters:', filters);
+    console.log('Filters:', );
     return this.jobModel
       .find(filters)
       .sort({ createdAt: -1 })

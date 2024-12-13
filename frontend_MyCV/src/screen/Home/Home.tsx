@@ -221,8 +221,8 @@ const Home = ({ navigation, route }: Props) => {
                 if (userInfoString) {
                     const userInfo = await JSON.parse(userInfoString);
 
-                    await axios.post(`${BASE_URL}/user/create-or-update`, {
-                        googleId: userInfo.data.user.id,
+                    await axios.post(`${BASE_URL}/user/create`, {
+                        userId: userInfo.data.user.id,
                         name: userInfo.data.user.name,
                         email: userInfo.data.user.email,
                         avatar: userInfo.data.user.photo,
