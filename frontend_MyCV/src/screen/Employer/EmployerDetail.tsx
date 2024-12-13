@@ -1,27 +1,57 @@
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { BASE_URL } from '../../utils/url';
+import ScreenName from '../../constants/ScreenName';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BASE_URL } from '../../utils/url';
 
-type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'CreateEmployer'
->;
+type Props = NativeStackScreenProps<RootStackParamList, 'EmployerDetail'>;
 
-type Props = {
-  navigation: CreateEmployerScreenNavigationProp;
-};
+interface Job {
+  deadline: string;
+  _id: string;
+  title: string;
+  companyName: string;
+  location: string;
+  salary: string;
+  jobType: string;
+  jobDescription: string;
+  requirement: string;
+  benefits: string;
+  additionalInfo: {
+    deadline: string;
+    experience: string;
+    education: string;
+    quantity: number;
+    gender: string;
+  };
+  status: "Chọn trạng thái" | "Mở" | "Tạm dừng" | "Đã đóng"; // Add status field here
+}
+
 const EmployerDetail: React.FC<Props> = ({ navigation }) => {
   const [applicants, setApplicants] = useState([]); // State to store applicants
   const route = useRoute();
-  const { jobDetails } = route.params as { jobDetails: any };
-  // State to manage job status selection
-  const [jobStatus, setJobStatus] = useState(jobDetails.status);
+  const { jobId } = route.params as { jobId: string };
+
+  const [jobDetails, setJobDetails] = useState<Job | null>(null);
+
+  useEffect(() => {
+    const fetchJobDetail = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/jobs/${jobId}`);
+        setJobDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching job details:", error);
+      }
+    }
+    fetchJobDetail();
+  }, [jobId]); // Empty dependency array to run effect only once
+
+  const [jobStatus, setJobStatus] = useState<string>(jobDetails?.status || '');
   const [loading, setLoading] = useState(false);
 
   const handleStatusChange = async (newStatus: string) => {
@@ -29,7 +59,7 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
 
     try {
       // Gửi yêu cầu cập nhật trạng thái lên server
-      const response = await axios.put(`${BASE_URL}/jobs/${jobDetails._id}`, {
+      const response = await axios.put(`${BASE_URL}/jobs/${jobDetails?._id}`, {
         status: newStatus,
       });
 
@@ -49,14 +79,14 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
       {/* Header */}
       <View style={styles.header}>
         <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.goBack()} />
-        <Text style={styles.headerText}>{jobDetails.title}</Text>
+        <Text style={styles.headerText}>{jobDetails?.title}</Text>
         <Icon name="share-social-outline" size={28} color="#011F82" />
       </View>
 
       {/* Company and Location */}
       <View style={styles.companyInfo}>
-        <Text style={styles.companyName}>{jobDetails.company}</Text>
-        <Text style={styles.location}>{jobDetails.location}</Text>
+        <Text style={styles.companyName}>{jobDetails?.companyName}</Text>
+        <Text style={styles.location}>{jobDetails?.location}</Text>
       </View>
       {/* Job Status */}
       <View style={styles.statusContainer}>
@@ -80,30 +110,30 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
         <Text style={styles.sectionTitle}>Chi tiết công việc</Text>
         <View style={styles.detailRow}>
           <Icon name="pricetag-outline" size={20} color="#10B981" />
-          <Text style={styles.detailText}>{jobDetails.salary}</Text>
+          <Text style={styles.detailText}>{jobDetails?.salary}</Text>
         </View>
         <View style={styles.detailRow}>
           <Icon name="briefcase-outline" size={20} color="#011F82" />
-          <Text style={styles.detailText}>{jobDetails.jobType}</Text>
+          <Text style={styles.detailText}>{jobDetails?.jobType}</Text>
         </View>
       </View>
 
       {/* Job Description */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Mô tả công việc</Text>
-        <Text style={styles.description}>{jobDetails.jobDescription}</Text>
+        <Text style={styles.description}>{jobDetails?.jobDescription}</Text>
       </View>
 
       {/* Requirements */}
-      {jobDetails.requirements && (
+      {jobDetails?.requirement && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Yêu cầu công việc</Text>
-          <Text style={styles.description}>{jobDetails.requirements}</Text>
+          <Text style={styles.description}>{jobDetails?.requirement}</Text>
         </View>
       )}
 
       {/* Benefits */}
-      {jobDetails.benefits && (
+      {jobDetails?.benefits && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quyền lợi được hưởng</Text>
           <Text style={styles.description}>{jobDetails.benefits}</Text>
@@ -111,7 +141,7 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
       )}
 
       {/* Additional Information */}
-      {jobDetails.additionalInfo && (
+      {jobDetails?.additionalInfo && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Thông tin bổ sung</Text>
           <View style={styles.detailRow}>
@@ -135,7 +165,7 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.detailText}>Giới tính: {jobDetails.additionalInfo.gender}</Text>
           </View>
         </View>
-      )}
+      )} 
 
       {/* Apply Button */}
       <View style={styles.btn}>
@@ -143,7 +173,7 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.applyButtonText}>Tạo đơn tuyển dụng mới</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.viewcv} onPress={() => navigation.navigate('ApplyManager', { jobId: jobDetails._id })}>
+        <TouchableOpacity style={styles.viewcv} onPress={() => navigation.navigate('ApplyManager', { jobId: jobDetails?._id || '' })}>
           <Text style={styles.applyButtonText}>Xem thông tin ứng viên</Text>
         </TouchableOpacity>
       </View>

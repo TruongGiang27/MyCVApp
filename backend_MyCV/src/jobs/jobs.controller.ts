@@ -38,7 +38,10 @@ export class JobsController {
     return this.jobsService.findOne(id);
   }
 
-
+  @Get('job-of-user/:userId')
+  async getJobByUserId(@Param('userId') userId: string) {
+    return this.jobsService.getJobByUserId(userId);
+  }
 
   @Put(':id')
   async update(@Param('id') id: string, @Body() createJobDto: CreateJobDto) {

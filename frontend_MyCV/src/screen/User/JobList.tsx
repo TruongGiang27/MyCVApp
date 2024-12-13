@@ -1,401 +1,331 @@
-// SearchScreen.tsx
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, ScrollView, KeyboardAvoidingView } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { appColors } from '../../constants/appColors';
-import { Icon } from '@rneui/themed';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigator/RootStackParamList';
-import ScreenName from '../../constants/ScreenName';
-import { BASE_URL } from '../../utils/url';
-import { SearchHistoryItem } from '../../interfaces/SearchHistoryItem';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Dimensions, ActivityIndicator, FlatList } from 'react-native'
+import { Icon, Card } from '@rneui/themed'
+import React, { useState, useEffect } from 'react'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../navigator/RootStackParamList'
+import ScreenName from '../../constants/ScreenName'
+import { BASE_URL } from '../../utils/url'
+import { SearchHistoryItem } from '../../interfaces/SearchHistoryItem'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height;
+type Props = NativeStackScreenProps<RootStackParamList, 'JobList'>;
+const Header = ({ location, navigation, query }: { location: string, navigation: any, query: string }) => {
+  return (
+    <View style={styles.header}>
+      <View style={styles.searchBar}>
+        <View style={styles.inputRow}>
+          <View style={{ width: "10%", alignItems: 'flex-start' }}>
+            <Icon name="search" type="font-awesome" color="#373737" size={20} />
+          </View>
+
+          <TouchableOpacity
+            style={styles.input}
+            onPress={() => navigation.navigate('SearchSceen', { searchType: 'text', location, query })}
+          >
+            { }
+            {!query ? <Text style={styles.text}>Tìm kiếm</Text> : <Text style={styles.text}>{query}</Text>}
+          </TouchableOpacity>
+        </View>
+        <View style={styles.locationRow}>
+          <View style={{ width: "10%", alignItems: 'flex-start' }}>
+            <Icon name="map-marker" type="font-awesome" color="#373737" size={20} />
+          </View>
+          <TouchableOpacity
+            style={styles.input}
+            onPress={() => navigation.navigate('SearchSceen', { searchType: 'map', location, query })}
+          >
+            {!location ? <Text style={styles.text}>Vị trí</Text> : <Text style={styles.text}>{location}</Text>}
+          </TouchableOpacity>
+          <Icon name="car" type="font-awesome" color="#373737" size={20} />
+        </View>
+
+      </View>
+    </View>
+  );
+};
+
+const JobItem = ({ title, company, salary, location, onPress }: { title: string, company: string, salary: string, location: string, onPress: () => void }) => {
+
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={1}>
+      <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>
+        <Card containerStyle={styles.cardContainer}>
+
+          {/* {isPremium && (
+              <View style={styles.premiumTag}>
+                  <Text style={styles.premiumText}>Tuyển dụng nhiều ứng viên</Text>
+              </View>
+          )} */}
+          <TouchableOpacity style={styles.icon}>
+            <Icon name="bookmark" type="font-awesome" color="#666" size={25} />
+          </TouchableOpacity>
+
+          <Text style={styles.title}>{title}</Text>
+          <View style={{ marginVertical: width * 0.03 }}>
+            <Text style={styles.company}>{company}</Text>
+            <Text style={styles.location}>{location}</Text>
+          </View>
+
+          <Text style={styles.salary}>{salary}</Text>
+          <View style={styles.easyApplyContainer}>
+            <Icon name="send" type="material" color="#007AFF" size={14} style={styles.sendIcon} />
+            <Text style={styles.easyApply}>Nộp đơn dễ dàng</Text>
+          </View>
+          {/* <Text style={styles.timePosted}>{timePosted}</Text> */}
+        </Card>
+      </View>
+    </TouchableOpacity >
+  )
+};
+
+const Content = ({ navigation, location, query }: { navigation: any, location: string, query: string }) => {
+  interface dataJobsIteam {
+    _id: string;
+    title: string;
+    company: string;
+    location: string;
+    salary: string;
+    jobType: string;
+    jobDescription: string;
+  }
+  const [dataJobs, setDataJobs] = useState<dataJobsIteam[]>([]);
+  const [loading, setLoading] = useState(true);  // Trạng thái loading
+
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        let queryString = '';
+        if (query) {
+          queryString += `?query=${encodeURIComponent(query)}`;
+        }
+
+        if (location) {
+          queryString += `${query ? '&' : '?'}location=${encodeURIComponent(location)}`;
+        }
+        console.log("Query string:", queryString);
+        console.log("URL:", `${BASE_URL}/jobs/search${queryString}`);
+        const response = await fetch(`${BASE_URL}/jobs/search${queryString}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const responseJson = await response.json();
+        setDataJobs(responseJson);
+        console.log("Data fetched successfully:", responseJson);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [query, location]);
 
 
 
-type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+  if (loading) {
+    return (
+      <ActivityIndicator size="large" color="#007AFF" />
+    );
+  }
 
-interface City {
-    code: string;
-    name: string;
-    type: string;
+  return (
+    <FlatList
+      data={dataJobs}
+      keyExtractor={(item) => item._id}
+      renderItem={({ item }) => (
+        <JobItem
+          title={item.title}
+          company={item.company}
+          salary={item.salary}
+          location={item.location}
+          onPress={() => navigation.navigate('JobDetail', { jobId: item._id })}
+        // timePosted={item.timePosted}
+        // isPremium={item.isPremium}
+        />
+      )}
+      ListFooterComponent={loading ? <ActivityIndicator size="small" color="#007AFF" /> : null}
+      onEndReachedThreshold={0.5}  // Trigger load when 50% from bottom
+    />
+  );
+};
+
+
+const JobList1 = ({ navigation, route }: Props) => {
+  const { location: initialLocation, query: initialQuery } = route.params as { location: string, query: string };
+  const [location, setLocation] = useState(initialLocation);
+  const [query, setQuery] = useState(initialQuery);
+  const MAX_HISTORY = 20;
+  const [history, setHistory] = useState<SearchHistoryItem[]>([]);
+  const [historyStack, setHistoryStack] = useState<{ location: string; query: string }[]>([]);
+  console.log('location:', location);
+  console.log('Query:', query);
+
+  const saveSearchHistory = async () => {
+    try {
+      const newItem: SearchHistoryItem = {
+        location, 
+        query,    
+      };
+
+      // Lấy lịch sử cũ từ AsyncStorage
+      const historyJson = await AsyncStorage.getItem('searchHistory');
+      let updatedHistory: SearchHistoryItem[] = historyJson ? JSON.parse(historyJson) : [];
+
+      updatedHistory = updatedHistory.filter(item => !(item.query === newItem.query && item.location === newItem.location));
+
+      // Thêm mục mới vào đầu danh sách
+      updatedHistory.unshift(newItem);
+
+      // Giới hạn danh sách chỉ chứa tối đa MAX_HISTORY mục
+      if (updatedHistory.length > MAX_HISTORY) {
+        updatedHistory = updatedHistory.slice(0, MAX_HISTORY);
+      }
+
+      // Lưu danh sách vào AsyncStorage và cập nhật state
+      await AsyncStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+      setHistory(updatedHistory);
+
+      console.log('Search history saved:', updatedHistory);
+    } catch (error) {
+      console.error('Error saving location history:', error);
+    }
+  };
+
+  const handleGoBack = () => {
+    navigation.navigate('Home');
+  };
+
+  useEffect(() => {
+    if (query || location) {
+      saveSearchHistory(); // Lưu lại lịch sử tìm kiếm
+    }
+  }, [query, location]);
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+        <Icon name="arrow-back" size={25} color="#000" />
+      </TouchableOpacity>
+      <Header navigation={navigation} location={location} query={query} />
+      <Content navigation={navigation} location={location} query={query} />
+    </View>
+  )
 }
-const majorCities = [
-    { code: '01', name: 'Hà Nội', type: 'city' },
-    { code: '79', name: 'Thành phố Hồ Chí Minh', type: 'city' },
-    { code: '48', name: 'Đà Nẵng', type: 'city' },
-    { code: '31', name: 'Hải Phòng', type: 'city' },
-    { code: '74', name: 'Bình Dương', type: 'city' },
-];
-const Search = ({ navigation, onJobSearchSubmit }: { navigation: any, onJobSearchSubmit: (query: string) => void }) => {
-    const [history, setHistory] = useState<SearchHistoryItem[]>([]);
-    const [suggestions, setSuggestions] = useState<any[]>([]); // Gợi ý từ API
-    const [query, setQuery] = useState<string>(''); // Từ khóa tìm kiếm
 
-    useEffect(() => {
-        const loadHistory = async () => {
-            try {
-                const historyJson = await AsyncStorage.getItem('searchHistory');
-                if (historyJson) {
-                    setHistory(JSON.parse(historyJson));
-                }
-            } catch (error) {
-                console.error('Error loading location history:', error);
-            }
-        };
-        loadHistory();
-        console.log('History:', history);
-    }, []);
-
-    // Hàm gọi API SerpAPI
-    const fetchJobSuggestions = async (query: string) => {
-        if (!query.trim()) return; // Nếu chuỗi rỗng thì không gọi API
-
-        try {
-            const response = await axios.get(`${BASE_URL}/jobs/suggest?q=${encodeURIComponent(query)}`);
-
-            console.log('API response:', response.data);
-
-            if (response.data) {
-                setSuggestions(
-                    response.data.map((job: any) => ({
-                        id: job._id,
-                        title: job.title,
-                        company: job.company,
-                        type: job.title?.toLowerCase().includes(query.toLowerCase())
-                            ? 'job'
-                            : 'company',
-
-                    }))
-                );
-            } else {
-                console.log('Không có gợi ý công việc');
-                setSuggestions([]);
-            }
-        } catch (error) {
-            console.error('Lỗi khi gọi API:', error);
-        }
-    };
-
-    const handleInputChange = (text: string) => {
-        setQuery(text);
-        if (text.length >= 1) {
-            fetchJobSuggestions(text);
-        } else {
-            setSuggestions([]);
-        }
-    };
-
-    const handleSelectSuggestion = (item: any) => {
-        const selectedQuery = item.title || item.query;
-        console.log('Selected query:', selectedQuery);
-        setQuery(selectedQuery);
-        onJobSearchSubmit(selectedQuery);
-    };
-
-    return (
-        <View style={styles.searchContainer}>
-            <Text style={{ marginBottom: 10, fontWeight: '500' }}>Bạn hãy nhập tên công việc hoặc công ty</Text>
-            <View style={styles.searchHeader}>
-                <Icon name="search" type="font-awesome" color="#373737" size={15} />
-                <TextInput
-                    style={styles.fullSearchInput}
-                    placeholder="Nhập từ khóa tìm kiếm"
-                    value={query}
-                    onChangeText={handleInputChange}
-                    autoFocus={true}
-                    onSubmitEditing={() => onJobSearchSubmit(query)}
-                />
-            </View>
-            <FlatList
-                data={query.length >= 1 ? suggestions : history} // Gợi ý từ API hoặc lịch sử
-                keyExtractor={(item, index) => `${item.id}-${index}`}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        style={styles.historyItem}
-                        onPress={() => { handleSelectSuggestion(item) }}
-                    >
-                        <View
-                            style={{
-                                backgroundColor: appColors.gray5,
-                                padding: 5,
-                                borderRadius: 8,
-                            }}
-                        >
-                            <Icon
-                                name="search"
-                                type="material"
-                                color="#000"
-                                size={24}
-                            />
-                        </View>
-                        <Text style={styles.historyText}>
-                            {item.query && item.location ? (
-                                <View style={{justifyContent:'space-between'}}>
-                                    <Text style={{ fontWeight: '500', color: '#333333' , fontSize:15, marginBottom:2}}>{item.query}</Text>
-                                    <Text style={{ fontWeight: '500', color: appColors.gray , fontSize:13}}>vị trí {item.location}</Text>
-                                </View>
-                            ) : item.query ? (
-                                <Text style={{ fontWeight: 'bold' }}>{item.query}</Text>
-                            ) : item.location ? (
-                                <Text style={{ fontWeight: '500', color: '#333333' , fontSize:15}}> {item.location}</Text>
-                            ) : null}
-                            {(item.title || item.query) && (
-                                <>
-                                    {item.type === 'job' && item.title && <Text>Công việc: {item.title}</Text>}
-                                    {item.type === 'company' && item.company && <Text>Công ty: {item.company}</Text>}
-                                </>
-                            )} {/* Hiển thị công việc hoặc lịch sử */}
-                        </Text>
-                    </TouchableOpacity>
-                )}
-                ListHeaderComponent={() => (
-                    <Text style={styles.searchText}>
-                        {query.length >= 1 ? 'Gợi ý tìm kiếm' : 'Các tìm kiếm gần đây'}
-                    </Text>
-                )}
-                ListEmptyComponent={
-                    <Text style={styles.noResultText}>
-                        {query.length >= 1 ? 'Không có gợi ý phù hợp.' : 'Không có lịch sử tìm kiếm.'}
-                    </Text>
-                }
-                showsVerticalScrollIndicator={false}
-            />
-        </View>
-    );
-};
-
-
-const SearchMap = ({ onMapSearchSubmit, navigation }: { onMapSearchSubmit: (location: string) => void, navigation: any }) => {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [locations, setLocations] = useState<City[]>([]);
-    const [filteredLocations, setFilteredLocations] = useState<City[]>(majorCities);
-    const [history, setHistory] = useState<SearchHistoryItem[]>([]);
-
-
-
-    useEffect(() => {
-        const fetchLocations = async () => {
-            try {
-                // Lấy danh sách tỉnh từ API
-                const response = await axios.get('https://provinces.open-api.vn/api/p/');
-                const fetchedLocations = response.data.map((province: any) => ({
-                    code: province.code,
-                    name: province.name,
-                    type: 'province',
-                }));
-                setLocations(fetchedLocations);
-            } catch (error) {
-                console.error('Error fetching locations:', error);
-            }
-        };
-
-        fetchLocations();
-    }, []);
-
-    const handleSearch = (query: string) => {
-        setSearchQuery(query);
-
-        if (query.trim() !== '') {
-            const filtered = locations.filter((location) =>
-                location.name.toLowerCase().includes(query.toLowerCase())
-            );
-            setFilteredLocations(filtered.slice(0, 10));
-        } else {
-            setFilteredLocations(majorCities);
-        }
-    };
-    const handleClearInput = () => {
-        setSearchQuery('');
-        setFilteredLocations(majorCities); // Reset lại danh sách khi xóa
-    };
-
-    return (
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-        >
-            <View style={styles.searchContainer}>
-                <Text style={{ marginBottom: 10, fontWeight: '500' }}>Nhập tên thành phố hoặc tỉnh</Text>
-                <View style={styles.searchHeader}>
-                    <Icon name="search" type="font-awesome" color="#373737" size={20} />
-                    <TextInput
-                        style={styles.fullSearchInput}
-                        placeholder="Nhập vị trí"
-                        autoFocus={true}
-                        value={searchQuery}
-                        onChangeText={handleSearch}
-                        onSubmitEditing={() => onMapSearchSubmit(searchQuery)}
-                    />
-                    {searchQuery.length > 0 && (
-                        <TouchableOpacity onPress={handleClearInput} style={styles.clearButton}>
-                            <Icon name="times" type="font-awesome" color="#373737" size={20} />
-                        </TouchableOpacity>
-                    )}
-                </View>
-                <Text style={{ fontWeight: 'bold', color: '#333', marginVertical: 20 }}>Đề xuất địa điểm</Text>
-                <FlatList
-                    data={filteredLocations}
-                    keyExtractor={(item) => `${item.code}-${item.type}`}
-                    keyboardShouldPersistTaps="always"
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={styles.resultItem}
-                            onPress={() => onMapSearchSubmit(item.name)}
-                        >
-                            <Icon
-                                name="map-marker"
-                                type="font-awesome"
-                                color={appColors.primary}
-                                size={20}
-                                style={styles.resultIcon}
-                            />
-                            <Text style={styles.resultText}>{item.name}</Text>
-                        </TouchableOpacity>
-                    )}
-                    ListEmptyComponent={<Text style={styles.noResultText}>Không tìm thấy kết quả.</Text>}
-                />
-            </View>
-        </KeyboardAvoidingView>
-    );
-};
-
-
-
-const SearchScreen = ({ route, navigation }: { route: any, navigation: any }) => {
-    const [isSearching, setIsSearching] = useState(false);
-    const [isMapSearching, setIsMapSearching] = useState(false);
-    //Check if the search type is text or map
-    const { searchType } = route.params;
-    const [query, setQuery] = useState('');
-    const [location, setLocation] = useState('');
-
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            const updatedLocation = route.params?.location;
-            const updatedQuery = route.params?.query;
-            console.log('Updated locationaaaaaaaaaaaa:', updatedLocation);
-            console.log('Updated queryaaaaaaaaaaaaa:', updatedQuery);
-            if (updatedLocation !== undefined) setLocation(updatedLocation);
-            if (updatedQuery !== undefined) setQuery(updatedQuery);
-        });
-        return unsubscribe;
-    }, [navigation, route.params]);
-
-    useEffect(() => {
-        if (searchType === 'text') {
-            setIsSearching(true);
-            setIsMapSearching(false);
-        } else if (searchType === 'map') {
-            setIsMapSearching(true);
-            setIsSearching(false);
-        }
-    }, [searchType]);
-    const handleJobSearchSubmit = (selectedJob: string) => {
-        navigation.navigate('JobList1', { location, query: selectedJob });
-    };
-
-    const handleMapSearchSubmit = (selectedLocation: string) => {
-        navigation.navigate('JobList1', { location: selectedLocation, query });
-    };
-    return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Icon name="arrow-back" size={25} color="#000" />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.headContainer}>
-                {isSearching ? (
-                    <Search navigation={navigation} onJobSearchSubmit={handleJobSearchSubmit} />
-                ) : isMapSearching ? (
-                    <SearchMap navigation={navigation} onMapSearchSubmit={handleMapSearchSubmit} />
-                ) : null}
-            </View>
-        </View>
-    );
-};
-
-export default SearchScreen;
+export default JobList1
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'flex-start',
-        backgroundColor: '#FFFFFF',
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 10,
-    },
-    backButton: {
-        marginRight: 20,
-        padding: 10,
-    },
-    headContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        width: '100%',
-    },
-    searchContainer: {
-        flex: 1,
-        paddingHorizontal: 20,
-    },
-    searchHeader: {
-        height: 50,
-        paddingHorizontal: 10,
-        borderBottomWidth: 2,
-        borderColor: appColors.primary,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    fullSearchInput: {
-        flex: 1,
-        marginRight: 10,
-        padding: 10,
-        borderColor: '#ccc',
-        borderRadius: 8,
-    },
-    clearButton: {
-        marginLeft: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    searchText: {
-        marginTop: 20,
-        marginBottom: 10,
-        fontSize: 14,
-        fontWeight: '700',
-        color: '#000000',
-    },
-    resultItem: {
-        flexDirection: 'row', // Đặt các phần tử con theo chiều ngang
-        alignItems: 'center', // Căn giữa theo chiều dọc
-        paddingVertical: 16,
-    },
-    resultText: {
-        fontSize: 16,
-        color: '#000',
-    },
-    resultIcon: {
-        marginRight: 20,
-    },
-    noResultText: {
-        textAlign: 'center',
-        fontSize: 14,
-        color: '#888',
-        marginTop: 20,
-    },
-    historyItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 10,
-    },
-    historyText: {
-        marginLeft: 10,
-        fontWeight: '500',
-        fontSize: 14,
-        color: '#000',
-    },
-
-});
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  backButton: {
+    flexDirection: 'row',
+    padding: 15,
+  },
+  header: {
+    padding: 10,
+  },
+  searchBar: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#CECECE',
+    borderRadius: 9,
+    elevation: 6,
+  },
+  searchInput: {
+    flexDirection: 'column',
+  },
+  inputRow: {
+    padding: 14,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  input: {
+    flex: 1,
+  },
+  locationRow: {
+    padding: 14,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  text: {
+    marginLeft: 10,
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#333",
+  },
+  cardContainer: {
+    borderWidth: 0,
+    borderRadius: 8,
+    borderColor: '#ddd',
+    width: '100%',
+    alignSelf: 'center',
+    elevation: 2,
+  },
+  premiumTag: {
+    backgroundColor: '#fdecef',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+  },
+  premiumText: {
+    color: '#d32f2f',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  title: {
+    fontSize: width * 0.05,
+    width: '85%',
+    flexWrap: 'wrap',
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  company: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 5,
+  },
+  salary: {
+    color: '#007AFF',
+    fontWeight: 'bold',
+    fontSize: 14,
+    marginBottom: 5,
+  },
+  location: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 5,
+  },
+  timePosted: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 10,
+  },
+  easyApplyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sendIcon: {
+    marginRight: 5,
+  },
+  easyApply: {
+    fontSize: 14,
+    color: '#007AFF',
+  },
+  icon: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+})

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Cv } from './entities/cv.entity';
+import { log } from 'console';
 
 @Injectable()
 export class CvService {
@@ -30,6 +31,8 @@ export class CvService {
   }
 
   async getCvByUserId(userId: string): Promise<Cv[]> {
-    return this.cvModel.find({ userId: userId });
+    const data = await this.cvModel.find({ userId: userId });
+    console.log(data)
+    return data
   }
 }

@@ -1,20 +1,18 @@
-import { Card, Icon } from '@rneui/themed';
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, Keyboard, TextInput, Image, useWindowDimensions, Dimensions, Platform } from 'react-native';
-import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigator/RootStackParamList';
-import ScreenName from '../../constants/ScreenName';
-import { BASE_URL } from '../../utils/url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Card, Icon } from '@rneui/themed';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import Navbar from '../../components/Navbar';
+import ScreenName from '../../constants/ScreenName';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
+import { BASE_URL } from '../../utils/url';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
-type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName.Home>;
 const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void, onMapSearchFocus: () => void }) => {
-    const [searchTerm, setSearchTerm] = useState('');
 
     return (
         <View style={styles.header}>
@@ -24,7 +22,7 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
                     style={styles.searchInput} // Dùng style cũ của TextInput
                     onPress={onSearchFocus} // Khi nhấn, điều hướng sang màn hình tìm kiếm
                 >
-                    <Text style={{ color: '#666' }}>Nhập vị trí</Text>
+                    <Text style={{ color: '#666', height:'70%', width:'100%'}}>Nhập công việc, từ khóa</Text>
                 </TouchableOpacity>
                 <View style={styles.divider} />
                 <Icon name="map-marker" type="font-awesome" color="#373737" size={15} />
@@ -47,7 +45,7 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
 interface dataJobsIteam {
     _id: string;
     title: string;
-    company: string;
+    companyName: string;
     location: string;
     salary: string;
     jobType: string;
@@ -90,7 +88,7 @@ const toggleBookmarkJob = async (job: dataJobsIteam, setIsBookmarked: (value: bo
     }
 };
 
-const JobItem = ({ title, company, salary, location, onPress, job, navigation }: { title: string, company: string, salary: string, location: string, onPress: () => void, job: dataJobsIteam, navigation: any }) => {
+const JobItem = ({ title, companyName, salary, location, onPress, job, navigation }: { title: string, companyName: string, salary: string, location: string, onPress: () => void, job: dataJobsIteam, navigation: any }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
 
     useEffect(() => {
@@ -111,7 +109,7 @@ const JobItem = ({ title, company, salary, location, onPress, job, navigation }:
 
                     <Text style={styles.title}>{title}</Text>
                     <View style={{ marginVertical: width * 0.03 }}>
-                        <Text style={styles.company}>{company}</Text>
+                        <Text style={styles.company}>{companyName}</Text>
                         <Text style={styles.location}>{location}</Text>
                     </View>
 
@@ -132,7 +130,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
     interface dataJobsIteam {
         _id: string;
         title: string;
-        company: string;
+        companyName: string;
         location: string;
         salary: string;
         jobType: string;
@@ -182,7 +180,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
             renderItem={({ item }) => (
                 <JobItem
                     title={item.title}
-                    company={item.company}
+                    companyName={item.companyName}
                     salary={item.salary}
                     location={item.location}
                     onPress={() => navigation.navigate('JobDetail', { jobId: item._id, userId: userId })}
@@ -193,7 +191,6 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
                 />
             )}
             ListHeaderComponent={<Header onSearchFocus={onSearchFocus} onMapSearchFocus={onMapSearchFocus} />}
-            ListFooterComponent={loading ? <ActivityIndicator size="small" color="#007AFF" /> : <Footer />}
             onEndReachedThreshold={0.5}  // Trigger load when 50% from bottom
         />
     );
@@ -237,11 +234,11 @@ const Home = ({ navigation, route }: Props) => {
     }, []);
 
     const handleSearchFocus = () => {
-        navigation.navigate('SearchSceen', { searchType: "text" }); // Điều hướng đến SearchScreen khi nhấn tìm kiếm
+        navigation.navigate('SearchScreen', { searchType: "text" }); // Điều hướng đến SearchScreen khi nhấn tìm kiếm
     };
 
     const handleMapSearchFocus = () => {
-        navigation.navigate('SearchSceen', { searchType: 'map' }); // Điều hướng đến SearchScreen khi nhấn tìm kiếm bản đồ
+        navigation.navigate('SearchScreen', { searchType: 'map' }); // Điều hướng đến SearchScreen khi nhấn tìm kiếm bản đồ
     };
     // responsive window width
     const { width } = useWindowDimensions();
