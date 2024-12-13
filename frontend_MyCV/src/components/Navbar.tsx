@@ -6,17 +6,23 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { appColors } from '../constants/appColors';
 import ScreenName from '../constants/ScreenName';
 import { RootStackParamList } from '../navigator/RootStackParamList';
+import { BASE_URL } from '../utils/url';
+import axios from 'axios';
 
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
 const Navbar = ({ route, navigation }: Props) => {
   const [user, setUser] = useState<any>(null);
-
+  const [userId, setUserId] = useState<string | null>(null); // Trạng thái lưu userId
+  const [employer, setEmployer] = useState<any>(null);
   useEffect(() => {
     const getInfo = async () => {
       const userInfo = await AsyncStorage.getItem('userInfo');
       if (userInfo) {
-        setUser(JSON.parse(userInfo));
+        const parsedUser = JSON.parse(userInfo);
+        setUser(parsedUser);
+        setUserId(parsedUser.data.user.id);
+        console.log("user------------", parsedUser.data.user.id);
       }
     };
     getInfo();
@@ -28,6 +34,31 @@ const Navbar = ({ route, navigation }: Props) => {
 
   const getTextColor = (screen: string) => {
     return route.name === screen ? '#011F82' : '#666'; // Tương tự như trên
+  };
+
+  const handleEmployer = async (userId: string) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/employers/check-cv-employer/${userId}`);
+      setEmployer(response.data);
+      console.log("hasCV", response.data.hasCv);
+      return response.data.hasCv; // Trả về giá trị true/false
+    } catch (error) {
+      console.error('Error checking CV:', error);
+      return false; // Default trường hợp lỗi
+    }
+  };
+
+  const navigateToEmployer = async () => {
+    if (userId) {
+      const hasCv = await handleEmployer(userId); // Kiểm tra trạng thái CV
+      if (hasCv) {
+        navigation.navigate('HomeEmployer', { userId }); // Điều hướng nếu có CV
+      } else {
+        navigation.navigate('CreateEmployer'); // Điều hướng nếu chưa có CV
+      }
+    } else {
+      console.warn("User ID is not available");
+    }
   };
 
   return (
@@ -44,9 +75,9 @@ const Navbar = ({ route, navigation }: Props) => {
       </View>
 
       <View style={styles.group}>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('MessageScreen')}>
+        <TouchableOpacity style={styles.navItem} onPress={navigateToEmployer}>
           <Icon name="chatbox-ellipses" size={25} color="#011F82" />
-          <Text style={styles.navText}>Tin nhắn</Text>
+          <Text style={styles.navText}>Nhà tuyển dụng</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navItem}

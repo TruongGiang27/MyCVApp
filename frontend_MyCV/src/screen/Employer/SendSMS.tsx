@@ -226,19 +226,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
     },
-    recipientInfo: {
-        width: '90%',
-        padding: 15,
-        borderRadius: 10,
-        backgroundColor: '#ffffff',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-        alignItems: 'center',
-        marginBottom: 20,
-    },
+
     recipientText: {
         fontSize: 18, // Tăng kích thước
         color: '#011F82', // Màu xanh cùng tông

@@ -17,9 +17,10 @@ import CVCreate from '../screen/User/CVCreate';
 import CVManagerment from '../screen/User/CVManagerment';
 import FavoriteJob from '../screen/User/FavoriteJob';
 import JobDetail from '../screen/User/JobDetail';
-import JobList1 from '../screen/User/JobList1';
+import JobList from '../screen/User/JobList';
 import ManageCVsApplied from '../screen/User/ManageCVsApplied';
 import MessageScreen from '../screen/User/Message';
+import SearchScreen from '../screen/home/SearchScreen';
 import { RootStackParamList } from './RootStackParamList';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -35,9 +36,8 @@ const App = () => {
 
             <Stack.Screen name={ScreenName.HomeEmployer} component={HomeEmployer} />
             <Stack.Screen name={ScreenName.ApplyManager} component={ApplyManager} />
-
             <Stack.Screen name={ScreenName.Home} component={Home} />
-            <Stack.Screen name={ScreenName.JobList1} component={JobList1} />
+            <Stack.Screen name={ScreenName.JobList} component={JobList} />
             <Stack.Screen name={ScreenName.JobDetail} component={JobDetail} />
             <Stack.Screen name={ScreenName.Profile} component={Profile} />
             <Stack.Screen name={ScreenName.CVCreate} component={CVCreate} />
@@ -45,8 +45,10 @@ const App = () => {
             <Stack.Screen name={ScreenName.CVManagerment} component={CVManagerment} />
             <Stack.Screen name={ScreenName.ManageCVsApplied} component={ManageCVsApplied} />
             <Stack.Screen name={ScreenName.FavoriteJob} component={FavoriteJob} />
-            <Stack.Screen name={ScreenName.CVDetail} component={CVDetail} />
             <Stack.Screen name={ScreenName.Login} component={Login} />
+
+            <Stack.Screen name={ScreenName.CVDetail} component={CVDetail} />
+            <Stack.Screen name={ScreenName.SearchScreen} component={SearchScreen} />
         </Stack.Navigator>
     );
 };

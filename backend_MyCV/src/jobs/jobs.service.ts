@@ -11,6 +11,7 @@ export class JobsService {
   constructor(@InjectModel(Job.name) private jobModel: Model<JobDocument>) { }
 
   async create(createJobDto: CreateJobDto): Promise<Job> {
+    console.log("create Job------------",createJobDto);
     const createdJob = new this.jobModel(createJobDto);
     return createdJob.save();
   }
@@ -71,5 +72,9 @@ export class JobsService {
 
   async update(id: string, createJobDto: CreateJobDto): Promise<Job> {
     return this.jobModel.findByIdAndUpdate(id, createJobDto, { new: true }).exec();
+  }
+
+  async getJobByUserId(userId: string): Promise<Job[]> {
+    return this.jobModel.find({ userId: userId }).exec();
   }
 }

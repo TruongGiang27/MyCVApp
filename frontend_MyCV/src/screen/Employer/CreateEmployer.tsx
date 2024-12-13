@@ -71,6 +71,7 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
         console.log('Submitting employer data:', employerData);
         await axios.post(`${BASE_URL}/employers`, employerData);
         Alert.alert('Thành công', 'Bạn đã đăng ký thành công');
+        navigation.navigate("HomeEmployer", { userId: user.data.user.id });
       } catch (error) {
         console.error('Error creating employer:', error);
         Alert.alert('Lỗi', 'Đã có lỗi xảy ra');

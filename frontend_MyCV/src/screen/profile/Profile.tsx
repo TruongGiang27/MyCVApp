@@ -2,8 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
+import { Icon } from '@rneui/themed';
 import { useDispatch } from 'react-redux';
 import Navbar from '../../components/Navbar';
 import { appColors } from '../../constants/appColors';
@@ -13,13 +13,53 @@ import { signOut } from '../../utils/auth';
 import { BASE_URL } from '../../utils/url';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
-
+interface CV {
+    _id: string;
+    userId: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    address: {
+        country: string;
+        city: string;
+        address: string;
+        zipCode: string;
+    };
+    education: {
+        educationLevel: string;
+        fieldOfStudy: string;
+        schoolName: string;
+        educationCountry: string;
+        educationCity: string;
+        educationStartDate: string;
+        educationEndDate: string;
+    };
+    experience: {
+        companyName: string;
+        jobTitle: string;
+        workCountry: string;
+        workCity: string;
+        workStartDate: string;
+        workEndDate: string;
+    };
+    skills: string;
+    certifications: string;
+    birthDate: string;
+    summary: string;
+    jobPreferences: {
+        desiredJobTitle: string;
+        jobType: string;
+        minimumSalary: string;
+    };
+}
 const Profile = ({ navigation, route }: Props) => {
     const { userEmail, userId } = route.params as { userEmail: string, userId: string };
     const [menuVisible, setMenuVisible] = useState(false);
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
-    const [employer, setEmployer] = useState<any>(null);
+
+
+    const [cvs, setCvs] = useState<CV[]>([]);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -33,57 +73,41 @@ const Profile = ({ navigation, route }: Props) => {
                 // console.log("user////////////", user?.data?.user?.id);
             }
         };
+
         getInfo();
+        fetchCVs();
     }, []);
 
-    const handleEmployer = async (userId: string) => {
+    const fetchCVs = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/employers/check-cv-employer/${userId}`);
-            setEmployer(response.data);
-            console.log("hasCV", response.data.hasCv);
-            return response.data.hasCv; // Trả về giá trị true/false
+            const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
+            console.log("response.data", response.data);
+            setCvs(response.data);
         } catch (error) {
-            console.error('Error checking CV:', error);
-            return false; // Default trường hợp lỗi
+            console.error('Error fetching CVs:', error);
         }
-        // try {
-        //     const response = await axios.get(`${BASE_URL}/employers?employer_id=${userId}`);
-        //     setEmployer(response.data);
-        //     console.log("employer", employer);
+    };
 
-        // }
-        // catch (error) {
-        //     console.log(error);
-        // }
-
-        // // if(user?.data?.user?.id === userId){
-        // //     navigation.navigate('HomeEmployer');
-        // // }
-        // // else if(user?.data?.user?.id !== userId){
-        // //     navigation.navigate('CreateEmployer');
-        // // }
-    }
     useEffect(() => {
-        const navigateBasedOnCv = async () => {
-            const hasCv = await handleEmployer(userId);
-            if (hasCv) {
-                navigation.navigate('HomeEmployer'); // Trang chính nếu đã có CV
-            } else {
-                navigation.navigate('CreateEmployer'); // Trang tạo CV
-            }
-        };
-        navigateBasedOnCv();
-    }, [userId]);
+        console.log("cvs", cvs);
+    },[]);
+
+    const submitCV = (cvId: string) => {
+        // Chuyển đến màn hình nộp CV hoặc gọi API
+        // navigation.navigate('SubmitCV', { cvId });
+    };
 
     return (
         <View style={styles.container}>
-
             <View style={styles.header}>
+
                 <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Icon name="arrow-back" size={25} color="#000" />
+                    <Icon name="arrow-back" size={32} color="#000" />
                 </TouchableOpacity>
+                <Text style={styles.headerText}>HỒ SƠ XIN VIỆC CỦA BẠN</Text>
+
                 <TouchableOpacity onPress={toggleMenu}>
-                    <Icon name="menu" size={25} color="#000" />
+                <Icon name="cog" type="font-awesome" size={30} color="#A6AEBF" />
                 </TouchableOpacity>
             </View>
             <Modal
@@ -98,9 +122,6 @@ const Profile = ({ navigation, route }: Props) => {
                         <Icon name="close" size={30} color="#000" />
                     </TouchableOpacity>
                     <View style={styles.menuContent}>
-                        <TouchableOpacity style={styles.menuItem} onPress={() => handleEmployer(userId)}>
-                            <Text style={styles.menuItemText}>Nhà tuyển dụng</Text>
-                        </TouchableOpacity>
                         <TouchableOpacity style={styles.menuItem}>
                             <Text style={styles.menuItemText}>Cài đặt</Text>
                         </TouchableOpacity>
@@ -113,15 +134,24 @@ const Profile = ({ navigation, route }: Props) => {
             </Modal>
 
             <View style={styles.content}>
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>Tải lên CV</Text>
+            <FlatList
+                    data={cvs}
+                    keyExtractor={(item) => item._id}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity
+                            style={styles.cvItem}
+                            onPress={() => submitCV(item._id)}
+                        >
+                            <Text style={styles.cvTitle}>{item.fullName}</Text>
+                            <Text style={styles.cvTitle}>{item.email}</Text>
+                        </TouchableOpacity>
+                    )}
+                />
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('CVCreate')}>
+                    <Text style={styles.buttonText}>Tạo hồ sơ</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('CVCreate', { startStep: 1, source: 'Profile' } as never)}>
-                    <Text style={styles.buttonText}>Xây dựng Indeed CV</Text>
-                </TouchableOpacity>
-                <Text style={styles.agreementText}>
-                    Bằng cách tiếp tục, bạn đồng ý nhận các cơ hội việc làm từ Indeed.
-                </Text>
             </View>
 
             <Navbar navigation={navigation} route={route} />
@@ -140,6 +170,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 16,
     },
+
+    headerText: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#011F82',
+    },
+
     backButton: {
         marginRight: 10,
     },
@@ -168,6 +205,18 @@ const styles = StyleSheet.create({
         marginTop: 20,
         paddingHorizontal: 20,
     },
+    cvItem: {
+        width: width * 0.9,
+        padding: 20,
+        backgroundColor: '#f9f9f9',
+        borderRadius: 8,
+        marginVertical: 10,
+    },
+    cvTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#000',
+    },
     footer: {
         alignItems: 'center',
         paddingBottom: 10,
@@ -184,6 +233,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
+
     closeButton: {
         alignSelf: 'flex-end',
         padding: 16,

@@ -1,5 +1,5 @@
 import { useRoute } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 // import axios from 'axios';
 import { Icon } from '@rneui/themed';
 import React, { useEffect, useState } from 'react';
@@ -46,14 +46,7 @@ interface cv_form {
     };
 }
 
-type CreateEmployerScreenNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'CVManagerment'
->;
-
-type Props = {
-    navigation: CreateEmployerScreenNavigationProp;
-};
+type Props = NativeStackScreenProps<RootStackParamList, 'CVDetail'>;
 
 const CVDetail: React.FC<Props> = ({ navigation }) => {
     const [cv, setCv] = useState<cv_form>();

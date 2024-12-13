@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Picker } from '@react-native-picker/picker';
-import { NavigationProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import axios from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -12,23 +13,18 @@ import {
   StatusBar,
   StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View
 } from 'react-native';
+import ScreenName from '../../constants/ScreenName';
+import RootStackParamList from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
+
 
 const { width } = Dimensions.get('window');
 // types.ts
-export type RootStackParamList = {
-  // HomeEmployer: undefined;
+type Props = NativeStackScreenProps<RootStackParamList, 'HomeEmployer'>;
 
-  CreateEmployer: undefined;
-
-  HomeEmployer: { userId: string };
-  EmployerDetail: { jobDetails: Job };
-  Login: undefined;
-  Home: undefined;
-};
 interface Job {
   deadline: string;
-  id: string;
+  _id: string;
   title: string;
   company: string;
   location: string;
@@ -38,9 +34,9 @@ interface Job {
   status: "Chọn trạng thái" | "Mở" | "Tạm dừng" | "Đã đóng"; // Add status field here
 }
 
-const HomeEmployer = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const route = useRoute();
+const HomeEmployer = ({navigation, route} : Props) => {
+  const {userId} = route.params as { userId: string };
+
   const [allJobs, setAllJobs] = useState<Job[]>([]); // Original data
   const [jobs, setJobs] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
@@ -59,23 +55,15 @@ const HomeEmployer = () => {
       };
       getInfo();
   }, []);
-
-  
-  // useEffect(() => {
-  //   if (userInfo) {
-  //     fetchJobsByCompany(userInfo.company);
-  //   } else {
-  //     setJobs([]); // Hoặc hiển thị thông báo cần đăng nhập
-  //   }
-  // }, [userInfo]);
   
   // Hàm tải dữ liệu từ API
   const fetchJobs = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/jobs`);
+      const response = await axios.get(`${BASE_URL}/jobs/job-of-user/${userId}`);
       setAllJobs(response.data);
       setJobs(response.data);
       setVisibleCount(2); // Reset số lượng hiển thị mỗi lần tải lại
+      console.log("userId------pagehomeemployer", userId);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -180,6 +168,14 @@ const HomeEmployer = () => {
     }
   };
 
+  console.log("data-----", filteredData)
+  if(!jobs) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text>Không có việc làm nào!! Hãy tạo bài đăng việc làm mới!</Text>
+      </View>
+    )
+  }
   return (
     <View style={styles.container}>
       <StatusBar />
@@ -219,7 +215,7 @@ const HomeEmployer = () => {
                   <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
                     closeMenu();
                     if (item.title === 'Tạo mới') {
-                      navigation.navigate('JobPost' as never); // Navigate to JobPost
+                      navigation.navigate('JobPost'); // Navigate to JobPost
                     }
                     if (item.title === 'Việc làm') {
                       navigation.navigate('InforManager' as never); // Navigate to InforManager
@@ -248,7 +244,7 @@ const HomeEmployer = () => {
           <View style={styles.overlay}>
             <Animated.View style={[styles.menuAccountContainer, { transform: [{ translateX: slideAnim_r }] }]}>
               <ScrollView>
-                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Home',{userId})}>
                   <Icon name="settings" size={25} color="#011F82" />
                   <Text style={styles.menuText}>Chuyển về trang chủ</Text>
                 </TouchableOpacity>
@@ -298,7 +294,7 @@ const HomeEmployer = () => {
           <TouchableOpacity
             key={index}
             style={styles.card}
-            onPress={() => navigation.navigate('EmployerDetail', { jobDetails: item })}
+            onPress={() => navigation.navigate('EmployerDetail', { jobId: item._id})}
           >
             <View style={styles.infoRow}>
               <Icon name="work-outline" size={20} color="#011F82" style={styles.icon} />
