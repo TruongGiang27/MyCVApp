@@ -1,11 +1,12 @@
 export enum ScreenName {
     Home = 'Home',
     Login = 'Login',
+    InfoEmployer = 'InfoEmployer',
     CreateEmployer = 'CreateEmployer',
     HomeEmployer = 'HomeEmployer',
     Profile = 'Profile',
     JobPost = 'JobPost',
-    JobList ='JobList',
+    JobList = 'JobList',
     JobDetail = 'JobDetail',
     SearchScreen = 'SearchScreen',
     CVCreate = 'CVCreate',
@@ -18,6 +19,6 @@ export enum ScreenName {
     FavoriteJob = "FavoriteJob",
     CVDetail = "CVDetail",
     SendSMS = "SendSMS",
-    EditCV = "EditCV",
+    EditCV = "EditCV"
 }
 export default ScreenName;

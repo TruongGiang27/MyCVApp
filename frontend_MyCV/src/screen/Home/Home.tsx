@@ -11,7 +11,7 @@ import { BASE_URL } from '../../utils/url';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
-type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName.Home>;
 const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void, onMapSearchFocus: () => void }) => {
 
     return (

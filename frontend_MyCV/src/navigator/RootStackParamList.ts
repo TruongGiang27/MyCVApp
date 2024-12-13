@@ -12,14 +12,15 @@ export type RootStackParamList = {
     MessageScreen: undefined;
     CvDetail: undefined;
     ApplyManager: { jobId: string };
-    InforManager: undefined;
+    InforManager: {userId: string};
     EmployerDetail: { jobId: string };
     CVManagerment: undefined;
     JobDetail: { jobId: string, jobName: string, userId: string, userEmail: string };
     ManageCVsApplied: undefined;
     FavoriteJob: undefined;
     CVDetail: {cvId: string};
-    SendSMS: undefined;
+    SendSMS: {phone: string};
     EditCV: { cvId: string };
+    InfoEmployer: { userId: string };
 };
 export default RootStackParamList;

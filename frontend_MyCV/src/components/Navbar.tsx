@@ -82,7 +82,7 @@ const Navbar = ({ route, navigation }: Props) => {
         <TouchableOpacity
           style={styles.navItem}
           onPress={() =>
-            navigation.navigate('Profile', { userId: user?.data?.user?.id ,userEmail: user?.data?.user?.email, jobId: '', jobName: '' })
+            navigation.navigate('Profile', { userId: user?.data?.user?.id, userEmail: user?.data?.user?.email, jobId: '', jobName: '', updated: false })
           }
         >
           <Icon name="person" size={25} color={getIconColor('Profile')} />

@@ -13,14 +13,14 @@ import {
   StatusBar,
   StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View
 } from 'react-native';
+import NavbarEmployer from '../../components/NavbarEmployer';
 import ScreenName from '../../constants/ScreenName';
 import RootStackParamList from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
 
 
 const { width } = Dimensions.get('window');
-// types.ts
-type Props = NativeStackScreenProps<RootStackParamList, 'HomeEmployer'>;
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName.HomeEmployer>;
 
 interface Job {
   deadline: string;
@@ -34,8 +34,8 @@ interface Job {
   status: "Chọn trạng thái" | "Mở" | "Tạm dừng" | "Đã đóng"; // Add status field here
 }
 
-const HomeEmployer = ({navigation, route} : Props) => {
-  const {userId} = route.params as { userId: string };
+const HomeEmployer = ({ navigation, route }: Props) => {
+  const { userId } = route.params as { userId: string };
 
   const [allJobs, setAllJobs] = useState<Job[]>([]); // Original data
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -43,19 +43,19 @@ const HomeEmployer = ({navigation, route} : Props) => {
   const [userInfo, setUserInfo] = useState<any>(null);
   const [visibleCount, setVisibleCount] = useState(2); // Start by showing 5 jobs
   const [user, setUser] = useState<any>(null);
-  
+
   useEffect(() => {
     const getInfo = async () => {
-        const userInfo = await AsyncStorage.getItem('userInfo');
-        if (userInfo) {
-            setUser(JSON.parse(userInfo));
-            console.log("------------------");
-            console.log("userInfo", userInfo);
-        }
-      };
-      getInfo();
+      const userInfo = await AsyncStorage.getItem('userInfo');
+      if (userInfo) {
+        setUser(JSON.parse(userInfo));
+        console.log("------------------");
+        console.log("userInfo", userInfo);
+      }
+    };
+    getInfo();
   }, []);
-  
+
   // Hàm tải dữ liệu từ API
   const fetchJobs = async () => {
     try {
@@ -154,8 +154,6 @@ const HomeEmployer = ({navigation, route} : Props) => {
     { title: 'Việc làm', icon: 'shopping-bag' },
     { title: 'Ứng viên', icon: 'people-outline' },
     { title: 'Phỏng vấn', icon: 'calendar-today' },
-    { title: 'Phân tích', icon: 'bar-chart' },
-    { title: 'Công cụ', icon: 'folder' },
   ];
 
   const signOut = async () => {
@@ -169,9 +167,9 @@ const HomeEmployer = ({navigation, route} : Props) => {
   };
 
   console.log("data-----", filteredData)
-  if(!jobs) {
+  if (!jobs) {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Không có việc làm nào!! Hãy tạo bài đăng việc làm mới!</Text>
       </View>
     )
@@ -218,7 +216,7 @@ const HomeEmployer = ({navigation, route} : Props) => {
                       navigation.navigate('JobPost'); // Navigate to JobPost
                     }
                     if (item.title === 'Việc làm') {
-                      navigation.navigate('InforManager' as never); // Navigate to InforManager
+                      navigation.navigate('InforManager', {userId: userId}); // Navigate to InforManager
                     }
                     if (item.title === 'Ứng viên') {
                       navigation.navigate('ApplyManager' as never); // Navigate to ApplyManager
@@ -244,7 +242,7 @@ const HomeEmployer = ({navigation, route} : Props) => {
           <View style={styles.overlay}>
             <Animated.View style={[styles.menuAccountContainer, { transform: [{ translateX: slideAnim_r }] }]}>
               <ScrollView>
-                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Home',{userId})}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Home', { userId })}>
                   <Icon name="settings" size={25} color="#011F82" />
                   <Text style={styles.menuText}>Chuyển về trang chủ</Text>
                 </TouchableOpacity>
@@ -294,7 +292,7 @@ const HomeEmployer = ({navigation, route} : Props) => {
           <TouchableOpacity
             key={index}
             style={styles.card}
-            onPress={() => navigation.navigate('EmployerDetail', { jobId: item._id})}
+            onPress={() => navigation.navigate('EmployerDetail', { jobId: item._id })}
           >
             <View style={styles.infoRow}>
               <Icon name="work-outline" size={20} color="#011F82" style={styles.icon} />
@@ -332,6 +330,7 @@ const HomeEmployer = ({navigation, route} : Props) => {
           </TouchableOpacity>
         )}
       </ScrollView>
+      <NavbarEmployer navigation={navigation} route={route}/>
     </View>
   );
 };
