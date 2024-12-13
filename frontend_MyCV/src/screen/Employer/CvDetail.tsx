@@ -5,7 +5,7 @@ import { Icon } from '@rneui/themed';
 import React, { useEffect, useState } from 'react';
 import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BASE_URL } from '../../utils/url';
-import { RootStackParamList } from '../User/types';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
 interface cv_form {
     _id: string;
     userId: string;
@@ -45,10 +45,9 @@ interface cv_form {
         minimumSalary: string;
     };
 }
-
 type Props = NativeStackScreenProps<RootStackParamList, 'CVDetail'>;
 
-const CVDetail: React.FC<Props> = ({ navigation }) => {
+const CVDetail = ({ navigation }:Props) => {
     const [cv, setCv] = useState<cv_form>();
     const [name, setName] = useState<string>();
     const [isModalVisible, setIsModalVisible] = useState(false);

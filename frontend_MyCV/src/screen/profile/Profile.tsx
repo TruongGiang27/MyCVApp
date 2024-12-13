@@ -12,7 +12,7 @@ import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { signOut } from '../../utils/auth';
 import { BASE_URL } from '../../utils/url';
 
-type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 const { width, height } = Dimensions.get('window');
 
 interface CV {
@@ -58,6 +58,7 @@ interface CV {
 const Profile = ({ navigation, route }: Props) => {
     const { userEmail, userId, jobId, jobName, updated } = route.params as { userEmail: string, userId: string, jobId: string, jobName: string, updated?: boolean };
     const [menuVisible, setMenuVisible] = useState(false);
+
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(false);
