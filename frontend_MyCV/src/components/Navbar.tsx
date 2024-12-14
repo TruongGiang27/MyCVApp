@@ -22,7 +22,6 @@ const Navbar = ({ route, navigation }: Props) => {
         const parsedUser = JSON.parse(userInfo);
         setUser(parsedUser);
         setUserId(parsedUser.data.user.id);
-        console.log("user------------", parsedUser.data.user.id);
       }
     };
     getInfo();
@@ -40,7 +39,6 @@ const Navbar = ({ route, navigation }: Props) => {
     try {
       const response = await axios.get(`${BASE_URL}/employers/check-cv-employer/${userId}`);
       setEmployer(response.data);
-      console.log("hasCV", response.data.hasCv);
       return response.data.hasCv; // Trả về giá trị true/false
     } catch (error) {
       console.error('Error checking CV:', error);

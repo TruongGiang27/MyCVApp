@@ -1,9 +1,10 @@
-import { useRoute } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import NavbarEmployer from '../../components/NavbarEmployer';
+import ScreenName from '../../constants/ScreenName';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
 
@@ -18,16 +19,8 @@ interface Employer {
     status: string;
 }
 
-type EmployerDetailScreenNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'EmployerDetail'
->;
-
-type Props = {
-    navigation: EmployerDetailScreenNavigationProp;
-};
-
-const ApplyManager: React.FC<Props> = ({ navigation }) => {
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+const ApplyManager= ({ navigation,route }: Props) => {
     const [employers, setEmployers] = useState<Employer[]>([]);
     const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
     const [formData, setFormData] = useState<Employer | null>(null);
@@ -36,7 +29,6 @@ const ApplyManager: React.FC<Props> = ({ navigation }) => {
     const [jobDetails, setJobDetails] = useState<any>(null);
     const [applicants, setApplicants] = useState<Employer[]>([]); // State to store applicants
     const [filteredEmployers, setFilteredEmployers] = useState<Employer[]>([]); // Lưu danh sách đã lọc
-    const route = useRoute();
 
     const fetchApplicants = async () => {
         setLoading(true);
@@ -113,16 +105,18 @@ const ApplyManager: React.FC<Props> = ({ navigation }) => {
                             <Text style={styles.jobDetail}>{employer.status}</Text>
                         </View>
                         <View style={styles.actionIconsRight}>
-                            <Icon name="eye" size={20} color="#007bff" style={styles.iconButton} onPress={() => navigation.navigate('CVDetail', { cvId: employer.cvId })} />
+                            <Icon name="eye" size={20} color="#007bff" style={styles.iconButton} onPress={() => navigation.navigate('CVDetail', { cvId: employer.cvId, jobId: employer.jobId })} />
                         </View>
                     </View>
                 )}
             />
+            <NavbarEmployer navigation={navigation} route={route}/>
         </View>
     )
 }
 const styles = StyleSheet.create({
     scrollView: {
+        flex: 1,
         backgroundColor: '#f5f5f5'
     },
     container: {

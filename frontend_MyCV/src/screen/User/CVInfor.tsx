@@ -1,11 +1,14 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-// import axios from 'axios';
 import { Icon } from '@rneui/themed';
 import React, { useEffect, useState } from 'react';
-import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Navbar from '../../components/NavbarEmployer';
 import ScreenName from '../../constants/ScreenName';
-import { RootStackParamList } from '../../navigator/RootStackParamList';
+import RootStackParamList from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
+
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 interface cv_form {
     _id: string;
     userId: string;
@@ -45,104 +48,39 @@ interface cv_form {
         minimumSalary: string;
     };
 }
-
-interface application {
-    _id: string;
-    jobId: string;
-    cvId: string;
-    status: string;
-}
-type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
-
-const CVDetail = ({ navigation, route }: Props) => {
-    const [cv, setCv] = useState<cv_form>();
-    const [applications, setApplications] = useState<application>();
-    const [name, setName] = useState<string>();
-    const [isModalVisible, setIsModalVisible] = useState(false);
-
-    const initials = cv?.email
-        ? cv.email
-            .split(' ') // Tách tên thành mảng các từ
-            .map(word => word[0]) // Lấy chữ cái đầu của mỗi từ
-            .join('') // Gộp lại thành một chuỗi
-            .toUpperCase() // Chuyển thành chữ in hoa
-        : 'CV';
+const CVInfor = ({ navigation, route }: Props) => {
+    const { cvId, userId } = route.params ? route.params as { cvId: string, userId: string } : { cvId: '', userId: '' };
+    const [cv, setCV] = useState<cv_form>();
+    const [user, setUser] = useState<any>({});
     useEffect(() => {
-        console.log("Route params:", route.params);
-    }, [route.params]);
-
-    const BackHandler = () => {
-        navigation.goBack();
-    }
-    const { cvId, disableButtons, jobId } = route.params ? route.params as { cvId: string, disableButtons: boolean, jobId: string } : { cvId: '', disableButtons: false, jobId: '' };
-    useEffect(() => {
-        const fetchData = async () => {
+        const getInfo = async () => {
+            const userInfo = await AsyncStorage.getItem('userInfo');
+            if (userInfo) {
+                setUser(JSON.parse(userInfo));
+            }
+        };
+        const fetchCV = async () => {
             try {
                 const response = await fetch(`${BASE_URL}/cv_form/${cvId}`);
                 const data = await response.json();
-                setCv(data);
-            } catch (error) {
-                console.error("Lỗi khi lấy dữ liệu CV:", error);
+                setCV(data);
+                console.log('CV:', cv);
+            } catch (err) {
+                console.error('Failed to fetch CV:', err);
             }
         };
-        const fetchApplications = async () => {
-            try {
-                const response = await fetch(`${BASE_URL}/applications/job/${jobId}`);
-                // Chuyển đổi chuỗi text thành JSON
-                const text = await response.text();
-                const data = JSON.parse(text); // Parse mảng chuỗi thành JSON
-                console.log("Applications data:", data);
-                // Cập nhật state với mảng JSON đã parse
-                setApplications(data);
-            } catch (error) {
-                console.error("Lỗi khi lấy danh sách ứng tuyển:", error);
-            }
-        };
-
-        fetchApplications();
-        fetchData();
+        getInfo();
+        fetchCV();
     }, [cvId]);
 
-    const formatDate = (dateString: string): string => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date);
+    const initials = cv?.fullName?.split(' ').map((n: string) => n[0]).join('');
+    const formatDate = (date: string) => {
+        const d = new Date(date);
+        return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
     };
-
-    const cancelRefuse = async () => {
-        setIsModalVisible(false);
-    };
-
-    //Từ chối cv
-    const confirmRefuse = async () => {
-        try {
-            const response = await fetch(`${BASE_URL}/applications/${cvId}/decline/${jobId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status: 'declined' }),
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                console.log("Result:", result);
-                Alert.alert('Thông báo', result.message || 'CV đã được từ chối thành công.');
-                setIsModalVisible(false); // Đóng modal sau khi từ chối thành công
-                setApplications(result); // Cập nhật danh sách ứng tuyển
-            } else {
-                const error = await response.json();
-                console.log("API Error:", error);
-                Alert.alert('Lỗi', error.message || 'Đã xảy ra lỗi khi từ chối CV.');
-            }
-        } catch (error) {
-            console.error("Lỗi khi từ chối CV:", error);
-            Alert.alert('Lỗi', 'Không thể thực hiện từ chối CV. Vui lòng thử lại sau.');
-        }
-    };
-
-
-
-
+    const BackHandler = () => {
+        navigation.goBack();
+    }
     return (
         <View style={styles.context}>
             <View style={styles.header}>
@@ -290,194 +228,73 @@ const CVDetail = ({ navigation, route }: Props) => {
                         <Text style={styles.infoText}>Mức lương mong muốn: {cv?.jobPreferences?.minimumSalary} $</Text>
                     </View>
                 </View>
-
-                <View style={styles.btnGroup}>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SendSMS', { phone: cv?.phone || '' })}>
-                        <Text style={styles.buttonText}>Liên hệ</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.buttonRefuse, (disableButtons || applications?.status) && styles.disabledButton]}
-                        onPress={() => setIsModalVisible(true)}
-                        disabled={disableButtons || applications?.status === 'declined'}
-                    >
-                        <Text style={styles.buttonText}>Từ chối</Text>
-                    </TouchableOpacity>
-                    <Modal
-                        visible={isModalVisible}
-                        transparent={true}
-                        animationType="slide"
-                        onRequestClose={cancelRefuse}
-                    >
-                        <View style={styles.modalContainer}>
-                            <View style={styles.modalContent}>
-                                <Text style={styles.modalText}>Bạn có chắc chắn từ chối ứng viên này?</Text>
-                                <View style={styles.modalButtons}>
-                                    <TouchableOpacity style={styles.modalButton} onPress={confirmRefuse}>
-                                        <Text style={styles.modalButtonText}>Xác nhận</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.modalButton} onPress={cancelRefuse}>
-                                        <Text style={styles.modalButtonText}>Hủy</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
-
-                </View>
             </ScrollView>
-        </View >
-
-    );
-
+            <Navbar navigation={navigation} route={route} />
+        </View>
+    )
 };
 
-export default CVDetail;
+export default CVInfor
 
 const styles = StyleSheet.create({
     context: {
         flex: 1,
-        backgroundColor: '#F5F5F5',
+        backgroundColor: '#F4F9FF',
+        padding: 16,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 16,
-        paddingHorizontal: 20,
-        backgroundColor: '#ffffff', // Header nền trắng
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#ccc', // Đường viền nhạt
-        elevation: 4,
+        marginBottom: 16,
     },
     headerText: {
-        fontSize: 22,
+        fontSize: 24,
         fontWeight: 'bold',
-        color: '#333333',
-        marginLeft: 10,
+        color: '#011F82',
+        marginLeft: 16,
     },
     avatarContainer: {
-        alignSelf: 'center',
-        justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 24,
+        marginBottom: 16,
     },
     avatar: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        backgroundColor: '#6C63FF', // Avatar gradient
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: '#011F82',
         justifyContent: 'center',
         alignItems: 'center',
-        elevation: 6, // Đổ bóng
     },
     initials: {
-        color: '#FFFFFF',
-        fontSize: 48,
-        fontWeight: 'bold',
+        fontSize: 24,
+        color: '#fff',
     },
     name: {
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
-        textAlign: 'center',
         color: '#011F82',
+        marginTop: 8,
     },
     infoCard: {
-        marginHorizontal: 16,
-        marginTop: 20,
-        backgroundColor: '#ffffff', // Màu nền card
-        borderRadius: 10,
-        padding: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 3,
+        backgroundColor: '#fff',
+        padding: 16,
+        borderRadius: 8,
+        marginBottom: 16,
+    },
+    infoTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#011F82',
+        marginBottom: 8,
     },
     info: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 8,
-    },
-    infoTitle: {
-        fontSize: 20,
-        fontWeight: '600',
-        color: '#011F82',
         marginBottom: 8,
     },
     infoText: {
-        fontSize: 17,
-        color: '#4B5563',
-        lineHeight: 18,
+        fontSize: 16,
         marginLeft: 8,
-    },
-    btnGroup: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginHorizontal: 16,
-        marginTop: 24,
-        marginBottom: 10,
-    },
-    button: {
-        flex: 1,
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 8,
-        marginHorizontal: 8,
-        backgroundColor: '#6C63FF', // Màu xanh gradient
-        elevation: 4, // Tạo bóng
-    },
-    buttonRefuse: {
-        flex: 1,
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 8,
-        marginHorizontal: 8,
-        backgroundColor: '#EF4444', // Màu đỏ từ chối
-        elevation: 4,
-    },
-    buttonText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#FFFFFF',
-    },
-    disabledButton: {
-        backgroundColor: '#ccc',
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        width: '80%',
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
-        alignItems: 'center',
-    },
-    modalText: {
-        fontSize: 18,
-        marginBottom: 20,
-        textAlign: 'center',
         color: '#011F82',
-    },
-    modalButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-    },
-    modalButton: {
-        flex: 1,
-        padding: 10,
-        margin: 5,
-        borderRadius: 5,
-        alignItems: 'center',
-        backgroundColor: '#011F82',
-    },
-    modalButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
     },
 });

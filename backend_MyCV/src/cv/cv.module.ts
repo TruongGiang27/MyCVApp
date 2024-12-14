@@ -12,6 +12,7 @@ import { ApplicationsModule } from 'src/applications/applications.module';
   ],
   controllers: [CvController],
   providers: [CvService],
+  
 })
 export class CvModule {}
 

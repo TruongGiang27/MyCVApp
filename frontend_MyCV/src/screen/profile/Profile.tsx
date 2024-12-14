@@ -82,8 +82,6 @@ const Profile = ({ navigation, route }: Props) => {
             const cvInfo = await AsyncStorage.getItem('cvInfo');
             if (cvInfo) {
                 setCvs(JSON.parse(cvInfo));
-                console.log("cvInfo:", cvInfo);
-
             }
         }
         getInfo();
@@ -114,7 +112,6 @@ const Profile = ({ navigation, route }: Props) => {
                 try {
                     const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
                     setCvs(response.data);
-                    console.log('CVs đã được cập nhật:', response.data);
                 } catch (error) {
                     console.error('Lỗi khi cập nhật danh sách CVs:', error);
                 }
@@ -126,16 +123,12 @@ const Profile = ({ navigation, route }: Props) => {
         }
     }, [updated]);
 
-    useEffect(() => {
-        console.log("cvs----", cvs);
-    }, [cvs]);
     
 
     const confirmApplyNow = async (cvId: string) => {
         try {
             const response = await axios.get(`${BASE_URL}/cv_form/${cvId}`);
             const cv = response.data;
-
             if (cv) {
                 const CVfullNameUser = cv.fullName;
                 const CVEmailUser = cv.email;
@@ -195,8 +188,6 @@ const Profile = ({ navigation, route }: Props) => {
         }
     }
 
-
-
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -250,13 +241,14 @@ const Profile = ({ navigation, route }: Props) => {
                                 <Icon style={styles.icon} name="edit" size={30} color="#fff" onPress={() => navigation.navigate('EditCV',{ cvId: item._id })} />
                                 <Icon style={styles.icondelete} name="delete" size={30} color="#fff" onPress={() => handleDelete(item._id)} />
                             </View>
-
                         </TouchableOpacity>
-
                     )}
                 />
-
-
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('ManageCVsApplied', { cvId: '', disableButtons: false, jobId, userId })}>
+                    <Text style={styles.buttonText}>Quản lý đơn đã ứng tuyển</Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => navigation.navigate('CVCreate')}>

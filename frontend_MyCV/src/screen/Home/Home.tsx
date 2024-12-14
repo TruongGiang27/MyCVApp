@@ -143,19 +143,15 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
         const loadData = async () => {
             setLoading(true);
             try {
-                console.log("Fetching data from:", `${BASE_URL}/jobs`);
                 const userInfoString = await AsyncStorage.getItem('userInfo');
                 const userInfo = userInfoString ? JSON.parse(userInfoString) : {};
                 setUserId(userInfo.data.user.id);
-                console.log("-------------------");
-                console.log("userInfo", userInfo.data.user.id);
                 const response = await fetch(`${BASE_URL}/jobs`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const responseJson = await response.json();
                 setDataJobs(responseJson);
-                console.log("Data fetched successfully:", responseJson);
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             } finally {

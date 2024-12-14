@@ -14,7 +14,6 @@ const Login = () => {
       const userInfo = await checkSignInStatus();
       if (userInfo) {
         dispatch(login(JSON.parse(userInfo)));
-        console.log('Đã dispatch login:', userInfo); // Đăng nhập nếu có thông tin người dùng
       } else {
         dispatch(logout()); // Đăng xuất nếu không tìm thấy thông tin
       }

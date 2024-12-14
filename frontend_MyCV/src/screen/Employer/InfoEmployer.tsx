@@ -82,6 +82,7 @@ const InfoEmployer = ({ navigation, route }: Props) => {
 
 const styles = StyleSheet.create({
     container: {
+        flexGrow: 1,
         padding: 20,
         backgroundColor: '#F9FAFC',
     },
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
         color: '#011F82',
         textAlign: 'center',
         flex: 1,
-        marginLeft: -30, // Để cân chỉnh với icon
+        marginLeft: 5, // Để cân chỉnh với icon
     },
     label: {
         fontSize: 14,

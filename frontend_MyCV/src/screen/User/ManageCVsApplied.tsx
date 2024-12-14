@@ -1,53 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Navbar from '../../components/NavbarEmployer';
+import ScreenName from '../../constants/ScreenName';
+import RootStackParamList from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
-const ManageCVsApplied = () => {
-  const navigation = useNavigation<NavigationProp<any>>();
-  const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
+interface cv {
+  _id: string;
+  userId: string;
+  jobId: string;
+  jobName: string;
+  cvId: string;
+  CVfullNameUser: string;
+  CVEmailUser: string;
+  status: string;
+
+}
+
+
+
+const ManageCVsApplied = ({ navigation, route }: Props) => {
+  const [appliedJobs, setAppliedJobs] = useState<cv[]>([]);
   const [error, setError] = useState<string | null>(null);
-
+  const { cvId, disableButtons, jobId, userId } = route.params ? route.params as { cvId: string, disableButtons: boolean, jobId: string, userId: string } : { cvId: '', disableButtons: false, jobId: '', userId: '' };
+  const [user, setUser] = useState<any>({});
+  console.log("userId", userId);
   useEffect(() => {
+    const getInfo = async () => {
+      const userInfo = await AsyncStorage.getItem('userInfo');
+      if (userInfo) {
+        setUser(JSON.parse(userInfo));
+      }
+    };
     const fetchAppliedJobs = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/applications`);
-        const jobs = response.data;
-
-        const jobDetailsPromises = jobs.map(async (job: any) => {
-          const jobDetailResponse = await axios.get(`${BASE_URL}/jobs/${job.jobId}`);
-          return { ...job, ...jobDetailResponse.data };
-        });
-
-        const jobsWithDetails = await Promise.all(jobDetailsPromises);
-        setAppliedJobs(jobsWithDetails);
-      } catch (error) {
-        console.error('Failed to fetch applied jobs:', error);
+        const response = await axios.get(`${BASE_URL}/applications/user/${userId}`);
+        if (response.data) {
+          setAppliedJobs(response.data); // Đặt dữ liệu trực tiếp thay vì stringify/parse
+          console.log('Applied Jobs:', response.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch applied jobs:', err);
         setError('Failed to fetch applied jobs.');
       }
     };
 
+    getInfo();
     fetchAppliedJobs();
-  }, []);
+  }, [userId]); // Thêm `userId` để đảm bảo useEffect chạy đúng với props thay đổi.
 
-  const renderJobItem = ({ item }: { item: { id: string; title: string; companyName: string; location: string; salary: string; type: string; status: string; jobId: string; } }) => (
-    <View style={styles.jobCard} key={item.id}>
-      <Text style={styles.jobTitle}>{item.title}</Text>
-      <Text style={styles.companyName}>{item.companyName}</Text>
-      <Text style={styles.location}>{item.location}</Text>
-      <Text style={styles.salaryType}>
-        {item.salary} - {item.type}
-      </Text>
-      <Text style={styles.status}>
-        Trạng thái: <Text style={styles.statusText}>{item.status}</Text>
-      </Text>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('JobDetail', { jobId: item.jobId, disableButtons: true })}>
-        <Text style={styles.buttonText}>Xem chi tiết</Text>
-      </TouchableOpacity>
-    </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -63,12 +69,21 @@ const ManageCVsApplied = () => {
         <Text style={styles.errorText}>{error}</Text>
       ) : (
         <FlatList
-          data={appliedJobs}
-          keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())} // Ensure the key is a string and handle missing ids
-          renderItem={renderJobItem}
-          contentContainerStyle={styles.listContent}
+          data={appliedJobs.filter((cv) => cv.userId === userId)}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.cvItem}
+              onPress={() => navigation.navigate('CVInfor', { cvId: item.cvId })}
+            >
+              <Text style={styles.cvTitle}>Họ tên: {item.CVfullNameUser}</Text>
+              <Text style={styles.cvtext}>Email: {item.CVEmailUser}</Text>
+              <Text style={styles.cvtext}>Tình trạng CV: {item.status}</Text>
+            </TouchableOpacity>
+          )}
         />
       )}
+      <Navbar navigation={navigation} route={route} />
     </View>
   );
 };
@@ -85,78 +100,50 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   backButton: {
-    marginRight: 8,
+    padding: 8,
   },
   header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#011F82',
+    marginLeft: 16,
+  },
+  errorText: {
+    fontSize: 16,
+    color: 'red',
+  },
+  cvItem: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  cvTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#011F82',
-    marginLeft: '25%',
   },
-  listContent: {
-    paddingBottom: 16,
-  },
-  jobCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    borderColor: '#B9D6F3',
-    borderWidth: 1,
-  },
-  jobTitle: {
+  cvtext: {
     fontSize: 16,
-    fontWeight: 'bold',
     color: '#011F82',
   },
-  companyName: {
-    fontSize: 14,
-    color: '#6D92D0',
-    marginTop: 4,
-  },
-  location: {
-    fontSize: 14,
-    color: '#6D92D0',
-    marginTop: 4,
-  },
-  salaryType: {
-    fontSize: 14,
-    color: '#011F82',
+  allicon: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     marginTop: 8,
   },
-  status: {
-    fontSize: 14,
-    color: '#6D92D0',
-    marginTop: 4,
-  },
-  statusText: {
-    fontWeight: 'bold',
-    color: '#011F82',
-  },
-  button: {
+  icon: {
     backgroundColor: '#011F82',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    padding: 8,
     borderRadius: 8,
-    marginTop: 12,
-    alignItems: 'center',
+    marginRight: 8,
   },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
+  icondelete: {
+    backgroundColor: '#011F82',
+    padding: 8,
+    borderRadius: 8,
   },
-  errorText: {
-    color: 'red',
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 20,
-  },
+
 });
 
 export default ManageCVsApplied;

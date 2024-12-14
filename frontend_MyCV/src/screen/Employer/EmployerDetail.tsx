@@ -1,5 +1,4 @@
 import { Picker } from '@react-native-picker/picker';
-import { useRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
@@ -7,10 +6,12 @@ import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import NavbarEmployer from '../../components/NavbarEmployer';
+import ScreenName from '../../constants/ScreenName';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'EmployerDetail'>;
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
 interface Job {
   deadline: string;
@@ -33,9 +34,8 @@ interface Job {
   status: "Chọn trạng thái" | "Mở" | "Tạm dừng" | "Đã đóng"; // Add status field here
 }
 
-const EmployerDetail: React.FC<Props> = ({ navigation }) => {
+const EmployerDetail= ({ navigation,route }: Props) => {
   const [applicants, setApplicants] = useState([]); // State to store applicants
-  const route = useRoute();
   const { jobId } = route.params as { jobId: string };
 
   const [jobDetails, setJobDetails] = useState<Job | null>(null);
@@ -74,6 +74,14 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
       console.error("Error updating job status:", error);
       Alert.alert("Lỗi", "Không thể kết nối với server.");
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -158,7 +166,7 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
 
             <View style={styles.detailRow}>
               <Icon name="calendar-outline" size={20} color="#011F82" />
-              <Text style={styles.detailText}>Hạn nộp: {jobDetails.additionalInfo.deadline}</Text>
+              <Text style={styles.detailText}>Hạn nộp: {formatDate(jobDetails.additionalInfo.deadline)}</Text>
             </View>
             <View style={styles.detailRow}>
               <Icon name="briefcase-outline" size={20} color="#011F82" />
@@ -190,6 +198,7 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <NavbarEmployer navigation={navigation} route={route} />
     </View>
 
   );
@@ -314,7 +323,6 @@ const styles = StyleSheet.create({
   btn: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
   },
   viewcv: {
     width: '48%',

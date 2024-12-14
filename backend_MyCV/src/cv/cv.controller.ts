@@ -27,6 +27,8 @@ export class CvController {
   async getCvByUserId(@Param('userId') userId: string): Promise<Cv[]> {
     return this.cvService.getCvByUserId(userId);
   }
+
+  @Get()
   async getAllCvs(): Promise<Cv[]> {
     return this.cvService.getAllCvs();
   }
@@ -35,4 +37,6 @@ export class CvController {
   async deleteCv(@Param('cvId') cvId: string): Promise<Cv> {
     return this.cvService.deleteCv(cvId);
   }
+
+
 }

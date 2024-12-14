@@ -20,7 +20,6 @@ const Navbar = ({ route, navigation }: Props) => {
                 const parsedUser = JSON.parse(userInfo);
                 setUser(parsedUser);
                 setUserId(parsedUser.data.user.id);
-                console.log("user------------", parsedUser.data.user.id);
             }
         };
         getInfo();
@@ -58,8 +57,8 @@ const Navbar = ({ route, navigation }: Props) => {
                         navigation.navigate('InfoEmployer', {userId: userId || '', updated: false})
                     }
                 >
-                    <Icon name="person" size={25} color={getIconColor('Profile')} />
-                    <Text style={[styles.navText, { color: getTextColor('Profile') }]}>
+                    <Icon name="person" size={25} color={getIconColor('InfoEmployer')} />
+                    <Text style={[styles.navText, { color: getTextColor('InfoEmployer') }]}>
                         Hồ sơ
                     </Text>
                 </TouchableOpacity>

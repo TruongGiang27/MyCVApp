@@ -21,5 +21,6 @@ export enum ScreenName {
     SendSMS = "SendSMS",
     EditCV = "EditCV",
     EditInfoEmployer = "EditInfoEmployer",
+    CVInfor = "CVInfor",
 }
 export default ScreenName;

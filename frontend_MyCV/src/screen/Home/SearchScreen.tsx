@@ -6,8 +6,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { appColors } from '../../constants/appColors';
-import { BASE_URL } from '../../utils/url';
 import { SearchHistoryItem } from '../../interfaces/SearchHistoryItem';
+import { BASE_URL } from '../../utils/url';
 
 interface City {
     code: string;
@@ -39,7 +39,6 @@ const Search = ({ navigation, onJobSearchSubmit, onSearchHistory, locations }: {
             }
         };
         loadHistory();
-        console.log('History:', history);
     }, []);
 
     // Hàm gọi API SerpAPI
@@ -48,9 +47,6 @@ const Search = ({ navigation, onJobSearchSubmit, onSearchHistory, locations }: {
 
         try {
             const response = await axios.get(`${BASE_URL}/jobs/suggest?q=${encodeURIComponent(query)}`);
-
-            console.log('API response:', response.data);
-
             if (response.data) {
                 setSuggestions(
                     response.data.map((job: any) => ({
@@ -64,7 +60,6 @@ const Search = ({ navigation, onJobSearchSubmit, onSearchHistory, locations }: {
                     }))
                 );
             } else {
-                console.log('Không có gợi ý công việc');
                 setSuggestions([]);
             }
         } catch (error) {
@@ -92,11 +87,8 @@ const Search = ({ navigation, onJobSearchSubmit, onSearchHistory, locations }: {
         }
     };
     const handleSearchHistory = (item: any) => {
-        console.log('Selected item:', item);
         const selectedQuery = item.query;
         const selectedLocation = item.location;
-        console.log('Selected query:', selectedQuery);
-        console.log('Selected location:', selectedLocation);
         if (selectedLocation) {
 
             onSearchHistory(selectedQuery || '', selectedLocation);
@@ -278,8 +270,6 @@ const SearchScreen = ({ route, navigation }: { route: any, navigation: any }) =>
         const unsubscribe = navigation.addListener('focus', () => {
             const updatedLocation = route.params?.location;
             const updatedQuery = route.params?.query;
-            console.log('Updated locationaaaaaaaaaaaa:', updatedLocation);
-            console.log('Updated queryaaaaaaaaaaaaa:', updatedQuery);
             if (updatedLocation !== undefined) setLocation(updatedLocation);
             if (updatedQuery !== undefined) setQuery(updatedQuery);
         });
@@ -311,7 +301,6 @@ const SearchScreen = ({ route, navigation }: { route: any, navigation: any }) =>
 
         fetchLocations();
     }, []);
-    useEffect(() => { console.log('aaaaaaaaaaaaaaaadddddddđ', locations) }, []);
 
     useEffect(() => {
         if (searchType === 'text') {

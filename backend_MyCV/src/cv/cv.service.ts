@@ -7,7 +7,7 @@ import { log } from 'console';
 @Injectable()
 export class CvService {
   [x: string]: any;
-  constructor(@InjectModel(Cv.name) private readonly cvModel: Model<Cv>) {}
+  constructor(@InjectModel(Cv.name) private readonly cvModel: Model<Cv>) { }
 
   async createCv(data: any): Promise<Cv> {
     const newCv = new this.cvModel(data);
@@ -35,4 +35,7 @@ export class CvService {
     console.log(data)
     return data
   }
+  
+
+
 }
