@@ -7,7 +7,7 @@ interface User {
 }
 
 const initialState: { user: User | null } = {
-    user: null,
+    user: null as User | null,
 };
 
 const authSlice = createSlice({

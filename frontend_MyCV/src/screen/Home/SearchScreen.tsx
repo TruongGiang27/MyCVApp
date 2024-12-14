@@ -1,26 +1,14 @@
 // SearchScreen.tsx
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { Icon } from '@rneui/themed';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { appColors } from '../../constants/appColors';
-import ScreenName from '../../constants/ScreenName';
-import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
+import { SearchHistoryItem } from '../../interfaces/SearchHistoryItem';
 
-const MAX_HISTORY = 10;
-
-type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
-
-interface SearchHistoryItem {
-    query: string; // Từ khóa tìm kiếm
-    type: 'job' | 'companyName' | 'location'; // Loại tìm kiếm
-    jobTitle?: string; // Tên công việc
-    companyName?: string; // Tên công ty
-    locationName?: string; // Tên địa điểm (cho SearchMap)
-}
 interface City {
     code: string;
     name: string;
@@ -33,16 +21,16 @@ const majorCities = [
     { code: '31', name: 'Hải Phòng', type: 'city' },
     { code: '74', name: 'Bình Dương', type: 'city' },
 ];
-
-const Search = ({ navigation }: { navigation: any }) => {
+const Search = ({ navigation, onJobSearchSubmit, onSearchHistory, locations }: { navigation: any, onJobSearchSubmit: (query: string) => void, onSearchHistory: (query: string, location: string) => void, locations: City[] }) => {
     const [history, setHistory] = useState<SearchHistoryItem[]>([]);
-    const [suggestions, setSuggestions] = useState<any[]>([]); // Gợi ý từ API
-    const [query, setQuery] = useState<string>(''); // Từ khóa tìm kiếm
+    const [suggestions, setSuggestions] = useState<any[]>([]);
+    const [query, setQuery] = useState<string>('');
+    const [filteredLocations, setFilteredLocations] = useState<City[]>([]);
 
     useEffect(() => {
         const loadHistory = async () => {
             try {
-                const historyJson = await AsyncStorage.getItem('locationHistory');
+                const historyJson = await AsyncStorage.getItem('searchHistory');
                 if (historyJson) {
                     setHistory(JSON.parse(historyJson));
                 }
@@ -51,6 +39,7 @@ const Search = ({ navigation }: { navigation: any }) => {
             }
         };
         loadHistory();
+        console.log('History:', history);
     }, []);
 
     // Hàm gọi API SerpAPI
@@ -60,7 +49,6 @@ const Search = ({ navigation }: { navigation: any }) => {
         try {
             const response = await axios.get(`${BASE_URL}/jobs/suggest?q=${encodeURIComponent(query)}`);
 
-            // Kiểm tra phản hồi trả về
             console.log('API response:', response.data);
 
             if (response.data) {
@@ -83,14 +71,46 @@ const Search = ({ navigation }: { navigation: any }) => {
             console.error('Lỗi khi gọi API:', error);
         }
     };
-    // Xử lý thay đổi input
+
     const handleInputChange = (text: string) => {
         setQuery(text);
         if (text.length >= 1) {
-            fetchJobSuggestions(text); // Gọi API khi từ khóa dài hơn 2 ký tự
+            fetchJobSuggestions(text);
         } else {
-            setSuggestions([]); // Reset nếu từ khóa ngắn
+            setSuggestions([]);
         }
+    };
+    const handleSubmitEditing = (query: string) => {
+        const foundCity = locations.find((city) =>
+            city.name.toLowerCase() === query.toLowerCase()
+        );
+
+        if (foundCity) {
+            navigation.navigate('JobList', { location: foundCity.name, query: '' });
+        } else {
+            onJobSearchSubmit(query);
+        }
+    };
+    const handleSearchHistory = (item: any) => {
+        console.log('Selected item:', item);
+        const selectedQuery = item.query;
+        const selectedLocation = item.location;
+        console.log('Selected query:', selectedQuery);
+        console.log('Selected location:', selectedLocation);
+        if (selectedLocation) {
+
+            onSearchHistory(selectedQuery || '', selectedLocation);
+        } else if (selectedQuery) {
+
+            onSearchHistory(selectedQuery, '');
+        }
+    }
+    useEffect(() => {
+        setFilteredLocations(locations); // Gán dữ liệu từ locations vào filteredLocations
+    }, [locations]);
+    const handleSelectSuggestion = (item: any) => {
+        const selectedQuery = item.title || item.query;
+        onJobSearchSubmit(selectedQuery);
     };
 
     return (
@@ -103,7 +123,8 @@ const Search = ({ navigation }: { navigation: any }) => {
                     placeholder="Nhập từ khóa tìm kiếm"
                     value={query}
                     onChangeText={handleInputChange}
-                    autoFocus={true} // Tự động focus khi mở tìm kiếm
+                    autoFocus={true}
+                    onSubmitEditing={() => handleSubmitEditing(query)}
                 />
             </View>
             <FlatList
@@ -113,11 +134,11 @@ const Search = ({ navigation }: { navigation: any }) => {
                     <TouchableOpacity
                         style={styles.historyItem}
                         onPress={() => {
-                            const selectedQuery = item.title || item.query;
-                            setQuery(selectedQuery);
-                            navigation.navigate('JobList', {
-                                query: selectedQuery,
-                                location: '',})
+                            if (query.length >= 1) {
+                                handleSelectSuggestion(item);
+                            } else {
+                                handleSearchHistory(item);
+                            }
                         }}
                     >
                         <View
@@ -135,7 +156,16 @@ const Search = ({ navigation }: { navigation: any }) => {
                             />
                         </View>
                         <Text style={styles.historyText}>
-                            {item.query && <Text style={{ fontWeight: 'bold' }}>{item.query}</Text>}
+                            {item.query && item.location ? (
+                                <View style={{ justifyContent: 'space-between' }}>
+                                    <Text style={{ fontWeight: '500', color: '#333333', fontSize: 15, marginBottom: 2 }}>{item.query}</Text>
+                                    <Text style={{ fontWeight: '500', color: appColors.gray, fontSize: 13 }}>vị trí {item.location}</Text>
+                                </View>
+                            ) : item.query ? (
+                                <Text style={{ fontWeight: '500' }}>{item.query}</Text>
+                            ) : item.location ? (
+                                <Text style={{ fontWeight: '500', color: '#333333', fontSize: 15 }}> {item.location}</Text>
+                            ) : null}
                             {(item.title || item.query) && (
                                 <>
                                     {item.type === 'job' && item.title && <Text>Công việc: {item.title}</Text>}
@@ -162,71 +192,11 @@ const Search = ({ navigation }: { navigation: any }) => {
 };
 
 
-const SearchMap = ({ onMapSearchSubmit, navigation }: { onMapSearchSubmit: (location: string) => void, navigation: any }) => {
+const SearchMap = ({ onMapSearchSubmit, locations }: { onMapSearchSubmit: (location: string) => void, locations: City[] }) => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [locations, setLocations] = useState<City[]>([]);
     const [filteredLocations, setFilteredLocations] = useState<City[]>(majorCities);
-    const [history, setHistory] = useState<SearchHistoryItem[]>([]);
-    const [searchLocation, setSearchLocation] = useState('');
 
 
-    useEffect(() => {
-        const fetchLocations = async () => {
-            try {
-                // Lấy danh sách tỉnh từ API
-                const response = await axios.get('https://provinces.open-api.vn/api/p/');
-                const fetchedLocations = response.data.map((province: any) => ({
-                    code: province.code,
-                    name: province.name,
-                    type: 'province',
-                }));
-                setLocations(fetchedLocations);
-            } catch (error) {
-                console.error('Error fetching locations:', error);
-            }
-        };
-
-        fetchLocations();
-    }, []);
-    //Save search history
-    const saveSearchHistory = async (newItem: SearchHistoryItem) => {
-        try {
-            // Lấy lịch sử tìm kiếm hiện tại từ AsyncStorage
-            const historyJson = await AsyncStorage.getItem('locationHistory');
-            let updatedHistory: SearchHistoryItem[] = [];
-
-            if (historyJson) {
-                updatedHistory = JSON.parse(historyJson);
-            }
-
-            // Kiểm tra nếu mục này chưa tồn tại trong lịch sử
-            const index = updatedHistory.findIndex(item => item.query === newItem.query);
-            if (index !== -1) {
-                updatedHistory.splice(index, 1);
-            }
-            updatedHistory.unshift(newItem);
-            if (updatedHistory.length > MAX_HISTORY) {
-                updatedHistory = updatedHistory.slice(0, MAX_HISTORY);
-            }
-
-            await AsyncStorage.setItem('locationHistory', JSON.stringify(updatedHistory));
-            setHistory(updatedHistory);
-        } catch (error) {
-            console.error('Error saving location history:', error);
-        }
-    };
-    const handlePressLocation = (item: City) => {
-        const newHistoryItem: SearchHistoryItem = {
-            query: item.name,
-            type: 'location', // Chỉ định loại là 'location'
-            jobTitle: undefined,
-            companyName: undefined,
-            locationName: item.name,
-        };
-        saveSearchHistory(newHistoryItem);
-        onMapSearchSubmit(item.name);
-        navigation.navigate('JobList', { location: item.name, query: '' });
-    };
     const handleSearch = (query: string) => {
         setSearchQuery(query);
 
@@ -234,15 +204,16 @@ const SearchMap = ({ onMapSearchSubmit, navigation }: { onMapSearchSubmit: (loca
             const filtered = locations.filter((location) =>
                 location.name.toLowerCase().includes(query.toLowerCase())
             );
-            setFilteredLocations(filtered.slice(0, 10)); // Giới hạn 10 kết quả
+            setFilteredLocations(filtered.slice(0, 10));
         } else {
-            setFilteredLocations(majorCities); // Nếu không nhập, hiển thị thành phố lớn
+            setFilteredLocations(majorCities);
         }
     };
     const handleClearInput = () => {
         setSearchQuery('');
         setFilteredLocations(majorCities); // Reset lại danh sách khi xóa
     };
+    useEffect(() => { console.log('aaaaaaaaaaaaaaaaaaaaa', filteredLocations) }, []);
 
     return (
         <KeyboardAvoidingView
@@ -274,7 +245,7 @@ const SearchMap = ({ onMapSearchSubmit, navigation }: { onMapSearchSubmit: (loca
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.resultItem}
-                            onPress={() => handlePressLocation(item)}
+                            onPress={() => onMapSearchSubmit(item.name)}
                         >
                             <Icon
                                 name="map-marker"
@@ -300,6 +271,47 @@ const SearchScreen = ({ route, navigation }: { route: any, navigation: any }) =>
     const [isMapSearching, setIsMapSearching] = useState(false);
     //Check if the search type is text or map
     const { searchType } = route.params;
+    const [query, setQuery] = useState('');
+    const [location, setLocation] = useState('');
+    const [locations, setLocations] = useState<City[]>([]);
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            const updatedLocation = route.params?.location;
+            const updatedQuery = route.params?.query;
+            console.log('Updated locationaaaaaaaaaaaa:', updatedLocation);
+            console.log('Updated queryaaaaaaaaaaaaa:', updatedQuery);
+            if (updatedLocation !== undefined) setLocation(updatedLocation);
+            if (updatedQuery !== undefined) setQuery(updatedQuery);
+        });
+        return unsubscribe;
+    }, [navigation, route.params]);
+
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                // Lấy danh sách tỉnh từ API
+                const response = await axios.get('https://provinces.open-api.vn/api/p/');
+                const fetchedLocations = response.data.map((province: any) => {
+                    let name = province.name;
+
+                    // Loại bỏ tiền tố "Thành phố" và "Tỉnh" nếu có
+                    name = name.replace(/^Thành phố /, "").replace(/^Tỉnh /, "").trim();
+
+                    return {
+                        code: province.code,
+                        name: name,
+                        type: 'province',
+                    };
+                });
+                setLocations(fetchedLocations);
+            } catch (error) {
+                console.error('Error fetching locations:', error);
+            }
+        };
+
+        fetchLocations();
+    }, []);
+    useEffect(() => { console.log('aaaaaaaaaaaaaaaadddddddđ', locations) }, []);
 
     useEffect(() => {
         if (searchType === 'text') {
@@ -310,18 +322,24 @@ const SearchScreen = ({ route, navigation }: { route: any, navigation: any }) =>
             setIsSearching(false);
         }
     }, [searchType]);
+    const handleSearchHistory = (query: string, location: string) => {
+        if (query && location) {
+            navigation.navigate('JobList', { location, query });
+        } else if (query) {
+            navigation.navigate('JobList', { location: '', query });
+        } else if (location) {
+            navigation.navigate('JobList', { location, query: '' });
+        }
 
-    const handleCancelSearch = () => {
-        setIsSearching(false);
-        setIsMapSearching(false);
-        navigation.goBack();
+
+    }
+    const handleJobSearchSubmit = (selectedJob: string) => {
+        navigation.navigate('JobList', { location, query: selectedJob });
     };
 
-    const handleMapSearchSubmit = (location: string) => {
-        console.log('Location:', location);
-        // navigation.navigate('JobList', { location: location });
-    }
-
+    const handleMapSearchSubmit = (selectedLocation: string) => {
+        navigation.navigate('JobList', { location: selectedLocation, query });
+    };
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -331,9 +349,9 @@ const SearchScreen = ({ route, navigation }: { route: any, navigation: any }) =>
             </View>
             <View style={styles.headContainer}>
                 {isSearching ? (
-                    <Search navigation={navigation} />
+                    <Search navigation={navigation} onJobSearchSubmit={handleJobSearchSubmit} onSearchHistory={handleSearchHistory} locations={locations} />
                 ) : isMapSearching ? (
-                    <SearchMap navigation={navigation} onMapSearchSubmit={handleMapSearchSubmit} />
+                    <SearchMap onMapSearchSubmit={handleMapSearchSubmit} locations={locations} />
                 ) : null}
             </View>
         </View>

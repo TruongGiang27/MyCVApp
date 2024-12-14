@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { Employer } from './entities/employer.entity';
+import { Types } from 'mongoose';
 
 const API_URL = 'http://localhost:3000/employer';
 
@@ -43,6 +44,7 @@ export class EmployerService {
     if (!updatedEmployer) {
       throw new NotFoundException(`Employer with ID ${id} not found`);
     }
+    console.log('updatedEmployer:', updatedEmployer);
     return updatedEmployer;
   }
 

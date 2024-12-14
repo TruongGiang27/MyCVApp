@@ -1,4 +1,5 @@
 export class CreateEmployerDto {
+  readonly userId: string;
   readonly selectedCompany: string;
   readonly companyName: string;
   readonly numberOfEmployees: string;

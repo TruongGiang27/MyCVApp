@@ -7,13 +7,9 @@ const App = () => {
 
     return (
 
-            <Provider store={store}>
-                <AppRouter />
-            </Provider>
-
-        // <NavigationContainer>
-        //     {user ? <AppNavigator /> : <AuthNavigator setUser={setUser}/>}
-        // </NavigationContainer>
+        <Provider store={store}>
+            <AppRouter />
+        </Provider>
     );
 };
 

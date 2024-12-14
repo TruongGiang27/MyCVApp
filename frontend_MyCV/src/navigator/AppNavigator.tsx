@@ -13,6 +13,7 @@ import SendSMS from '../screen/Employer/SendSMS';
 import Home from '../screen/home/Home';
 import Login from '../screen/login/Login';
 import Profile from '../screen/profile/Profile';
+import SearchSceen from '../screen/home/SearchScreen';
 import CVCreate from '../screen/User/CVCreate';
 import CVManagerment from '../screen/User/CVManagerment';
 import FavoriteJob from '../screen/User/FavoriteJob';
@@ -24,6 +25,7 @@ import SearchScreen from '../screen/home/SearchScreen';
 import EditCV from '../screen/User/EditCV';
 import { RootStackParamList } from './RootStackParamList';
 import InfoEmployer from '../screen/Employer/InfoEmployer';
+import EditInfoEmployer from '../screen/Employer/EditInfoEmployer';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -39,6 +41,7 @@ const App = () => {
             <Stack.Screen name={ScreenName.HomeEmployer} component={HomeEmployer} />
             <Stack.Screen name={ScreenName.ApplyManager} component={ApplyManager} />
             <Stack.Screen name={ScreenName.Home} component={Home} />
+            <Stack.Screen name={ScreenName.SearchScreen} component={SearchScreen} />
             <Stack.Screen name={ScreenName.JobList} component={JobList} />
             <Stack.Screen name={ScreenName.JobDetail} component={JobDetail} />
             <Stack.Screen name={ScreenName.Profile} component={Profile} />
@@ -46,13 +49,13 @@ const App = () => {
             <Stack.Screen name={ScreenName.MessageScreen} component={MessageScreen} />
             <Stack.Screen name={ScreenName.CVManagerment} component={CVManagerment} />
             <Stack.Screen name={ScreenName.ManageCVsApplied} component={ManageCVsApplied} />
-            <Stack.Screen name={ScreenName.FavoriteJob} component={FavoriteJob} />
             <Stack.Screen name={ScreenName.Login} component={Login} />
 
             <Stack.Screen name={ScreenName.CVDetail} component={CVDetail} />
             <Stack.Screen name={ScreenName.InfoEmployer} component={InfoEmployer} />
             <Stack.Screen name={ScreenName.EditCV} component={EditCV} />
-            <Stack.Screen name={ScreenName.SearchScreen} component={SearchScreen} />
+            <Stack.Screen name={ScreenName.FavoriteJob} component={FavoriteJob} />
+            <Stack.Screen name={ScreenName.EditInfoEmployer} component={EditInfoEmployer} />
         </Stack.Navigator>
     );
 };

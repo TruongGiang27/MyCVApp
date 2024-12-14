@@ -11,7 +11,7 @@ import { BASE_URL } from '../../utils/url';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
-type Props = NativeStackScreenProps<RootStackParamList, ScreenName.Home>;
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void, onMapSearchFocus: () => void }) => {
 
     return (
@@ -217,8 +217,8 @@ const Home = ({ navigation, route }: Props) => {
                 const userInfoString = await AsyncStorage.getItem('userInfo');
                 if (userInfoString) {
                     const userInfo = await JSON.parse(userInfoString);
-                    console.log("userInfo//////", userInfo);
-                    await axios.post(`${BASE_URL}/user/create-or-update`, {
+
+                    await axios.post(`${BASE_URL}/user/create`, {
                         userId: userInfo.data.user.id,
                         name: userInfo.data.user.name,
                         email: userInfo.data.user.email,

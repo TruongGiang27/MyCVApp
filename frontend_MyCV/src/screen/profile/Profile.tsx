@@ -12,7 +12,9 @@ import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { signOut } from '../../utils/auth';
 import { BASE_URL } from '../../utils/url';
 
+
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+
 const { width, height } = Dimensions.get('window');
 
 interface CV {
@@ -58,6 +60,7 @@ interface CV {
 const Profile = ({ navigation, route }: Props) => {
     const { userEmail, userId, jobId, jobName, updated } = route.params as { userEmail: string, userId: string, jobId: string, jobName: string, updated?: boolean };
     const [menuVisible, setMenuVisible] = useState(false);
+
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(false);
@@ -172,22 +175,6 @@ const Profile = ({ navigation, route }: Props) => {
         } catch (error) {
             console.error('Error submitting application:', error);
             Alert.alert('Lỗi', 'Có lỗi xảy ra khi ứng tuyển. Vui lòng thử lại.');
-        }
-    };
-
-    const handleEditAndCreate = async (cvId: string) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
-            const hasCV = response.data.length > 0;
-            console.log('Has CV:', hasCV);
-
-            if (hasCV) {
-                navigation.navigate('CVCreate', { startStep: 10, jobId, source: 'Profile' } as never);
-            } else {
-                navigation.navigate('CVCreate', { startStep: 1, jobId, source: 'Profile' } as never);
-            }
-        } catch (error) {
-            console.error('Error checking CV:', error);
         }
     };
 

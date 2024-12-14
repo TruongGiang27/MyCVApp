@@ -1206,6 +1206,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flex: 1,
     flexWrap: 'wrap', // Ensure text wraps within the input field
+    color: 'black',
   },
   formContainer: {
     flex: 1,
@@ -1253,6 +1254,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+    color: '#011F82', // Màu chữ chính
   },
   selectedSkillsContainer: {
     flexDirection: 'row',
@@ -1280,6 +1282,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap', // Ensure text wraps within the content
     // backgroundColor: 'red',
     width: '30%',
+    color: '#011F82', // Màu chữ chính
   },
   boldText: {
     fontWeight: 'bold',

@@ -21,6 +21,7 @@ export type RootStackParamList = {
     CVDetail: {cvId: string};
     SendSMS: {phone: string};
     EditCV: { cvId: string };
-    InfoEmployer: { userId: string };
+    InfoEmployer: { userId: string, updated: boolean };
+    EditInfoEmployer: { userId: string};
 };
 export default RootStackParamList;

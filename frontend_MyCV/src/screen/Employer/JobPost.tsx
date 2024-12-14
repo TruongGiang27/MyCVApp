@@ -14,6 +14,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ScreenName } from '../../constants/ScreenName';
 import RootStackParamList from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 // Khai báo kiểu cho props 'navigation'
 type Props = NativeStackScreenProps<RootStackParamList, 'JobPost'>;
@@ -209,7 +210,7 @@ const JobPost = ({ navigation }: Props) => {
                         )}
 
                         <View style={styles.inputRow}>
-                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <FontAwesome5 name={'clipboard'} size={25} color={'#011F82'} />
                             <Text style={styles.label}>Mô tả công việc</Text>
                         </View>
                         <TextInput
@@ -221,7 +222,7 @@ const JobPost = ({ navigation }: Props) => {
                         />
 
                         <View style={styles.inputRow}>
-                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <MaterialIcons name="checklist" size={25} color="#011F82" />
                             <Text style={styles.label}>Yêu cầu công việc</Text>
                         </View>
                         <TextInput
@@ -233,7 +234,7 @@ const JobPost = ({ navigation }: Props) => {
                         />
 
                         <View style={styles.inputRow}>
-                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <FontAwesome5 name="hands-helping" size={25} color="#011F82" />
                             <Text style={styles.label}>Quyền lợi</Text>
                         </View>
 
@@ -246,7 +247,7 @@ const JobPost = ({ navigation }: Props) => {
                         />
 
                         <View style={styles.inputRow}>
-                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <FontAwesome5 name={'user-graduate'} size={25} color={'#011F82'} />
                             <Text style={styles.label}>Kinh nghiệm</Text>
                         </View>
 
@@ -257,9 +258,10 @@ const JobPost = ({ navigation }: Props) => {
                         />
 
                         <View style={styles.inputRow}>
-                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <MaterialIcons name="school" size={25} color="#011F82" />
                             <Text style={styles.label}>Trình độ</Text>
                         </View>
+
 
                         <TextInput
                             style={styles.textinput}
@@ -268,8 +270,8 @@ const JobPost = ({ navigation }: Props) => {
                         />
 
                         <View style={styles.inputRow}>
-                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
-                            <Text style={styles.label}>Số lượng nhân viên</Text>
+                            <MaterialIcons name="groups" size={25} color="#011F82" />
+                            <Text style={styles.label}>Số lượng cần tuyển</Text>
                         </View>
 
                         <TextInput
@@ -279,7 +281,7 @@ const JobPost = ({ navigation }: Props) => {
                         />
 
                         <View style={styles.inputRow}>
-                            <FontAwesome5 name={'briefcase'} size={25} color={'#011F82'} />
+                            <FontAwesome5 name="venus-mars" size={25} color="#011F82" />
                             <Text style={styles.label}>Giới tính</Text>
                         </View>
 

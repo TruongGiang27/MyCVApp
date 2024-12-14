@@ -19,6 +19,7 @@ export enum ScreenName {
     FavoriteJob = "FavoriteJob",
     CVDetail = "CVDetail",
     SendSMS = "SendSMS",
-    EditCV = "EditCV"
+    EditCV = "EditCV",
+    EditInfoEmployer = "EditInfoEmployer",
 }
 export default ScreenName;

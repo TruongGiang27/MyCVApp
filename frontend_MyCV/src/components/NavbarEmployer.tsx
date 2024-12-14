@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Icon } from '@rneui/themed';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import { appColors } from '../constants/appColors';
 import ScreenName from '../constants/ScreenName';
 import { RootStackParamList } from '../navigator/RootStackParamList';
@@ -27,36 +27,35 @@ const Navbar = ({ route, navigation }: Props) => {
     }, []);
 
     const getIconColor = (screen: string) => {
-        return route.name === screen ? '#011F82' : appColors.gray; // Màu xanh cho trang hiện tại, xám cho trang khác
+        return route.name === screen ? appColors.gray : appColors.primary; // Màu xanh cho trang hiện tại, xám cho trang khác
     };
 
     const getTextColor = (screen: string) => {
-        return route.name === screen ? '#011F82' : '#666'; // Tương tự như trên
+        return route.name === screen ? appColors.gray : appColors.primary; // Tương tự như trên
     };
-
 
     return (
         <View style={styles.navbar}>
             <View style={styles.group}>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("HomeEmployer", {userId: userId || ''})}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("HomeEmployer", { userId: userId || '' })}>
                     <Icon name="home" size={25} color="#011F82" />
                     <Text style={styles.navText}>Trang chủ</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('FavoriteJob')}>
-                    <Icon name="bookmark" size={25} color="#011F82" />
-                    <Text style={styles.navText}>Việc làm của tôi</Text>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('JobPost')}>
+                    <Icon name="bullhorn" type="font-awesome" size={25} color="#011F82" />
+                    <Text style={styles.navText}>Đăng tin</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.group}>
-                <TouchableOpacity style={styles.navItem} onPress={()=> navigation.navigate('Home', {userId: userId || ''})}>
-                    <Icon name="business" size={25} color="#011F82" />
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home', { userId: userId || '' })}>
+                    <Icon name="briefcase" type="font-awesome" size={25} color="#011F82" />
                     <Text style={styles.navText}>Người tìm việc</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.navItem}
                     onPress={() =>
-                        navigation.navigate('InfoEmployer' as never)
+                        navigation.navigate('InfoEmployer', {userId: userId || '', updated: false})
                     }
                 >
                     <Icon name="person" size={25} color={getIconColor('Profile')} />
@@ -92,7 +91,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     navText: {
-        fontSize: 12,
+        fontSize: 14,
         marginTop: 2,
+        color: appColors.primary,
+        fontWeight: 'bold',
     },
 });

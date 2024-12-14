@@ -9,15 +9,18 @@ import { User, UserDocument } from './entities/user.entity';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
   async create(createUserDto: CreateUserDto) {
-    console.log("Create User DTO:", createUserDto); // Log dữ liệu DTO để kiểm tra
+    const existingUser = await this.userModel.findOne({ userId: createUserDto.userId });
 
-    const updatedUser = await this.userModel.findOneAndUpdate(
-      { userId: createUserDto.userId },
-      createUserDto,
-      { new: true, upsert: true }
-    );
-    console.log("Updated User:", updatedUser);
-    return updatedUser;
+    if (existingUser) {
+      console.log("User already exists:", existingUser);
+      return existingUser;
+    }
+
+    const newUser = new this.userModel(createUserDto);
+    await newUser.save();
+
+    console.log("Created new user:", newUser);
+    return newUser;
   }
 
 

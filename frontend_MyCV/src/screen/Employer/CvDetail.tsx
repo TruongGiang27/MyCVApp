@@ -5,7 +5,7 @@ import { Icon } from '@rneui/themed';
 import React, { useEffect, useState } from 'react';
 import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BASE_URL } from '../../utils/url';
-import { RootStackParamList } from '../User/types';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
 interface cv_form {
     _id: string;
     userId: string;
@@ -45,10 +45,9 @@ interface cv_form {
         minimumSalary: string;
     };
 }
-
 type Props = NativeStackScreenProps<RootStackParamList, 'CVDetail'>;
 
-const CVDetail: React.FC<Props> = ({ navigation }) => {
+const CVDetail = ({ navigation }: Props) => {
     const [cv, setCv] = useState<cv_form>();
     const [name, setName] = useState<string>();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -109,12 +108,12 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
 
 
     return (
-        <ScrollView>
-            <View style={styles.container}>
-                <View style={styles.header}>
-                    <Icon name="arrow-back" size={30} color="#011F82" onPress={BackHandler} />
-                    <Text style={styles.headerText}>Chi tiết CV</Text>
-                </View>
+        <View style={styles.context}>
+            <View style={styles.header}>
+                <Icon name="arrow-back" size={30} color="#011F82" onPress={BackHandler} />
+                <Text style={styles.headerText}>Chi tiết CV</Text>
+            </View>
+            <ScrollView>
                 <View style={styles.avatarContainer}>
                     <View style={styles.avatar}>
                         <Text style={styles.initials}>{initials}</Text>
@@ -289,8 +288,9 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                     </Modal>
 
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View >
+
     );
 
 };
@@ -298,9 +298,9 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
 export default CVDetail;
 
 const styles = StyleSheet.create({
-    container: {
+    content: {
         flex: 1,
-        backgroundColor: '#F0F4F8', // Nền màu trung tính
+        backgroundColor: '#F5F5F5',
     },
     header: {
         flexDirection: 'row',
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginHorizontal: 16,
         marginTop: 24,
-        marginBottom: 20,
+        marginBottom: 80,
     },
     button: {
         flex: 1,

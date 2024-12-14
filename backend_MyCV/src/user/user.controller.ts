@@ -7,7 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Post('create-or-update')
+  @Post('create')
   async createOrUpdate(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
