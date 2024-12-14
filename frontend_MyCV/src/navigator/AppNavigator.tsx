@@ -21,6 +21,7 @@ import JobList from '../screen/User/JobList';
 import ManageCVsApplied from '../screen/User/ManageCVsApplied';
 import MessageScreen from '../screen/User/Message';
 import SearchScreen from '../screen/home/SearchScreen';
+import EditCV from '../screen/User/EditCV';
 import { RootStackParamList } from './RootStackParamList';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -48,6 +49,7 @@ const App = () => {
             <Stack.Screen name={ScreenName.Login} component={Login} />
 
             <Stack.Screen name={ScreenName.CVDetail} component={CVDetail} />
+            <Stack.Screen name={ScreenName.EditCV} component={EditCV} />
             <Stack.Screen name={ScreenName.SearchScreen} component={SearchScreen} />
         </Stack.Navigator>
     );

@@ -46,7 +46,7 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
 interface dataJobsIteam {
     _id: string;
     title: string;
-    company: string;
+    companyName: string;
     location: string;
     salary: string;
     jobType: string;
@@ -89,7 +89,7 @@ const toggleBookmarkJob = async (job: dataJobsIteam, setIsBookmarked: (value: bo
     }
 };
 
-const JobItem = ({ title, company, salary, location, onPress, job, navigation }: { title: string, company: string, salary: string, location: string, onPress: () => void, job: dataJobsIteam, navigation: any }) => {
+const JobItem = ({ title, companyName, salary, location, onPress, job, navigation }: { title: string, companyName: string, salary: string, location: string, onPress: () => void, job: dataJobsIteam, navigation: any }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
 
     useEffect(() => {
@@ -110,7 +110,7 @@ const JobItem = ({ title, company, salary, location, onPress, job, navigation }:
 
                     <Text style={styles.title}>{title}</Text>
                     <View style={{ marginVertical: width * 0.03 }}>
-                        <Text style={styles.company}>{company}</Text>
+                        <Text style={styles.company}>{companyName}</Text>
                         <Text style={styles.location}>{location}</Text>
                     </View>
 
@@ -131,7 +131,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
     interface dataJobsIteam {
         _id: string;
         title: string;
-        company: string;
+        companyName: string;
         location: string;
         salary: string;
         jobType: string;
@@ -181,7 +181,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
             renderItem={({ item }) => (
                 <JobItem
                     title={item.title}
-                    company={item.company}
+                    companyName={item.companyName}
                     salary={item.salary}
                     location={item.location}
                     onPress={() => navigation.navigate('JobDetail', { jobId: item._id, userId: userId })}

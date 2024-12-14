@@ -23,10 +23,11 @@ export class CvController {
   }
 
   @Get('/user/:userId')
-  async getCvByUserId(@Param('userId') userId: string): Promise<Cv> {
+  async getCvByUserId(@Param('userId') userId: string): Promise<Cv[]> {
     return this.cvService.getCvByUserId(userId);
   }
-  
+
+  @Get()
   async getAllCvs(): Promise<Cv[]> {
     return this.cvService.getAllCvs();
   }

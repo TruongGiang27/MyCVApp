@@ -12,7 +12,7 @@ type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 interface Employer {
     _id: string;
     title: string; // Chức vụ
-    company: string; // Tên công ty
+    companyName: string; // Tên công ty
     location: string; // Địa điểm làm việc
     salary: string; // Mức lương
     jobType: string; // Loại công việc
@@ -64,7 +64,7 @@ const InforManager = () => {
         const results = employers
             .filter(emp =>
                 emp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                emp.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                emp.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 emp.location.toLowerCase().includes(searchQuery.toLowerCase())
             );
         setFilteredEmployers(results);
@@ -254,7 +254,7 @@ const InforManager = () => {
                                 </View>
                                 <View style={styles.detailRow}>
                                     <Text style={styles.titleText}>Tên công ty:</Text>
-                                    <Text style={styles.viewText}>{viewingEmployer.company}</Text>
+                                    <Text style={styles.viewText}>{viewingEmployer.companyName}</Text>
                                 </View>
                                 <View style={styles.detailRow}>
                                     <Text style={styles.titleText}>Địa điểm:</Text>
@@ -300,8 +300,8 @@ const InforManager = () => {
                                     <Text style={styles.inputLabel}>Tên công ty</Text>
                                     <TextInput
                                         style={styles.input}
-                                        value={formData?.company}
-                                        onChangeText={text => handleInputChange('company', text)}
+                                        value={formData?.companyName}
+                                        onChangeText={text => handleInputChange('companyName', text)}
                                         placeholder="Nhập tên công ty"
                                     />
                                 </View>
@@ -376,7 +376,7 @@ const InforManager = () => {
                         <View key={index} style={styles.employerContainer}>
                             <View style={styles.employerInfo}>
                                 <Text style={styles.jobTitle}>Chức vụ: {employer.title}</Text>
-                                <Text style={styles.jobLocation}>Công ty: {employer.company}</Text>
+                                <Text style={styles.jobLocation}>Công ty: {employer.companyName}</Text>
                                 <Text style={styles.jobDetail}>Mức lương: {employer.salary}</Text>
                             </View>
                             <View style={styles.actionIconsRight}>

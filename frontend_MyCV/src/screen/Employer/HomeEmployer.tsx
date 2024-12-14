@@ -26,7 +26,7 @@ interface Job {
   deadline: string;
   _id: string;
   title: string;
-  company: string;
+  companyName: string;
   location: string;
   salary: string;
   jobType: string;
@@ -78,7 +78,7 @@ const HomeEmployer = ({navigation, route} : Props) => {
   const filteredData = jobs
     .filter((item) =>
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.location.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .slice(0, visibleCount); // Show only `visibleCount` items
@@ -302,7 +302,7 @@ const HomeEmployer = ({navigation, route} : Props) => {
             </View>
             <View style={styles.infoRow}>
               <Icon name="business" size={20} color="#011F82" style={styles.icon} />
-              <Text style={styles.jobDetail}>Tên công ty: {item.company}</Text>
+              <Text style={styles.jobDetail}>Tên công ty: {item.companyName}</Text>
             </View>
             <View style={styles.infoRow}>
               <Icon name="location-on" size={20} color="#011F82" style={styles.icon} />

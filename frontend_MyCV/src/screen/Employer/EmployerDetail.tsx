@@ -15,7 +15,7 @@ interface Job {
   deadline: string;
   _id: string;
   title: string;
-  company: string;
+  companyName: string;
   location: string;
   salary: string;
   jobType: string;
@@ -85,7 +85,7 @@ const EmployerDetail: React.FC<Props> = ({ navigation }) => {
 
       {/* Company and Location */}
       <View style={styles.companyInfo}>
-        <Text style={styles.companyName}>{jobDetails?.company}</Text>
+        <Text style={styles.companyName}>{jobDetails?.companyName}</Text>
         <Text style={styles.location}>{jobDetails?.location}</Text>
       </View>
       {/* Job Status */}

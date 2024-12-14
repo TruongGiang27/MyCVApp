@@ -30,8 +30,8 @@ export class CvService {
     return this.cvModel.find();
   }
 
-  async getCvByUserId(userId: string): Promise<Cv> {
-    const data = await this.cvModel.findOne({ userId: userId });
+  async getCvByUserId(userId: string): Promise<Cv[]> {
+    const data = await this.cvModel.find({ userId: userId });
     console.log(data)
     return data
   }

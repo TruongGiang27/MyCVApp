@@ -1,7 +1,7 @@
 export class CreateJobDto {
   readonly userId: string;
   readonly title: string;
-  readonly company: string;
+  readonly companyName: string;
   readonly location: string;
   readonly salary: string;
   readonly jobType: string;
