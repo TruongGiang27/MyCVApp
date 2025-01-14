@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Query } from '@nestjs/common';
-import { JobsService } from './jobs.service';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
-import { query } from 'express';
+import { JobsService } from './jobs.service';
 
 @Controller('jobs')
 export class JobsController {
@@ -42,11 +41,6 @@ export class JobsController {
   async getJobByUserId(@Param('userId') userId: string) {
     return this.jobsService.getJobByUserId(userId);
   }
-
-  // @Put(':id')
-  // async update(@Param('id') id: string, @Body() createJobDto: CreateJobDto) {
-  //   return this.jobsService.update(id, createJobDto);
-  // }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {

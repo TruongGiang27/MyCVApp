@@ -54,7 +54,7 @@ const JobEmployerDetail = ({ navigation, route }: Props) => {
       try {
         const response = await axios.get(`${BASE_URL}/applications/job/${jobId}`);
         setApplicants(response.data); // Lưu danh sách ứng viên
-        console.log("applicant",applicants);
+        console.log("applicant", applicants);
       } catch (error) {
         console.error("Error fetching applicants:", error);
       }
@@ -67,15 +67,22 @@ const JobEmployerDetail = ({ navigation, route }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const handleStatusChange = async (newStatus: string) => {
-    // Kiểm tra nếu trạng thái là "Đã đóng" và có ứng viên nộp CV
-    if (newStatus === "Đã đóng" && applicants.length > 0) {
-      Alert.alert(
-        "Không thể đóng công việc",
-        "Công việc này hiện có ứng viên nộp CV. Hãy xử lý trước khi đóng công việc."
-      );
-      return; // Không cho phép chuyển trạng thái
+    // Nếu trạng thái mới là "Đã đóng", kiểm tra điều kiện trước khi đóng
+    if (newStatus === "Đã đóng") {
+      if (applicants.length === 0 || applicants.every((applicant: any) => applicant.status === "declined")) {
+        setJobStatus(newStatus);
+      } else {
+        Alert.alert(
+          "Không thể đóng công việc",
+          "Công việc này hiện có ứng viên nộp CV. Hãy xử lý trước khi đóng công việc."
+        );
+        return; // Thoát sớm nếu không thỏa mãn điều kiện đóng
+      }
+    } else {
+      // Nếu trạng thái mới là "Mở" hoặc "Tạm dừng", cho phép chuyển đổi trực tiếp
+      setJobStatus(newStatus);
     }
-    setJobStatus(newStatus); // Cập nhật trạng thái trong giao diện
+
     try {
       setLoading(true);
       // Gửi yêu cầu cập nhật trạng thái lên server
@@ -95,6 +102,8 @@ const JobEmployerDetail = ({ navigation, route }: Props) => {
       setLoading(false);
     }
   };
+
+
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -219,7 +228,6 @@ const JobEmployerDetail = ({ navigation, route }: Props) => {
       </ScrollView>
       <NavbarEmployer navigation={navigation} route={route} />
     </View>
-
   );
 };
 

@@ -183,7 +183,7 @@ const SendSMSComponent = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f0f4f8', // Màu nền tinh tế, dễ nhìn
+        backgroundColor: '#f0f4f8',
         padding: 20,
         alignItems: 'center',
     },
