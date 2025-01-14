@@ -30,7 +30,7 @@ const InfoEmployer = ({ navigation, route }: Props) => {
         const getEmployerInfo = async () => {
             const response = await fetch(`${BASE_URL}/employers/${userId}`);
             const data = await response.json();
-            console.log(data);
+            console.log("job of user id: ",data);
             setCompanyName(data.companyName);
             setSelectedCompany(data.selectedCompany);
             setNumberOfEmployees(data.numberOfEmployees);
@@ -75,8 +75,6 @@ const InfoEmployer = ({ navigation, route }: Props) => {
             </ScrollView>
             <NavbarEmployer navigation={navigation} route={route} />
         </View>
-
-
     );
 };
 
@@ -104,7 +102,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
         marginBottom: 5,
-        color: '#555',
+        color: '#011F82',
         textTransform: 'uppercase',
         letterSpacing: 0.5,
     },
@@ -138,7 +136,4 @@ const styles = StyleSheet.create({
         height: 100,
     },
 });
-
-
-
 export default InfoEmployer;

@@ -5,7 +5,7 @@ import { useRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, Keyboard, KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Image, Keyboard, KeyboardAvoidingView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Button, Card, Text, TextInput, Title } from 'react-native-paper';
 import { BASE_URL } from '../../utils/url';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
@@ -95,18 +95,21 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
           <Card style={styles.card}>
             <Card.Content>
               <Title style={styles.subtitle}>Chọn loại công ty</Title>
-              <Picker
-                selectedValue={selectedCompany}
-                onValueChange={(itemValue: string, itemIndex: number) => setSelectedCompany(itemValue)}
-                onFocus={handlePickerFocus}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-              >
-                <Picker.Item label="Chọn một tùy chọn" value="choose" />
-                <Picker.Item label="Bảo hiểm" value="Bảo hiểm" />
-                <Picker.Item label="Công Nghệ" value="Công Nghệ" />
-                <Picker.Item label="Y tế" value="Y tế" />
-              </Picker>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={selectedCompany}
+                  onValueChange={(itemValue: string, itemIndex: number) => setSelectedCompany(itemValue)}
+                  onFocus={handlePickerFocus}
+                  style={styles.picker}
+                  itemStyle={styles.pickerItem}
+                >
+                  <Picker.Item label="Chọn một tùy chọn" value="choose" />
+                  <Picker.Item label="Bảo hiểm" value="Bảo hiểm" />
+                  <Picker.Item label="Công Nghệ" value="Công Nghệ" />
+                  <Picker.Item label="Y tế" value="Y tế" />
+                  <Picker.Item label="Logistics" value="Logistics" />
+                </Picker>
+              </View>
               <Title style={styles.subtitle}>Tên của công ty</Title>
               <TextInput
                 label="Tên công ty"
@@ -123,20 +126,23 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                 }}
               />
               <Title style={styles.subtitle}>Số lượng nhân viên</Title>
-              <Picker
-                selectedValue={numberOfEmployees}
-                onValueChange={(itemValue: string, itemIndex: number) => setNumberOfEmployees(itemValue)}
-                onFocus={handlePickerFocus}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-              >
-                <Picker.Item label="Chọn một tùy chọn" value="choose" />
-                <Picker.Item label="1-10" value="1-10" />
-                <Picker.Item label="11-50" value="11-50" />
-                <Picker.Item label="51-100" value="51-100" />
-                <Picker.Item label="101-500" value="101-500" />
-                <Picker.Item label="501-1000" value="501-1000" />
-              </Picker>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={numberOfEmployees}
+                  onValueChange={(itemValue: string, itemIndex: number) => setNumberOfEmployees(itemValue)}
+                  onFocus={handlePickerFocus}
+                  style={styles.picker}
+                  itemStyle={styles.pickerItem}
+                >
+                  <Picker.Item label="Chọn một tùy chọn" value="choose" />
+                  <Picker.Item label="1-10" value="1-10" />
+                  <Picker.Item label="11-50" value="11-50" />
+                  <Picker.Item label="51-100" value="51-100" />
+                  <Picker.Item label="101-500" value="101-500" />
+                  <Picker.Item label="501-1000" value="501-1000" />
+                  <Picker.Item label="Trên 1000" value="Trên 1000" />
+                </Picker>
+              </View>
               <Title style={styles.subtitle}>Họ và tên của bạn</Title>
 
               <TextInput
@@ -157,18 +163,18 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                   style={styles.picker}
                   itemStyle={styles.pickerItem}
                 >
-                  <Picker.Item label="Chọn một tùy chọn" value="choose" />
-                  <Picker.Item label="Facebook" value="facebook" />
-                  <Picker.Item label="Google" value="google" />
-                  <Picker.Item label="LinkedIn" value="linkedIn" />
-                  <Picker.Item label="Twitter" value="twitter" />
-                  <Picker.Item label="Từ bạn bè" value="friends" />
-                  <Picker.Item label="Từ gia đình" value="family" />
-                  <Picker.Item label="Từ đối tác" value="partner" />
-                  <Picker.Item label="Từ khách hàng" value="customer" />
-                  <Picker.Item label="Từ nhân viên" value="employee" />
-                  <Picker.Item label="Từ nhà cung cấp" value="supplier" />
-                  <Picker.Item label="Từ người khác" value="other" />
+                  <Picker.Item label="Chọn một tùy chọn" value="Choose" />
+                  <Picker.Item label="Facebook" value="Facebook" />
+                  <Picker.Item label="Google" value="Google" />
+                  <Picker.Item label="LinkedIn" value="/linkedIn" />
+                  <Picker.Item label="Twitter" value="Twitter" />
+                  <Picker.Item label="Từ bạn bè" value="Friends" />
+                  <Picker.Item label="Từ gia đình" value="Family" />
+                  <Picker.Item label="Từ đối tác" value="Partner" />
+                  <Picker.Item label="Từ khách hàng" value="Customer" />
+                  <Picker.Item label="Từ nhân viên" value="Employee" />
+                  <Picker.Item label="Từ nhà cung cấp" value="Supplier" />
+                  <Picker.Item label="Từ người khác" value="Other" />
                 </Picker>
               </View>
 
@@ -185,17 +191,23 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
                 theme={{ colors: { primary: '#011F82', outline: '#6D92D0' } }}
               />
               <Title style={styles.subtitle}>Mô tả công ty</Title>
-              <Text style={styles.describe}>Mô tả ngắn về công ty của bạn</Text>
+              <Text style={styles.text}>Mô tả ngắn về công ty của bạn</Text>
               <TextInput
                 label="Mô tả công ty"
                 value={describe}
                 onChangeText={setDescribe}
                 style={styles.input}
-                textColor='#6D92D0'
+                textColor="#6D92D0"
                 mode="outlined"
-                theme={{ colors: { primary: '#011F82', outline: '#6D92D0' } }} />
+                multiline
+                numberOfLines={4} // Số dòng ban đầu
+                theme={{ colors: { primary: '#011F82', outline: '#6D92D0' } }}
+              />
+
               {error ? <Text style={styles.error}>{error}</Text> : null}
-              <Button mode="contained" onPress={handleSubmit} style={styles.button}>Submit</Button>
+              <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+                <Text style={styles.btnText}>Xác nhận</Text>
+              </TouchableOpacity>
             </Card.Content>
           </Card>
         </View>
@@ -205,12 +217,11 @@ const CreateEmployer: React.FC<Props> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F4F9FF',
   },
   imgBg: {
     width: '100%',
@@ -242,7 +253,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 5,
     paddingBottom: 5,
-    color: '#6D92D0',
+    color: '#4C585B',
     fontStyle: 'italic',
   },
   describe: {
@@ -260,7 +271,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     backgroundColor: 'white',
-    color: '#6D92D0',
+    color: '#243642',
   },
   pickerItem: {
     fontSize: 16,
@@ -271,12 +282,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 16,
     borderRadius: 8,
-    color: 'red',
+    color: '#243642',
   },
   button: {
-    marginTop: 16,
     backgroundColor: '#6D92D0',
+    borderRadius: 8,
   },
+
+  btnText: {
+    textAlign: 'center',
+    color: 'white',
+    padding: 10,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+
   error: {
     color: 'red',
     marginTop: 5,

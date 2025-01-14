@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'flex-start',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#F4F9FF',
     },
     header: {
         flexDirection: 'row',

@@ -4,7 +4,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Navbar from '../../components/NavbarEmployer';
+import Navbar from '../../components/Navbar';
 import ScreenName from '../../constants/ScreenName';
 import RootStackParamList from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
@@ -21,8 +21,6 @@ interface cv {
   status: string;
 
 }
-
-
 
 const ManageCVsApplied = ({ navigation, route }: Props) => {
   const [appliedJobs, setAppliedJobs] = useState<cv[]>([]);
@@ -56,7 +54,7 @@ const ManageCVsApplied = ({ navigation, route }: Props) => {
 
 
   return (
-    <View style={styles.container}>
+    <View style={styles.context}>
       {/* Header Container */}
       <View style={styles.headerContainer}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -65,30 +63,38 @@ const ManageCVsApplied = ({ navigation, route }: Props) => {
         <Text style={styles.header}>CVs đã nộp</Text>
       </View>
 
-      {error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : (
-        <FlatList
-          data={appliedJobs.filter((cv) => cv.userId === userId)}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.cvItem}
-              onPress={() => navigation.navigate('CVInfor', { cvId: item.cvId })}
-            >
-              <Text style={styles.cvTitle}>Họ tên: {item.CVfullNameUser}</Text>
-              <Text style={styles.cvtext}>Email: {item.CVEmailUser}</Text>
-              <Text style={styles.cvtext}>Tình trạng CV: {item.status}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      )}
+      <View style={styles.container}>
+
+        {error ? (
+          <Text style={styles.errorText}>{error}</Text>
+        ) : (
+          <FlatList
+            data={appliedJobs.filter((cv) => cv.userId === userId)}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.cvItem}
+                onPress={() => navigation.navigate('CVInfor', { cvId: item.cvId })}
+              >
+                <Text style={styles.cvTitle}>Họ tên: {item.CVfullNameUser}</Text>
+                <Text style={styles.cvtext}>Email: {item.CVEmailUser}</Text>
+                <Text style={styles.cvtext}>Tình trạng CV: {item.status}</Text>
+                <Text style={styles.cvtext}>Tên công việc: {item.jobName}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        )}
+      </View>
       <Navbar navigation={navigation} route={route} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  context: {
+    flex: 1,
+    backgroundColor: '#F4F9FF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#F4F9FF',
@@ -97,7 +103,8 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    padding: 5,
+    backgroundColor: '#fff',
   },
   backButton: {
     padding: 8,

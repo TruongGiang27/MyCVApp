@@ -66,7 +66,7 @@ const Navbar = ({ route, navigation }: Props) => {
           <Icon name="home" size={25} color={getIconColor('Home')} />
           <Text style={styles.navText}>Trang chủ</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem }  onPress={() => navigation.navigate("FavoriteJob")}>
+        <TouchableOpacity style={styles.navItem }  onPress={() => navigation.navigate("FavoriteJob", { userId: userId, userEmail: user?.data?.user?.email } as never)}>
           <Icon name="heart" type="font-awesome" size={25} color={getIconColor('FavoriteJob')} />
           <Text style={styles.navText}>Việc làm của tôi</Text>
         </TouchableOpacity>

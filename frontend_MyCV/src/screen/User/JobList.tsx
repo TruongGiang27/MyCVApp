@@ -7,6 +7,7 @@ import ScreenName from '../../constants/ScreenName'
 import { BASE_URL } from '../../utils/url'
 import { SearchHistoryItem } from '../../interfaces/SearchHistoryItem'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Navbar from '../../components/NavbarEmployer'
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 type Props = NativeStackScreenProps<RootStackParamList, 'JobList'>;
@@ -45,7 +46,7 @@ const Header = ({ location, navigation, query }: { location: string, navigation:
   );
 };
 
-const JobItem = ({ title, company, salary, location, onPress }: { title: string, company: string, salary: string, location: string, onPress: () => void }) => {
+const JobItem = ({ title, companyName, status, salary, location, onPress }: { title: string, companyName: string, status: string, salary: string, location: string, onPress: () => void }) => {
 
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={1}>
@@ -63,8 +64,9 @@ const JobItem = ({ title, company, salary, location, onPress }: { title: string,
 
           <Text style={styles.title}>{title}</Text>
           <View style={{ marginVertical: width * 0.03 }}>
-            <Text style={styles.company}>{company}</Text>
-            <Text style={styles.location}>{location}</Text>
+            <Text style={styles.companyName}>Công ty {companyName}</Text>
+            <Text style={styles.location}>Vị trí: {location}</Text>
+            <Text style={styles.status}>Trạng thái: {status}</Text>
           </View>
 
           <Text style={styles.salary}>{salary}</Text>
@@ -83,11 +85,12 @@ const Content = ({ navigation, location, query }: { navigation: any, location: s
   interface dataJobsIteam {
     _id: string;
     title: string;
-    company: string;
+    companyName: string;
     location: string;
     salary: string;
     jobType: string;
     jobDescription: string;
+    status: string;
   }
   const [dataJobs, setDataJobs] = useState<dataJobsIteam[]>([]);
   const [loading, setLoading] = useState(true);  // Trạng thái loading
@@ -112,7 +115,9 @@ const Content = ({ navigation, location, query }: { navigation: any, location: s
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const responseJson = await response.json();
-        setDataJobs(responseJson);
+        // Filter out closed jobs
+        const validJobs = responseJson.filter((job: dataJobsIteam) => job.status !== 'Đã đóng');
+        setDataJobs(validJobs);
         console.log("Data fetched successfully:", responseJson);
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -122,8 +127,6 @@ const Content = ({ navigation, location, query }: { navigation: any, location: s
     };
     loadData();
   }, [query, location]);
-
-
 
   if (loading) {
     return (
@@ -138,7 +141,8 @@ const Content = ({ navigation, location, query }: { navigation: any, location: s
       renderItem={({ item }) => (
         <JobItem
           title={item.title}
-          company={item.company}
+          companyName={item.companyName}
+          status={item.status}
           salary={item.salary}
           location={item.location}
           onPress={() => navigation.navigate('JobDetail', { jobId: item._id })}
@@ -154,7 +158,7 @@ const Content = ({ navigation, location, query }: { navigation: any, location: s
 
 
 const JobList1 = ({ navigation, route }: Props) => {
-  const { location: initialLocation, query: initialQuery } = route.params as { location: string, query: string };
+  const { userId, location: initialLocation, query: initialQuery } = route.params as { userId: string, location: string, query: string };
   const [location, setLocation] = useState(initialLocation);
   const [query, setQuery] = useState(initialQuery);
   const MAX_HISTORY = 20;
@@ -166,8 +170,8 @@ const JobList1 = ({ navigation, route }: Props) => {
   const saveSearchHistory = async () => {
     try {
       const newItem: SearchHistoryItem = {
-        location, 
-        query,    
+        location,
+        query,
       };
 
       // Lấy lịch sử cũ từ AsyncStorage
@@ -195,7 +199,7 @@ const JobList1 = ({ navigation, route }: Props) => {
   };
 
   const handleGoBack = () => {
-    navigation.navigate('Home');
+    navigation.navigate('Home', { userId });
   };
 
   useEffect(() => {
@@ -211,6 +215,7 @@ const JobList1 = ({ navigation, route }: Props) => {
       </TouchableOpacity>
       <Header navigation={navigation} location={location} query={query} />
       <Content navigation={navigation} location={location} query={query} />
+      {/* <Navbar navigation={navigation} route={route} /> */}
     </View>
   )
 }
@@ -220,7 +225,7 @@ export default JobList1
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F4F9FF',
   },
   backButton: {
     flexDirection: 'row',
@@ -291,7 +296,7 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 5,
   },
-  company: {
+  companyName: {
     fontSize: 14,
     color: '#555',
     marginBottom: 5,
@@ -305,6 +310,11 @@ const styles = StyleSheet.create({
   location: {
     fontSize: 14,
     color: '#666',
+    marginBottom: 5,
+  },
+  status: {
+    fontSize: 16,
+    color: '#1F509A',
     marginBottom: 5,
   },
   timePosted: {

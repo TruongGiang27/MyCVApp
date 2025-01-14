@@ -9,7 +9,7 @@ import { RootStackParamList } from '../navigator/RootStackParamList';
 
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
-const Navbar = ({ route, navigation }: Props) => {
+const NavbarEmployer = ({ route, navigation }: Props) => {
     const [user, setUser] = useState<any>(null);
     const [userId, setUserId] = useState<string | null>(null); // Trạng thái lưu userId
     const [employer, setEmployer] = useState<any>(null);
@@ -67,7 +67,7 @@ const Navbar = ({ route, navigation }: Props) => {
     );
 };
 
-export default Navbar;
+export default NavbarEmployer;
 
 const styles = StyleSheet.create({
     navbar: {

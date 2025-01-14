@@ -31,7 +31,7 @@ interface Employer {
 
 const InforManager = ({ navigation, route }: Props) => {
     const { userId } = route.params as { userId: string };
-    console.log("userId", userId);
+    // console.log("userId", userId);
     const [user, setUser] = useState<any>(null);
     const [employers, setEmployers] = useState<Employer[]>([]);
     const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
@@ -49,8 +49,8 @@ const InforManager = ({ navigation, route }: Props) => {
             const userInfo = await AsyncStorage.getItem('userInfo');
             if (userInfo) {
                 setUser(JSON.parse(userInfo));
-                console.log("------------------");
-                console.log("userInfo", userInfo);
+                // console.log("------------------");
+                // console.log("userInfo", userInfo);
             }
         };
 
@@ -144,17 +144,6 @@ const InforManager = ({ navigation, route }: Props) => {
     };
 
     const handleStatusChange = async (status: "Mở" | "Tạm dừng" | "Đã đóng", employerId: string) => {
-        //       try{
-        //     if (status === "Đã đóng") {
-        //         // Kiểm tra tất cả CV đã duyệt
-        //         const response = await axios.get(`${BASE_URL}/jobs/${employerId}/cvs`);
-        //         const allCVReviewed = response.data.every((cv: any) => cv.status === "Đã duyệt");
-
-        //         if (!allCVReviewed) {
-        //             Alert.alert("Không thể đóng", "Vui lòng duyệt tất cả CV trước khi đóng công việc này.");
-        //             return;
-        //         }
-        // }
         try {
             const response = await axios.put(`${BASE_URL}/jobs/${employerId}`, { status });
             const updatedEmployers = employers.map(emp => emp._id === employerId ? { ...emp, status } : emp);
@@ -408,19 +397,21 @@ const InforManager = ({ navigation, route }: Props) => {
                         <Text style={styles.viewMoreText}>Xem thêm</Text>
                     </TouchableOpacity>
                 )}
-
             </ScrollView>
+
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    scrollView: {
-        backgroundColor: '#f5f5f5',
-    },
     container: {
         padding: 20,
         flex: 1,
+        backgroundColor: '#F9FAFC',
+    },
+    scrollView: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
     },
     header: {
         flexDirection: 'row',

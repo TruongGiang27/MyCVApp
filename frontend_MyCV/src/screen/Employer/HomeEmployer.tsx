@@ -35,7 +35,7 @@ interface Job {
 }
 
 const HomeEmployer = ({ navigation, route }: Props) => {
-  const { userId } = route.params as { userId: string };
+  const { userId, jobId} = route.params as { userId: string, jobId: string };
 
   const [allJobs, setAllJobs] = useState<Job[]>([]); // Original data
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -49,8 +49,6 @@ const HomeEmployer = ({ navigation, route }: Props) => {
       const userInfo = await AsyncStorage.getItem('userInfo');
       if (userInfo) {
         setUser(JSON.parse(userInfo));
-        console.log("------------------");
-        console.log("userInfo", userInfo);
       }
     };
     getInfo();
@@ -62,8 +60,7 @@ const HomeEmployer = ({ navigation, route }: Props) => {
       const response = await axios.get(`${BASE_URL}/jobs/job-of-user/${userId}`);
       setAllJobs(response.data);
       setJobs(response.data);
-      setVisibleCount(2); // Reset số lượng hiển thị mỗi lần tải lại
-      console.log("userId------pagehomeemployer", userId);
+      setVisibleCount(2);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -165,8 +162,6 @@ const HomeEmployer = ({ navigation, route }: Props) => {
       console.error(error);
     }
   };
-
-  console.log("data-----", filteredData)
   if (!jobs) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -179,7 +174,7 @@ const HomeEmployer = ({ navigation, route }: Props) => {
       <StatusBar />
       <View style={styles.header}>
         <Icon style={styles.menuIcon} name="menu" size={40} color="#fff" onPress={openMenu} />
-        <TouchableOpacity onPress={() => navigation.navigate('HomeEmployer' as never)}>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeEmployer', { userId })}>
           <Image
             source={require('../../../assets/images/logo.png')}
             style={[styles.logo, { width: 150, height: 70 }]}
@@ -219,7 +214,8 @@ const HomeEmployer = ({ navigation, route }: Props) => {
                       navigation.navigate('InforManager', {userId: userId}); // Navigate to InforManager
                     }
                     if (item.title === 'Ứng viên') {
-                      navigation.navigate('ApplyManager' as never); // Navigate to ApplyManager
+                      navigation.navigate('ApplyManager',{jobId: jobId, userId: userId}); // Navigate to ApplyManager
+                      console.log("userId:", userId);
                     }
 
                   }}
@@ -340,10 +336,10 @@ export default HomeEmployer;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F4F9FF',
   },
   scrollContent: {
-    paddingBottom: 40, // Add padding to push the button up
+    paddingBottom: 40,
   },
   header: {
     flexDirection: 'row',
@@ -496,7 +492,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     flex: 1,
-    color: '#1976D2',
+    // color: '#1976D2',
   },
   cardContainer: {
     padding: 10,

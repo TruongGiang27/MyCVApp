@@ -140,9 +140,6 @@ const CVDetail = ({ navigation, route }: Props) => {
         }
     };
 
-
-
-
     return (
         <View style={styles.context}>
             <View style={styles.header}>

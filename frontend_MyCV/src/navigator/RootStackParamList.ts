@@ -11,13 +11,13 @@ export type RootStackParamList = {
     CVCreate: undefined;
     MessageScreen: undefined;
     CvDetail: undefined;
-    ApplyManager: { jobId: string };
+    ApplyManager: { jobId: string, userId: string };
     InforManager: {userId: string};
     EmployerDetail: { jobId: string };
     CVManagerment:{userId: string};
     JobDetail: { jobId: string, jobName: string, userId: string, userEmail: string };
     ManageCVsApplied: { cvId: string, disableButtons: boolean, jobId: string, userId: string };
-    FavoriteJob: undefined;
+    FavoriteJob: { userId: string, userEmail: string };
     CVDetail: {cvId: string, jobId: string};
     SendSMS: {phone: string};
     EditCV: { cvId: string };

@@ -1,8 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ObjectId } from 'bson';
 import { Document } from 'mongoose';
 
 @Schema()
 export class Employer extends Document {
+  @Prop({ required: true })
+  id: ObjectId;
+  
   @Prop({ required: true })
   userId: string;
 
@@ -26,6 +30,10 @@ export class Employer extends Document {
 
   @Prop({ required: true })
   describe: string;
+
+  @Prop({ default: false })
+  isBlocked: boolean;
+  
 }
 
 export const EmployerSchema = SchemaFactory.createForClass(Employer);

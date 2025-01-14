@@ -5,9 +5,8 @@ import { Model } from 'mongoose';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { Employer } from './entities/employer.entity';
-import { Types } from 'mongoose';
 
-const API_URL = 'http://localhost:3000/employer';
+const API_URL = 'http://localhost:3000/employers';
 
 export const createEmployer = async (employerData) => {
   try {
@@ -31,10 +30,10 @@ export class EmployerService {
     return this.employerModel.find().exec();
   }
 
-  async findOne(id: string): Promise<Employer> {
-    const employer = await this.employerModel.findOne({ userId: id }).exec();
+  async findOne(userId: string): Promise<Employer> {
+    const employer = await this.employerModel.findOne({ userId: userId }).exec();
     if (!employer) {
-      throw new NotFoundException(`Employer with ID ${id} not found`);
+      throw new NotFoundException(`Employer with ID ${userId} not found`);
     }
     return employer;
   }
@@ -61,5 +60,22 @@ export class EmployerService {
     console.log("userid-----", userId);
     console.log('employer:', employer);
     return !!employer?.userId;
+  }
+  async findByFilters(filters: any): Promise<Employer[]> {
+    return this.employerModel.find(filters).exec();
+  }
+
+  async updateAdmin(
+    id: string,
+    updateEmployerDto: Partial<Employer>,
+  ): Promise<Employer> {
+    const updatedEmployer = await this.employerModel
+      .findByIdAndUpdate(id, updateEmployerDto, { new: true })
+      .exec();
+
+    if (!updatedEmployer) {
+      throw new NotFoundException(`Employer with ID ${id} not found`);
+    }
+    return updatedEmployer;
   }
 }

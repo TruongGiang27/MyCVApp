@@ -116,14 +116,14 @@ const Profile = ({ navigation, route }: Props) => {
                     console.error('Lỗi khi cập nhật danh sách CVs:', error);
                 }
             };
-    
+
             fetchUpdatedCVs();
             // Xóa `updated` để tránh lặp lại không cần thiết
             navigation.setParams({ updated: false });
         }
     }, [updated]);
 
-    
+
 
     const confirmApplyNow = async (cvId: string) => {
         try {
@@ -160,7 +160,7 @@ const Profile = ({ navigation, route }: Props) => {
                         userId,
                     });
                     Alert.alert('Thành công', 'Bạn đã ứng tuyển thành công!');
-                    navigation.navigate('JobDetail', { jobId, jobName, userId, userEmail });
+                    navigation.navigate('Home', { userId });
                 }
             } else {
                 Alert.alert('Lỗi', 'Không tìm thấy CV để ứng tuyển.');
@@ -228,7 +228,13 @@ const Profile = ({ navigation, route }: Props) => {
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.cvItem}
-                            onPress={() => confirmApplyNow(item._id)} // Truyền cvId
+                            onPress={() => {
+                                if (jobId === '') {
+                                    navigation.navigate('CVInfor', { cvId: item._id });
+                                } else {
+                                    confirmApplyNow(item._id);
+                                }
+                            }} // Truyền cvId
                         >
                             <Text style={styles.cvTitle}>Họ tên: {item.fullName}</Text>
                             <Text style={styles.cvtext}>Email: {item.email}</Text>
@@ -238,7 +244,7 @@ const Profile = ({ navigation, route }: Props) => {
                             <Text style={styles.cvtext}>Loại công việc mong muốn: {item.jobPreferences.jobType}</Text>
                             <Text style={styles.cvtext}>Mức lương mong muốn: {item.jobPreferences.minimumSalary}</Text>
                             <View style={styles.allicon}>
-                                <Icon style={styles.icon} name="edit" size={30} color="#fff" onPress={() => navigation.navigate('EditCV',{ cvId: item._id })} />
+                                <Icon style={styles.icon} name="edit" size={30} color="#fff" onPress={() => navigation.navigate('EditCV', { cvId: item._id })} />
                                 <Icon style={styles.icondelete} name="delete" size={30} color="#fff" onPress={() => handleDelete(item._id)} />
                             </View>
                         </TouchableOpacity>
@@ -255,7 +261,6 @@ const Profile = ({ navigation, route }: Props) => {
                     <Text style={styles.buttonText}>Tạo hồ sơ</Text>
                 </TouchableOpacity>
             </View>
-
             <Navbar navigation={navigation} route={route} />
         </View>
     );
@@ -264,7 +269,7 @@ const Profile = ({ navigation, route }: Props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#F4F9FF',
     },
     header: {
         flexDirection: 'row',

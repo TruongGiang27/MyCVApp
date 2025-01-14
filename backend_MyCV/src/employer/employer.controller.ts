@@ -6,7 +6,32 @@ import { EmployerService } from './employer.service';
 @Controller('employers')
 export class EmployerController {
   constructor(private readonly employerService: EmployerService) { }
+  
+  @Get()
+  async findAllOrSearch(
+    @Query('companyName') companyName?: string,
+    @Query('fullName') fullName?: string,
+    @Query('howDidYouHear') howDidYouHear?: string,
+    @Query('phoneNumber') phoneNumber?: string,
+  ) {
+    const filters = {
+      ...(companyName && { companyName: new RegExp(companyName, 'i') }),
+      ...(fullName && { fullName: new RegExp(fullName, 'i') }),
+      ...(howDidYouHear && { howDidYouHear: new RegExp(howDidYouHear, 'i') }),
+      ...(phoneNumber && { phoneNumber: new RegExp(phoneNumber, 'i') }),
+    };
+    return this.employerService.findByFilters(filters);
+  }
 
+  @Patch(':_id/block')
+  async blockEmployer(@Param('_id') id: string) {
+    return this.employerService.updateAdmin(id, { isBlocked: true });
+  }
+
+  @Patch(':_id/unblock')
+  async unblockEmployer(@Param('_id') id: string) {
+    return this.employerService.updateAdmin(id, { isBlocked: false });
+  }
   @Post()
   create(@Body() createEmployerDto: CreateEmployerDto) {
     return this.employerService.create(createEmployerDto);

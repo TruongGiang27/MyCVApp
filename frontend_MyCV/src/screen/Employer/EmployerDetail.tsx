@@ -34,9 +34,9 @@ interface Job {
   status: "Chọn trạng thái" | "Mở" | "Tạm dừng" | "Đã đóng"; // Add status field here
 }
 
-const EmployerDetail= ({ navigation,route }: Props) => {
+const JobEmployerDetail = ({ navigation, route }: Props) => {
   const [applicants, setApplicants] = useState([]); // State to store applicants
-  const { jobId } = route.params as { jobId: string };
+  const { userId, jobId } = route.params as { userId: string, jobId: string };
 
   const [jobDetails, setJobDetails] = useState<Job | null>(null);
 
@@ -49,15 +49,33 @@ const EmployerDetail= ({ navigation,route }: Props) => {
         console.error("Error fetching job details:", error);
       }
     }
+
+    const fetchApplicants = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/applications/job/${jobId}`);
+        setApplicants(response.data); // Lưu danh sách ứng viên
+        console.log("applicant",applicants);
+      } catch (error) {
+        console.error("Error fetching applicants:", error);
+      }
+    };
     fetchJobDetail();
+    fetchApplicants();
   }, [jobId]); // Empty dependency array to run effect only once
 
   const [jobStatus, setJobStatus] = useState<string>(jobDetails?.status || '');
   const [loading, setLoading] = useState(false);
 
   const handleStatusChange = async (newStatus: string) => {
+    // Kiểm tra nếu trạng thái là "Đã đóng" và có ứng viên nộp CV
+    if (newStatus === "Đã đóng" && applicants.length > 0) {
+      Alert.alert(
+        "Không thể đóng công việc",
+        "Công việc này hiện có ứng viên nộp CV. Hãy xử lý trước khi đóng công việc."
+      );
+      return; // Không cho phép chuyển trạng thái
+    }
     setJobStatus(newStatus); // Cập nhật trạng thái trong giao diện
-
     try {
       setLoading(true);
       // Gửi yêu cầu cập nhật trạng thái lên server
@@ -73,6 +91,8 @@ const EmployerDetail= ({ navigation,route }: Props) => {
     } catch (error) {
       console.error("Error updating job status:", error);
       Alert.alert("Lỗi", "Không thể kết nối với server.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,9 +114,9 @@ const EmployerDetail= ({ navigation,route }: Props) => {
       <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
 
         {/* Company and Location */}
-        <View style={styles.companyInfo}>
-          <Text style={styles.companyName}>{jobDetails?.companyName}</Text>
-          <Text style={styles.location}>{jobDetails?.location}</Text>
+        <View>
+          <Text style={styles.companyName}>Công ty {jobDetails?.companyName}</Text>
+          <Text style={styles.location}>Địa chỉ: {jobDetails?.location}</Text>
         </View>
         {/* Job Status */}
         <View style={styles.statusContainer}>
@@ -186,14 +206,13 @@ const EmployerDetail= ({ navigation,route }: Props) => {
             </View>
           </View>
         )}
-
         {/* Apply Button */}
         <View style={styles.btn}>
           <TouchableOpacity style={styles.applyButton} onPress={() => navigation.navigate('JobPost' as never)}>
             <Text style={styles.applyButtonText}>Tạo đơn tuyển dụng mới</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.viewcv} onPress={() => navigation.navigate('ApplyManager', { jobId: jobDetails?._id || '' })}>
+          <TouchableOpacity style={styles.viewcv} onPress={() => navigation.navigate('ApplyManager', { jobId: jobDetails?._id || '', userId: userId })}>
             <Text style={styles.applyButtonText}>Xem thông tin ứng viên</Text>
           </TouchableOpacity>
         </View>
@@ -204,31 +223,24 @@ const EmployerDetail= ({ navigation,route }: Props) => {
   );
 };
 
-export default EmployerDetail;
+export default JobEmployerDetail;
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#F4F9FF',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     height: 50,
-    marginLeft: 10,
+    paddingLeft: 10,
+    backgroundColor: '#FFFFFF',
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#011F82',
     marginLeft: 30,
-  },
-  companyInfo: {
-    marginBottom: 16,
   },
   companyName: {
     fontSize: 20,
@@ -249,12 +261,16 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 20,
-    color: '#6D92D0',
+    color: '#001F3F',
   },
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
+  },
+  dropdown: {
+    backgroundColor: '#FFFFFF', // Nền trắng
+    color: '#000000', // Chữ đen
   },
   statusLabel: {
     fontSize: 18,

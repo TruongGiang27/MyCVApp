@@ -21,6 +21,7 @@ interface Employer {
 
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const ApplyManager= ({ navigation,route }: Props) => {
+    const { userId, jobId } = route.params as { userId: string, jobId: string };
     const [employers, setEmployers] = useState<Employer[]>([]);
     const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
     const [formData, setFormData] = useState<Employer | null>(null);
@@ -34,9 +35,6 @@ const ApplyManager= ({ navigation,route }: Props) => {
         setLoading(true);
         // Xóa danh sách ứng viên cũ
         setApplicants([]);
-        // get params from route
-        const { jobId } = route.params as { jobId: string };
-        console.log("Job ID:", jobId);
         setJobDetails(jobDetails);
         try {
             const response = await axios.get(`${BASE_URL}/applications/job/${jobId}`);
@@ -74,13 +72,11 @@ const ApplyManager= ({ navigation,route }: Props) => {
     };
     const displayEmployers = (filteredEmployers.length > 0 ? filteredEmployers : employers).slice(0, 3);
 
-
-
     return (
         <View style={styles.scrollView}>
             <View style={styles.container}>
                 <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.goBack()} />
-                <Text style={styles.pageTitle}>Danh sách ứng viên</Text>
+                <Text style={styles.pageTitle}>Danh sách ứng viên đã nộp đơn</Text>
             </View>
             <View style={styles.searchSection}>
                 <TextInput
@@ -117,7 +113,7 @@ const ApplyManager= ({ navigation,route }: Props) => {
 const styles = StyleSheet.create({
     scrollView: {
         flex: 1,
-        backgroundColor: '#f5f5f5'
+        backgroundColor: '#F9FAFC'
     },
     container: {
         display: 'flex',
