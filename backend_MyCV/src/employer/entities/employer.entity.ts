@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class Employer extends Document {
-  @Prop({ required: true })
+  @Prop()
   id: ObjectId;
   
   @Prop({ required: true })

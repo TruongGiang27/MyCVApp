@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
-import { useDispatch,useSelector } from 'react-redux';
-import { checkSignInStatus } from '../../utils/auth';
-import { signIn } from '../../utils/auth';
+import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { login, logout } from '../../redux/reducers/authReducer';
-import { RootState } from '../../redux/store';
+import { checkSignInStatus, signIn } from '../../utils/auth';
 const Login = () => {
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth.user);
+
+
   useEffect(() => {
     const checkUser = async () => {
       const userInfo = await checkSignInStatus();
       if (userInfo) {
-        dispatch(login(JSON.parse(userInfo)));
+        dispatch(login(userInfo));
+
       } else {
         dispatch(logout()); // Đăng xuất nếu không tìm thấy thông tin
       }

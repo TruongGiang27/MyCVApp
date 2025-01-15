@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Picker } from '@react-native-picker/picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -13,9 +12,11 @@ import {
   StatusBar,
   StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 import NavbarEmployer from '../../components/NavbarEmployer';
 import ScreenName from '../../constants/ScreenName';
 import RootStackParamList from '../../navigator/RootStackParamList';
+import { signOut } from '../../utils/auth';
 import { BASE_URL } from '../../utils/url';
 
 
@@ -36,7 +37,7 @@ interface Job {
 
 const HomeEmployer = ({ navigation, route }: Props) => {
   const { userId, jobId} = route.params as { userId: string, jobId: string };
-
+  const dispatch = useDispatch();
   const [allJobs, setAllJobs] = useState<Job[]>([]); // Original data
   const [jobs, setJobs] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
@@ -152,16 +153,6 @@ const HomeEmployer = ({ navigation, route }: Props) => {
     { title: 'Ứng viên', icon: 'people-outline' },
     { title: 'Phỏng vấn', icon: 'calendar-today' },
   ];
-
-  const signOut = async () => {
-    try {
-      await GoogleSignin.signOut();
-      setUserInfo(null);
-      navigation.navigate('Login');
-    } catch (error) {
-      console.error(error);
-    }
-  };
   if (!jobs) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -242,7 +233,7 @@ const HomeEmployer = ({ navigation, route }: Props) => {
                   <Icon name="settings" size={25} color="#011F82" />
                   <Text style={styles.menuText}>Chuyển về trang chủ</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuItem} onPress={signOut}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => signOut(dispatch)}>
                   <Icon name="logout" size={25} color="#011F82" />
                   <Text style={styles.menuText}>Đăng xuất</Text>
                 </TouchableOpacity>
