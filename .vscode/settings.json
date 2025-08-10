@@ -1,4 +1,5 @@
 {
     "java.configuration.updateBuildConfiguration": "interactive",
-    "java.compile.nullAnalysis.mode": "disabled"
+    "java.compile.nullAnalysis.mode": "disabled",
+    "cmake.sourceDirectory": "C:/Users/uyenm/Documents/DoAnChuyenNganhA/MyCVApp/frontend_MyCV/node_modules/react-native-screens/android"
 }

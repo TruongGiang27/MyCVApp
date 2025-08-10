@@ -8,7 +8,7 @@ export class CreateJobDto {
   readonly jobDescription: string;
   readonly requirements: string;
   readonly benefits: string;
-  readonly status: 'Mở' | 'Tạm dừng' | 'Đóng'; // Trạng thái của đơn tuyển dụng
+  readonly status: 'Mở' | 'Tạm dừng' | 'Đã Đóng'; // Trạng thái của đơn tuyển dụng
   readonly additionalInfo: {
       deadline: string;
       experience: string;

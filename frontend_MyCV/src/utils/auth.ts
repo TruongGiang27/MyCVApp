@@ -4,6 +4,7 @@ import { Dispatch } from 'redux';
 import { login, logout } from '../redux/reducers/authReducer';
 GoogleSignin.configure({
     webClientId: '29647774100-3d7b9j6m74v9bknvb9ic11lm5c7p2k04.apps.googleusercontent.com',
+    offlineAccess: true,
 });
 
 export const signIn = async (dispatch: Dispatch) => {
@@ -11,11 +12,9 @@ export const signIn = async (dispatch: Dispatch) => {
         await GoogleSignin.hasPlayServices();
         const userInfo = await GoogleSignin.signIn();
         await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        console.log("user----------------",userInfo);
         dispatch(login(userInfo));
     } catch (error: any) {
         if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-            console.log('User cancelled the sign-in process');
         } else if (error.code === statusCodes.IN_PROGRESS) {
             console.log('Sign in is in progress');
         } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
@@ -30,15 +29,12 @@ export const checkSignInStatus = async () => {
     try {
         const userInfo = await AsyncStorage.getItem('userInfo');
         if (userInfo) {
-            console.log('User is signed in:', JSON.parse(userInfo));
-            return (userInfo);
+            return JSON.parse(userInfo);
         } else {
-            console.log('User is not signed in');
             return null;
         }
     } catch (error) {
-        console.log('Error checking sign-in status:', error);
-        return null;
+        return error;
     }
 };
 
@@ -47,6 +43,7 @@ export const signOut = async (dispatch: Dispatch) => {
         await GoogleSignin.revokeAccess();
         await GoogleSignin.signOut();
         await AsyncStorage.removeItem('userInfo');
+        await AsyncStorage.removeItem('searchHistory');
         dispatch(logout());
         console.log('User signed out');
     } catch (error) {

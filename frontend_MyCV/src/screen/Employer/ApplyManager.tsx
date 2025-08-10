@@ -1,9 +1,10 @@
-import { useRoute } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import NavbarEmployer from '../../components/NavbarEmployer';
+import ScreenName from '../../constants/ScreenName';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
 
@@ -18,16 +19,9 @@ interface Employer {
     status: string;
 }
 
-type EmployerDetailScreenNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'EmployerDetail'
->;
-
-type Props = {
-    navigation: EmployerDetailScreenNavigationProp;
-};
-
-const ApplyManager: React.FC<Props> = ({ navigation }) => {
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+const ApplyManager= ({ navigation,route }: Props) => {
+    const { userId, jobId } = route.params as { userId: string, jobId: string };
     const [employers, setEmployers] = useState<Employer[]>([]);
     const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
     const [formData, setFormData] = useState<Employer | null>(null);
@@ -36,15 +30,11 @@ const ApplyManager: React.FC<Props> = ({ navigation }) => {
     const [jobDetails, setJobDetails] = useState<any>(null);
     const [applicants, setApplicants] = useState<Employer[]>([]); // State to store applicants
     const [filteredEmployers, setFilteredEmployers] = useState<Employer[]>([]); // Lưu danh sách đã lọc
-    const route = useRoute();
 
     const fetchApplicants = async () => {
         setLoading(true);
         // Xóa danh sách ứng viên cũ
         setApplicants([]);
-        // get params from route
-        const { jobId } = route.params as { jobId: string };
-        console.log("Job ID:", jobId);
         setJobDetails(jobDetails);
         try {
             const response = await axios.get(`${BASE_URL}/applications/job/${jobId}`);
@@ -82,13 +72,11 @@ const ApplyManager: React.FC<Props> = ({ navigation }) => {
     };
     const displayEmployers = (filteredEmployers.length > 0 ? filteredEmployers : employers).slice(0, 3);
 
-
-
     return (
         <View style={styles.scrollView}>
             <View style={styles.container}>
                 <Icon name="arrow-back-outline" size={28} color="#011F82" onPress={() => navigation.goBack()} />
-                <Text style={styles.pageTitle}>Danh sách ứng viên</Text>
+                <Text style={styles.pageTitle}>Danh sách ứng viên đã nộp đơn</Text>
             </View>
             <View style={styles.searchSection}>
                 <TextInput
@@ -113,17 +101,19 @@ const ApplyManager: React.FC<Props> = ({ navigation }) => {
                             <Text style={styles.jobDetail}>{employer.status}</Text>
                         </View>
                         <View style={styles.actionIconsRight}>
-                            <Icon name="eye" size={20} color="#007bff" style={styles.iconButton} onPress={() => navigation.navigate('CVDetail', { cvId: employer.cvId })} />
+                            <Icon name="eye" size={20} color="#007bff" style={styles.iconButton} onPress={() => navigation.navigate('CVDetail', { cvId: employer.cvId, jobId: employer.jobId })} />
                         </View>
                     </View>
                 )}
             />
+            <NavbarEmployer navigation={navigation} route={route}/>
         </View>
     )
 }
 const styles = StyleSheet.create({
     scrollView: {
-        backgroundColor: '#f5f5f5'
+        flex: 1,
+        backgroundColor: '#F9FAFC'
     },
     container: {
         display: 'flex',

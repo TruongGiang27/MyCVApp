@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import { BASE_URL } from '../../utils/url';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import Iconicon from 'react-native-vector-icons/Ionicons';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import RootStackParamList from '../../navigator/RootStackParamList';
+import ScreenName from '../../constants/ScreenName';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NavbarEmployer from '../../components/NavbarEmployer';
 
-type RootStackParamList = {
-    CVCreate: { startStep: number };
-};
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+const { width, height } = Dimensions.get('window');
 
 interface ProfileData {
+    userId: string;
     fullName: string;
     email: string;
     phone: string;
@@ -22,12 +27,19 @@ interface ProfileData {
     };
 }
 
-const CVManagerment = () => {
+const CVManagerment = ({ navigation, route }: Props) => {
+    const { userId } = route.params as { userId: string };
+    const [user, setUser] = useState<any | null>(null);
     const [profileData, setProfileData] = useState<ProfileData | null>(null);
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const navigationMessage = useNavigation<NavigationProp<any>>();
 
     useEffect(() => {
+        const getInfo = async () => {
+            const userInfo = await AsyncStorage.getItem('userInfo');
+            if (userInfo) {
+                setUser(JSON.parse(userInfo));
+            }
+        };
         const fetchProfileData = async () => {
             try {
                 const response = await axios.get(`${BASE_URL}/cv_form`);
@@ -36,7 +48,7 @@ const CVManagerment = () => {
                 const { fullName, email, phone, address } = profile;
                 console.log('Profile data:', { fullName, email, phone, address });
                 if (fullName && email && phone && address) {
-                    setProfileData({ fullName, email, phone, address });
+                    setProfileData({ userId, fullName, email, phone, address });
                 } else {
                     console.error('Some profile data fields are missing in the response');
                 }
@@ -44,13 +56,9 @@ const CVManagerment = () => {
                 console.error('Failed to fetch profile data:', error);
             }
         };
-
+        getInfo()
         fetchProfileData();
     }, []);
-
-    const handleNavigateToMessages = () => {
-        navigation.navigate('Message' as never);
-    };
 
     const handleNavigateToNotifications = () => {
         navigation.navigate('NotificationScreen' as never);
@@ -69,89 +77,71 @@ const CVManagerment = () => {
     }
 
     return (
-        <View style={styles.container}>
-            {/* Header */}
-            <View style={styles.header}>
-                <View style={styles.headerLeft}>
-                    <Text style={styles.headerText}>My CV</Text>
-                </View>
-                <View style={styles.headerIcons}>
-                    <Icon name="notifications-none" size={24} color="#011F82" style={styles.icon} onPress={handleNavigateToNotifications} />
-                </View>
-            </View>
-
-            {/* Profile Info */}
-            <View style={styles.profileSection}>
-                <View style={styles.userRow}>
-                    <Text style={styles.profileName}>{profileData.fullName}</Text>
-                    <View style={styles.avatar}>
-                        <Text style={styles.avatarText}>{profileData.fullName ? profileData.fullName.charAt(0) : ''}</Text>
+        <View style={{ flex: 1 }}>
+            <View style={styles.container}>
+                {/* Header */}
+                <View style={styles.header}>
+                    <View style={styles.headerLeft}>
+                        <Text style={styles.headerText}>My CV</Text>
+                    </View>
+                    <View style={styles.headerIcons}>
+                        <Icon name="notifications-none" size={24} color="#011F82" style={styles.icon} onPress={handleNavigateToNotifications} />
                     </View>
                 </View>
 
-                {/* Info Group */}
-                <View style={styles.infoGroup}>
-                    <View style={styles.infoContainer}>
-                        <View style={styles.infoRow}>
-                            <Icon name="email" size={20} color="#011F82" />
-                            <Text style={styles.infoText}>{profileData.email}</Text>
+                {/* Profile Info */}
+                <View style={styles.profileSection}>
+                    <View style={styles.userRow}>
+                        <Text style={styles.profileName}>{profileData.fullName}</Text>
+                        <View style={styles.avatar}>
+                            <Text style={styles.avatarText}>{profileData.fullName ? profileData.fullName.charAt(0) : ''}</Text>
                         </View>
-                        <View style={styles.infoRow}>
-                            <Icon name="phone" size={20} color="#011F82" />
-                            <Text style={styles.infoText}>{profileData.phone}</Text>
-                        </View>
-                        {profileData.address && (
+                    </View>
+
+                    {/* Info Group */}
+                    <View style={styles.infoGroup}>
+                        <View style={styles.infoContainer}>
                             <View style={styles.infoRow}>
-                                <Icon name="location-on" size={20} color="#011F82" />
-                                <Text style={styles.infoText}>{`${profileData.address.address}, ${profileData.address.city}, ${profileData.address.country}, ${profileData.address.zipCode}`}</Text>
+                                <Icon name="email" size={20} color="#011F82" />
+                                <Text style={styles.infoText}>{profileData.email}</Text>
                             </View>
-                        )}
+                            <View style={styles.infoRow}>
+                                <Icon name="phone" size={20} color="#011F82" />
+                                <Text style={styles.infoText}>{profileData.phone}</Text>
+                            </View>
+                            {profileData.address && (
+                                <View style={styles.infoRow}>
+                                    <Icon name="location-on" size={20} color="#011F82" />
+                                    <Text style={styles.infoText}>{`${profileData.address.address}, ${profileData.address.city}, ${profileData.address.country}, ${profileData.address.zipCode}`}</Text>
+                                </View>
+                            )}
+                        </View>
+                        {/* <Icon name="chevron-right" size={24} color="#011F82" style={styles.infoArrow} /> */}
                     </View>
-                    {/* <Icon name="chevron-right" size={24} color="#011F82" style={styles.infoArrow} /> */}
                 </View>
-            </View>
 
-            {/* CV Section */}
-            <TouchableOpacity style={styles.cvSection} onPress={() => navigation.navigate('CVCreate', { startStep: 10 })}>
-                <Text style={styles.MyCVTitle}>CV của bạn</Text>
-                <View style={styles.cvCard}>
-                    <Image
-                        source={{ uri: 'https://e7.pngegg.com/pngimages/205/491/png-clipart-cv-library-employment-website-curriculum-vitae-recruitment-job-others-miscellaneous-blue.png' }}
-                        style={styles.cvLogo}
-                    />
-                    <View style={styles.cvInfo}>
-                        <Text style={styles.cvTitle}>My CV</Text>
-                        <Text style={styles.cvSubtitle}>Cập nhật hôm nay</Text>
-                        <Text style={styles.cvStatus}>Không thể tìm được</Text>
+                {/* CV Section */}
+                <TouchableOpacity style={styles.cvSection} onPress={() => navigation.navigate('Profile', { userId: userId, userEmail: profileData.email, jobId: '', jobName: '', updated: false })}>
+                    <Text style={styles.MyCVTitle}>CV của bạn</Text>
+                    <View style={styles.cvCard}>
+                        <Image
+                            source={{ uri: 'https://e7.pngegg.com/pngimages/205/491/png-clipart-cv-library-employment-website-curriculum-vitae-recruitment-job-others-miscellaneous-blue.png' }}
+                            style={styles.cvLogo}
+                        />
+                        <View style={styles.cvInfo}>
+                            <Text style={styles.cvTitle}>My CV</Text>
+                            <Text style={styles.cvSubtitle}>Cập nhật hôm nay</Text>
+                            <Text style={styles.cvStatus}>Không thể tìm được</Text>
+                        </View>
+                        <Icon name="chevron-right" size={24} color="#011F82" />
                     </View>
-                    <Icon name="chevron-right" size={24} color="#011F82" />
-                </View>
-            </TouchableOpacity>
+                </TouchableOpacity>
 
-            <TouchableOpacity style={styles.manageCVsButton} onPress={handleNavigateToManageCVsApplied}>
-                <Text style={styles.manageCVsButtonText}>Manage CVs Applied</Text>
-            </TouchableOpacity>
-
-            {/* Navigation Bar */}
-            <View style={styles.navBar}>
-                <TouchableOpacity style={styles.navItem}>
-                    <Iconicon name="home-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Trang chủ</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="bookmark-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Việc làm của tôi</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigationMessage.navigate('Message')}>
-                    <Iconicon name="chatbubble-outline" size={25} color="#000" />
-                    <Text style={styles.navText}>Tin nhắn</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem}>
-                    <Icon name="person-outline" size={25} color="#007AFF" />
-                    <Text style={[styles.navText, { color: '#007AFF' }]}>Hồ sơ</Text>
+                <TouchableOpacity style={styles.manageCVsButton} onPress={handleNavigateToManageCVsApplied}>
+                    <Text style={styles.manageCVsButtonText}>Manage CVs Applied</Text>
                 </TouchableOpacity>
             </View>
-
+            <NavbarEmployer navigation={navigation} route={route} />
         </View>
     );
 };

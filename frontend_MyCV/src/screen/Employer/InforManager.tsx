@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ScreenName from '../../constants/ScreenName';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
-type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+type Props = NativeStackScreenProps<RootStackParamList, 'InforManager'>;
 // Cấu trúc dữ liệu của Employer dựa trên các trường từ JobPost
 interface Employer {
     _id: string;
@@ -29,8 +29,10 @@ interface Employer {
     };
 }
 
-const InforManager = () => {
-    const navigation = useNavigation();
+const InforManager = ({ navigation, route }: Props) => {
+    const { userId } = route.params as { userId: string };
+    // console.log("userId", userId);
+    const [user, setUser] = useState<any>(null);
     const [employers, setEmployers] = useState<Employer[]>([]);
     const [viewingEmployer, setViewingEmployer] = useState<Employer | null>(null);
     const [editingMode, setEditingMode] = useState<boolean>(false);
@@ -43,9 +45,18 @@ const InforManager = () => {
     // Adjust the list of displayed employers to be limited by `visibleCount`
 
     useEffect(() => {
+        const getInfo = async () => {
+            const userInfo = await AsyncStorage.getItem('userInfo');
+            if (userInfo) {
+                setUser(JSON.parse(userInfo));
+                // console.log("------------------");
+                // console.log("userInfo", userInfo);
+            }
+        };
+
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/jobs`); // Đường dẫn API từ JobPost
+                const response = await axios.get(`${BASE_URL}/jobs/job-of-user/${userId}`); // Đường dẫn API từ JobPost
                 setEmployers(response.data);
                 countStatuses(response.data);
             } catch (error) {
@@ -53,6 +64,7 @@ const InforManager = () => {
             }
         };
 
+        getInfo();
         fetchData();
     }, []);
 
@@ -132,17 +144,6 @@ const InforManager = () => {
     };
 
     const handleStatusChange = async (status: "Mở" | "Tạm dừng" | "Đã đóng", employerId: string) => {
-        //       try{
-        //     if (status === "Đã đóng") {
-        //         // Kiểm tra tất cả CV đã duyệt
-        //         const response = await axios.get(`${BASE_URL}/jobs/${employerId}/cvs`);
-        //         const allCVReviewed = response.data.every((cv: any) => cv.status === "Đã duyệt");
-    
-        //         if (!allCVReviewed) {
-        //             Alert.alert("Không thể đóng", "Vui lòng duyệt tất cả CV trước khi đóng công việc này.");
-        //             return;
-        //         }
-        // }
         try {
             const response = await axios.put(`${BASE_URL}/jobs/${employerId}`, { status });
             const updatedEmployers = employers.map(emp => emp._id === employerId ? { ...emp, status } : emp);
@@ -186,7 +187,7 @@ const InforManager = () => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Icon style={styles.icon} name="arrow-back-outline" onPress={BackHandler} size={28} color="#011F82" />
-                <Text style={styles.pageTitle}>Quản lý thông tin tuyển dụng</Text>
+                <Text style={styles.pageTitle}>Quản lý bài đăng tuyển dụng</Text>
             </View>
 
             <View style={styles.searchSection}>
@@ -396,19 +397,21 @@ const InforManager = () => {
                         <Text style={styles.viewMoreText}>Xem thêm</Text>
                     </TouchableOpacity>
                 )}
-
             </ScrollView>
+
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    scrollView: {
-        backgroundColor: '#f5f5f5',
-    },
     container: {
         padding: 20,
         flex: 1,
+        backgroundColor: '#F9FAFC',
+    },
+    scrollView: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
     },
     header: {
         flexDirection: 'row',

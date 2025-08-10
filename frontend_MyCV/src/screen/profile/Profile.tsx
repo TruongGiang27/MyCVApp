@@ -12,7 +12,9 @@ import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { signOut } from '../../utils/auth';
 import { BASE_URL } from '../../utils/url';
 
+
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
+
 const { width, height } = Dimensions.get('window');
 
 interface CV {
@@ -58,6 +60,7 @@ interface CV {
 const Profile = ({ navigation, route }: Props) => {
     const { userEmail, userId, jobId, jobName, updated } = route.params as { userEmail: string, userId: string, jobId: string, jobName: string, updated?: boolean };
     const [menuVisible, setMenuVisible] = useState(false);
+
     const dispatch = useDispatch();
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(false);
@@ -79,8 +82,6 @@ const Profile = ({ navigation, route }: Props) => {
             const cvInfo = await AsyncStorage.getItem('cvInfo');
             if (cvInfo) {
                 setCvs(JSON.parse(cvInfo));
-                console.log("cvInfo:", cvInfo);
-
             }
         }
         getInfo();
@@ -111,28 +112,23 @@ const Profile = ({ navigation, route }: Props) => {
                 try {
                     const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
                     setCvs(response.data);
-                    console.log('CVs đã được cập nhật:', response.data);
                 } catch (error) {
                     console.error('Lỗi khi cập nhật danh sách CVs:', error);
                 }
             };
-    
+
             fetchUpdatedCVs();
             // Xóa `updated` để tránh lặp lại không cần thiết
             navigation.setParams({ updated: false });
         }
     }, [updated]);
 
-    useEffect(() => {
-        console.log("cvs----", cvs);
-    }, [cvs]);
-    
+
 
     const confirmApplyNow = async (cvId: string) => {
         try {
             const response = await axios.get(`${BASE_URL}/cv_form/${cvId}`);
             const cv = response.data;
-
             if (cv) {
                 const CVfullNameUser = cv.fullName;
                 const CVEmailUser = cv.email;
@@ -164,7 +160,7 @@ const Profile = ({ navigation, route }: Props) => {
                         userId,
                     });
                     Alert.alert('Thành công', 'Bạn đã ứng tuyển thành công!');
-                    navigation.navigate('JobDetail', { jobId, jobName, userId, userEmail });
+                    navigation.navigate('Home', { userId });
                 }
             } else {
                 Alert.alert('Lỗi', 'Không tìm thấy CV để ứng tuyển.');
@@ -172,22 +168,6 @@ const Profile = ({ navigation, route }: Props) => {
         } catch (error) {
             console.error('Error submitting application:', error);
             Alert.alert('Lỗi', 'Có lỗi xảy ra khi ứng tuyển. Vui lòng thử lại.');
-        }
-    };
-
-    const handleEditAndCreate = async (cvId: string) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/cv_form/user/${userId}`);
-            const hasCV = response.data.length > 0;
-            console.log('Has CV:', hasCV);
-
-            if (hasCV) {
-                navigation.navigate('CVCreate', { startStep: 10, jobId, source: 'Profile' } as never);
-            } else {
-                navigation.navigate('CVCreate', { startStep: 1, jobId, source: 'Profile' } as never);
-            }
-        } catch (error) {
-            console.error('Error checking CV:', error);
         }
     };
 
@@ -207,8 +187,6 @@ const Profile = ({ navigation, route }: Props) => {
             Alert.alert('Lỗi', 'Có lỗi xảy ra khi xóa hồ sơ.');
         }
     }
-
-
 
     return (
         <View style={styles.container}>
@@ -250,7 +228,13 @@ const Profile = ({ navigation, route }: Props) => {
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.cvItem}
-                            onPress={() => confirmApplyNow(item._id)} // Truyền cvId
+                            onPress={() => {
+                                if (jobId === '') {
+                                    navigation.navigate('CVInfor', { cvId: item._id });
+                                } else {
+                                    confirmApplyNow(item._id);
+                                }
+                            }} // Truyền cvId
                         >
                             <Text style={styles.cvTitle}>Họ tên: {item.fullName}</Text>
                             <Text style={styles.cvtext}>Email: {item.email}</Text>
@@ -260,23 +244,23 @@ const Profile = ({ navigation, route }: Props) => {
                             <Text style={styles.cvtext}>Loại công việc mong muốn: {item.jobPreferences.jobType}</Text>
                             <Text style={styles.cvtext}>Mức lương mong muốn: {item.jobPreferences.minimumSalary}</Text>
                             <View style={styles.allicon}>
-                                <Icon style={styles.icon} name="edit" size={30} color="#fff" onPress={() => navigation.navigate('EditCV',{ cvId: item._id })} />
+                                <Icon style={styles.icon} name="edit" size={30} color="#fff" onPress={() => navigation.navigate('EditCV', { cvId: item._id })} />
                                 <Icon style={styles.icondelete} name="delete" size={30} color="#fff" onPress={() => handleDelete(item._id)} />
                             </View>
-
                         </TouchableOpacity>
-
                     )}
                 />
-
-
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('ManageCVsApplied', { cvId: '', disableButtons: false, jobId, userId })}>
+                    <Text style={styles.buttonText}>Quản lý đơn đã ứng tuyển</Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => navigation.navigate('CVCreate')}>
                     <Text style={styles.buttonText}>Tạo hồ sơ</Text>
                 </TouchableOpacity>
             </View>
-
             <Navbar navigation={navigation} route={route} />
         </View>
     );
@@ -285,7 +269,7 @@ const Profile = ({ navigation, route }: Props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#F4F9FF',
     },
     header: {
         flexDirection: 'row',

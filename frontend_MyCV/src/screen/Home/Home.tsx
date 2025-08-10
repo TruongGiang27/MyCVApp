@@ -39,8 +39,6 @@ const Header = ({ onSearchFocus, onMapSearchFocus }: { onSearchFocus: () => void
     );
 };
 
-
-
 // Mid section (Content)
 // Job item component
 interface dataJobsIteam {
@@ -51,6 +49,7 @@ interface dataJobsIteam {
     salary: string;
     jobType: string;
     jobDescription: string;
+    status: string;
 }
 
 const isJobBookmarked = async (jobId: string) => {
@@ -89,7 +88,7 @@ const toggleBookmarkJob = async (job: dataJobsIteam, setIsBookmarked: (value: bo
     }
 };
 
-const JobItem = ({ title, companyName, salary, location, onPress, job, navigation }: { title: string, companyName: string, salary: string, location: string, onPress: () => void, job: dataJobsIteam, navigation: any }) => {
+const JobItem = ({ title, companyName, salary, location, status, onPress, job, navigation }: { title: string, companyName: string, salary: string, location: string, status: string, onPress: () => void, job: dataJobsIteam, navigation: any }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
 
     useEffect(() => {
@@ -110,8 +109,9 @@ const JobItem = ({ title, companyName, salary, location, onPress, job, navigatio
 
                     <Text style={styles.title}>{title}</Text>
                     <View style={{ marginVertical: width * 0.03 }}>
-                        <Text style={styles.company}>{companyName}</Text>
-                        <Text style={styles.location}>{location}</Text>
+                        <Text style={styles.company}>Công ty {companyName}</Text>
+                        <Text style={styles.location}>Vị trí: {location}</Text>
+                        <Text style={styles.status}>Trạng thái: {status}</Text>
                     </View>
 
                     <Text style={styles.salary}>{salary}</Text>
@@ -126,7 +126,6 @@ const JobItem = ({ title, companyName, salary, location, onPress, job, navigatio
     )
 };
 
-
 const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocus: () => void, onMapSearchFocus: () => void, navigation: any }) => {
     interface dataJobsIteam {
         _id: string;
@@ -136,6 +135,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
         salary: string;
         jobType: string;
         jobDescription: string;
+        status: string;
     }
     const [dataJobs, setDataJobs] = useState<dataJobsIteam[]>([]);
     const [loading, setLoading] = useState(true);  // Trạng thái loading
@@ -144,19 +144,17 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
         const loadData = async () => {
             setLoading(true);
             try {
-                console.log("Fetching data from:", `${BASE_URL}/jobs`);
                 const userInfoString = await AsyncStorage.getItem('userInfo');
                 const userInfo = userInfoString ? JSON.parse(userInfoString) : {};
                 setUserId(userInfo.data.user.id);
-                console.log("-------------------");
-                console.log("userInfo", userInfo.data.user.id);
                 const response = await fetch(`${BASE_URL}/jobs`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const responseJson = await response.json();
-                setDataJobs(responseJson);
-                console.log("Data fetched successfully:", responseJson);
+                // Filter out closed jobs
+                const validJobs = responseJson.filter((job:dataJobsIteam) => job.status !== 'Đã đóng' && job.status !== 'Tạm dừng');
+                setDataJobs(validJobs);
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             } finally {
@@ -165,8 +163,6 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
         };
         loadData();
     }, []);
-
-
 
     if (loading) {
         return (
@@ -184,6 +180,7 @@ const Content = ({ onSearchFocus, onMapSearchFocus, navigation }: { onSearchFocu
                     companyName={item.companyName}
                     salary={item.salary}
                     location={item.location}
+                    status={item.status}
                     onPress={() => navigation.navigate('JobDetail', { jobId: item._id, userId: userId })}
                     job={item}
                     navigation={navigation}
@@ -218,8 +215,8 @@ const Home = ({ navigation, route }: Props) => {
                 const userInfoString = await AsyncStorage.getItem('userInfo');
                 if (userInfoString) {
                     const userInfo = await JSON.parse(userInfoString);
-                    console.log("userInfo//////", userInfo);
-                    await axios.post(`${BASE_URL}/user/create-or-update`, {
+
+                    await axios.post(`${BASE_URL}/user/create`, {
                         userId: userInfo.data.user.id,
                         name: userInfo.data.user.name,
                         email: userInfo.data.user.email,
@@ -267,7 +264,7 @@ export default Home;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#F4F9FF',
     },
     headContainer: {
         flex: 1,
@@ -339,6 +336,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignSelf: 'center',
         elevation: 2,
+        marginBottom: 5,
     },
     premiumTag: {
         backgroundColor: '#fdecef',
@@ -362,14 +360,19 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     company: {
-        fontSize: 14,
+        fontSize: 16,
         color: '#555',
         marginBottom: 5,
     },
     salary: {
         color: '#007AFF',
         fontWeight: 'bold',
-        fontSize: 14,
+        fontSize: 15,
+        marginBottom: 5,
+    },
+    status: {
+        fontSize: 16,
+        color: '#1F509A',
         marginBottom: 5,
     },
     location: {
@@ -390,7 +393,7 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     easyApply: {
-        fontSize: 14,
+        fontSize: 15,
         color: '#007AFF',
     },
     icon: {

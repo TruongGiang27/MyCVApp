@@ -1,11 +1,11 @@
-import { useRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 // import axios from 'axios';
 import { Icon } from '@rneui/themed';
 import React, { useEffect, useState } from 'react';
 import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import ScreenName from '../../constants/ScreenName';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
 import { BASE_URL } from '../../utils/url';
-import { RootStackParamList } from '../User/types';
 interface cv_form {
     _id: string;
     userId: string;
@@ -46,10 +46,17 @@ interface cv_form {
     };
 }
 
-type Props = NativeStackScreenProps<RootStackParamList, 'CVDetail'>;
+interface application {
+    _id: string;
+    jobId: string;
+    cvId: string;
+    status: string;
+}
+type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
-const CVDetail: React.FC<Props> = ({ navigation }) => {
+const CVDetail = ({ navigation, route }: Props) => {
     const [cv, setCv] = useState<cv_form>();
+    const [applications, setApplications] = useState<application>();
     const [name, setName] = useState<string>();
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -60,7 +67,6 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
             .join('') // Gộp lại thành một chuỗi
             .toUpperCase() // Chuyển thành chữ in hoa
         : 'CV';
-    const route = useRoute();
     useEffect(() => {
         console.log("Route params:", route.params);
     }, [route.params]);
@@ -68,19 +74,32 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
     const BackHandler = () => {
         navigation.goBack();
     }
-    const { cvId, disableButtons, employerId } = route.params ? route.params as { cvId: string, disableButtons: boolean, employerId: string } : { cvId: '', disableButtons: false, employerId: '' };
-
+    const { cvId, disableButtons, jobId } = route.params ? route.params as { cvId: string, disableButtons: boolean, jobId: string } : { cvId: '', disableButtons: false, jobId: '' };
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await fetch(`${BASE_URL}/cv_form/${cvId}`);
                 const data = await response.json();
-                console.log("CV data:", data);
                 setCv(data);
             } catch (error) {
                 console.error("Lỗi khi lấy dữ liệu CV:", error);
             }
         };
+        const fetchApplications = async () => {
+            try {
+                const response = await fetch(`${BASE_URL}/applications/job/${jobId}`);
+                // Chuyển đổi chuỗi text thành JSON
+                const text = await response.text();
+                const data = JSON.parse(text); // Parse mảng chuỗi thành JSON
+                console.log("Applications data:", data);
+                // Cập nhật state với mảng JSON đã parse
+                setApplications(data);
+            } catch (error) {
+                console.error("Lỗi khi lấy danh sách ứng tuyển:", error);
+            }
+        };
+
+        fetchApplications();
         fetchData();
     }, [cvId]);
 
@@ -96,25 +115,38 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
     //Từ chối cv
     const confirmRefuse = async () => {
         try {
-            const response = await fetch(`${BASE_URL}/cv_form/${cvId}/decline/${employerId}`, {
-                method: 'DELETE',
+            const response = await fetch(`${BASE_URL}/applications/${cvId}/decline/${jobId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: 'declined' }),
             });
-            const result = await response.json();
-            Alert.alert(result); // Thông báo cho người dùng về kết quả từ chối
-            setIsModalVisible(false); // Đóng modal
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log("Result:", result);
+                Alert.alert('Thông báo', result.message || 'CV đã được từ chối thành công.');
+                setIsModalVisible(false); // Đóng modal sau khi từ chối thành công
+                setApplications(result); // Cập nhật danh sách ứng tuyển
+            } else {
+                const error = await response.json();
+                console.log("API Error:", error);
+                Alert.alert('Lỗi', error.message || 'Đã xảy ra lỗi khi từ chối CV.');
+            }
         } catch (error) {
             console.error("Lỗi khi từ chối CV:", error);
+            Alert.alert('Lỗi', 'Không thể thực hiện từ chối CV. Vui lòng thử lại sau.');
         }
     };
 
-
     return (
-        <ScrollView>
-            <View style={styles.container}>
-                <View style={styles.header}>
-                    <Icon name="arrow-back" size={30} color="#011F82" onPress={BackHandler} />
-                    <Text style={styles.headerText}>Chi tiết CV</Text>
-                </View>
+        <View style={styles.context}>
+            <View style={styles.header}>
+                <Icon name="arrow-back" size={30} color="#011F82" onPress={BackHandler} />
+                <Text style={styles.headerText}>Chi tiết CV</Text>
+            </View>
+            <ScrollView>
                 <View style={styles.avatarContainer}>
                     <View style={styles.avatar}>
                         <Text style={styles.initials}>{initials}</Text>
@@ -257,13 +289,13 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                 </View>
 
                 <View style={styles.btnGroup}>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SendSMS', { phone: cv?.phone, fullName: cv?.fullName })}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SendSMS', { phone: cv?.phone || '' })}>
                         <Text style={styles.buttonText}>Liên hệ</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[styles.buttonRefuse, disableButtons && styles.disabledButton]}
-                        onPress={confirmRefuse}
-                        disabled={disableButtons}
+                        style={[styles.buttonRefuse, (disableButtons || applications?.status) && styles.disabledButton]}
+                        onPress={() => setIsModalVisible(true)}
+                        disabled={disableButtons || applications?.status === 'declined'}
                     >
                         <Text style={styles.buttonText}>Từ chối</Text>
                     </TouchableOpacity>
@@ -289,8 +321,9 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
                     </Modal>
 
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View >
+
     );
 
 };
@@ -298,9 +331,9 @@ const CVDetail: React.FC<Props> = ({ navigation }) => {
 export default CVDetail;
 
 const styles = StyleSheet.create({
-    container: {
+    context: {
         flex: 1,
-        backgroundColor: '#F0F4F8', // Nền màu trung tính
+        backgroundColor: '#F5F5F5',
     },
     header: {
         flexDirection: 'row',
@@ -378,7 +411,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginHorizontal: 16,
         marginTop: 24,
-        marginBottom: 20,
+        marginBottom: 10,
     },
     button: {
         flex: 1,

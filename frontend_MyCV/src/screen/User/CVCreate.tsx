@@ -242,9 +242,6 @@ const CVCreate = () => {
 
     try {
       const response = await axios.post(`${BASE_URL}/cv_form`, formattedData);
-      console.log('Data successfully posted to MongoDB:', response.data);
-      console.log('Response data structure:', response.data); // Add this line to log the response data structure
-      console.log('User ID:', userId);
       Alert.alert('Thành công', 'Bạn đã tạo CV thành công!');
       // Navigate back to the appropriate screen based on the source parameter
       if (route.params?.source === 'JobDetail') {
@@ -256,9 +253,6 @@ const CVCreate = () => {
       console.error('Error posting data to MongoDB:', error);
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          console.log('Error response data:', error.response.data);
-          console.log('Error response status:', error.response.status);
-          console.log('Error response headers:', error.response.headers);
         } else if (error.request) {
           console.log('Error request:', error.request);
         } else {
@@ -267,14 +261,12 @@ const CVCreate = () => {
       } else {
         console.log('Unexpected error:', error);
       }
-      console.log('Data that failed to post:', formattedData);
       console.log('userInfoString:', await AsyncStorage.getItem('userInfo'));
       // Handle error, e.g., show an error message
     }
   };
 
   const handleSaveAndExit = () => {
-    console.log("Lưu tiến trình hiện tại và thoát");
     navigation.goBack();
   };
 
@@ -1206,6 +1198,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flex: 1,
     flexWrap: 'wrap', // Ensure text wraps within the input field
+    color: 'black',
   },
   formContainer: {
     flex: 1,
@@ -1253,6 +1246,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+    color: '#011F82', // Màu chữ chính
   },
   selectedSkillsContainer: {
     flexDirection: 'row',
@@ -1280,6 +1274,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap', // Ensure text wraps within the content
     // backgroundColor: 'red',
     width: '30%',
+    color: '#011F82', // Màu chữ chính
   },
   boldText: {
     fontWeight: 'bold',

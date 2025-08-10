@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   Dimensions,
   FlatList,
@@ -13,13 +14,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Navbar from '../../components/Navbar';
 import ScreenName from '../../constants/ScreenName';
 import { RootStackParamList } from '../../navigator/RootStackParamList';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 const { width, height } = Dimensions.get('window');
 
 const FavoriteJob = ({ navigation, route }: Props)=> {
   const [jobs, setJobs] = useState<any>([]);
+  const { userId, userEmail } = route.params as { userId: string, userEmail: string};
 
   useEffect(() => {
     const loadBookmarkedJobs = async () => {
@@ -44,7 +45,7 @@ const FavoriteJob = ({ navigation, route }: Props)=> {
       <Text style={[styles.status, item.status === 'Mở' ? styles.open : styles.closed]}>
         Trạng thái: {item.status}
       </Text>
-      <TouchableOpacity style={styles.detailButton} onPress={() => navigation.navigate('JobDetail', { jobId: item._id })}>
+      <TouchableOpacity style={styles.detailButton} onPress={() => navigation.navigate('JobDetail', { jobId: item._id, jobName: item.title, userId: userId, userEmail: userEmail })}>
         <Text style={styles.detailButtonText}>Xem chi tiết</Text>
       </TouchableOpacity>
     </View>

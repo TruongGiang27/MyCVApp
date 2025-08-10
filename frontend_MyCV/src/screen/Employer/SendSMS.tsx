@@ -119,7 +119,7 @@ const SendSMSComponent = () => {
             {
                 body: fullMessage,
                 recipients: [recipient],
-                successTypes: ['sent', 'queued'],
+                // successTypes: ['sent', 'queued'],
                 allowAndroidSendWithoutReadPermission: true,
             },
             (completed, cancelled, error) => {
@@ -194,7 +194,7 @@ const SendSMSComponent = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8fafc',
+        backgroundColor: '#f0f4f8',
         padding: 20,
         alignItems: 'center',
     },

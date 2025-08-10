@@ -25,9 +25,7 @@ export class ApplicationService {
 
   async getApplicationsByJobId(jobId: string): Promise<Application[]> {
     const applications = await this.applicationModel.find({jobId: jobId}).exec();
-
-
-    console.log(applications)
+    // console.log(applications)
     // if (applications.length === 0) {
     //   throw new NotFoundException(`No applications found for jobId ${jobId}`);
     // }
@@ -44,5 +42,19 @@ export class ApplicationService {
     const result = await this.applicationModel.deleteOne({ _id: id }).exec();
     if (result.deletedCount === 0) throw new NotFoundException(`Application with ID ${id} not found`);
     return { deleted: true };
+  }
+
+  async declineCv(cvId: string, jobId: string, status: string): Promise<Application> {
+    // Tìm và cập nhật trạng thái CV
+    return this.applicationModel.findOneAndUpdate(
+      { cvId: cvId, jobId: jobId },
+      { status: 'declined' },
+      { new: true } // Trả về bản ghi đã cập nhật
+    ).exec();
+  }
+
+  async getApplicationsByUserId(userId: string): Promise<Application[]> {
+    const applications = await this.applicationModel.find({userId: userId}).exec();
+    return applications;
   }
 }

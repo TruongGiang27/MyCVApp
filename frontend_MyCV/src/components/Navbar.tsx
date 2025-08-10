@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Icon } from '@rneui/themed';
 import { appColors } from '../constants/appColors';
 import ScreenName from '../constants/ScreenName';
 import { RootStackParamList } from '../navigator/RootStackParamList';
@@ -22,25 +22,23 @@ const Navbar = ({ route, navigation }: Props) => {
         const parsedUser = JSON.parse(userInfo);
         setUser(parsedUser);
         setUserId(parsedUser.data.user.id);
-        console.log("user------------", parsedUser.data.user.id);
       }
     };
     getInfo();
   }, []);
 
   const getIconColor = (screen: string) => {
-    return route.name === screen ? '#011F82' : appColors.gray; // Màu xanh cho trang hiện tại, xám cho trang khác
+    return route.name === screen ? appColors.gray : appColors.primary ; // Màu xanh cho trang hiện tại, xám cho trang khác
   };
 
   const getTextColor = (screen: string) => {
-    return route.name === screen ? '#011F82' : '#666'; // Tương tự như trên
+    return route.name === screen ? appColors.gray : appColors.primary; // Tương tự như trên
   };
 
   const handleEmployer = async (userId: string) => {
     try {
       const response = await axios.get(`${BASE_URL}/employers/check-cv-employer/${userId}`);
       setEmployer(response.data);
-      console.log("hasCV", response.data.hasCv);
       return response.data.hasCv; // Trả về giá trị true/false
     } catch (error) {
       console.error('Error checking CV:', error);
@@ -65,24 +63,24 @@ const Navbar = ({ route, navigation }: Props) => {
     <View style={styles.navbar}>
       <View style={styles.group}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home" as never)}>
-          <Icon name="home" size={25} color="#011F82" />
+          <Icon name="home" size={25} color={getIconColor('Home')} />
           <Text style={styles.navText}>Trang chủ</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('FavoriteJob')}>
-          <Icon name="bookmark" size={25} color="#011F82" />
+        <TouchableOpacity style={styles.navItem }  onPress={() => navigation.navigate("FavoriteJob", { userId: userId, userEmail: user?.data?.user?.email } as never)}>
+          <Icon name="heart" type="font-awesome" size={25} color={getIconColor('FavoriteJob')} />
           <Text style={styles.navText}>Việc làm của tôi</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.group}>
         <TouchableOpacity style={styles.navItem} onPress={navigateToEmployer}>
-          <Icon name="business" size={25} color="#011F82" />
+          <Icon name="business" size={25} color={getIconColor('HomeEmployer')} />
           <Text style={styles.navText}>Nhà tuyển dụng</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navItem}
           onPress={() =>
-            navigation.navigate('Profile', { userId: user?.data?.user?.id ,userEmail: user?.data?.user?.email, jobId: '', jobName: '' })
+            navigation.navigate('Profile', { userId: user?.data?.user?.id, userEmail: user?.data?.user?.email, jobId: '', jobName: '', updated: false })
           }
         >
           <Icon name="person" size={25} color={getIconColor('Profile')} />
@@ -118,7 +116,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   navText: {
-    fontSize: 12,
+    fontSize: 14,
     marginTop: 2,
+    color: appColors.primary,
+    fontWeight: 'bold',
   },
 });

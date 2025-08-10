@@ -1,11 +1,10 @@
-import React from 'react';
-import { View, Text, Button, StatusBar, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Navbar from '../../components/Navbar';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigator/RootStackParamList';
+import React from 'react';
+import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Navbar from '../../components/Navbar';
 import ScreenName from '../../constants/ScreenName';
+import { RootStackParamList } from '../../navigator/RootStackParamList';
 type Props = NativeStackScreenProps<RootStackParamList, ScreenName>;
 
 const MessageScreen = ({navigation, route} : Props) => {
